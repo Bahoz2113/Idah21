@@ -1,0 +1,802 @@
+// ============================================================
+// CEZERİ ROBOTECH — Education OS
+// Prisma Şeması (Faz 0 — Çekirdek Veri Modeli)
+// Postgres (Supabase) · Multi-tenant · KVKK uyumlu
+// ============================================================
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  output        = "../src/generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")        // Supabase connection pooler
+  directUrl = env("DIRECT_URL")          // migration için doğrudan bağlantı
+}
+
+// ===================== ENUMS =====================
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  PARENT
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  PASSIVE
+  PENDING
+}
+
+enum AttendanceStatus {
+  PRESENT   // geldi
+  ABSENT    // gelmedi
+  LATE      // geç geldi
+  EXCUSED   // izinli
+}
+
+enum ParticipationLevel {
+  ACTIVE    // aktif katıldı
+  PASSIVE   // pasif katıldı
+  NONE
+}
+
+enum MaterialType {
+  PDF
+  PPT
+  ARDUINO_CODE
+  CIRCUIT       // devre şeması
+  MODEL_3D
+  STL
+  NOTE
+  LINK          // harici bağlantı — çocuk foto/videosu sistemde BARINDIRILMAZ
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  VISUAL
+  CIRCUIT_COMPLETION
+  CODE_OUTPUT
+  ORDERING
+  MINI_PROBLEM
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum LearningStyle {
+  VISUAL        // görerek
+  AUDITORY      // dinleyerek
+  KINESTHETIC   // uygulayarak
+  UNKNOWN
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum ReportType {
+  PARENT_MONTHLY
+  TEACHER_WEEKLY
+  STUDENT_ANALYSIS
+  WEAKNESS
+}
+
+// =============== ÇOK-KİRACILI & KİMLİK ===============
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  plan      String   @default("standard")   // SaaS lisans planı
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+
+  branches  Branch[]
+  users     User[]
+  ageGroups AgeGroup[]
+  students  Student[]
+  parents   Parent[]
+  teachers  Teacher[]
+  classes   Class[]
+  events    Event[]
+  invitations         Invitation[]
+  institutionProjects InstitutionProject[]
+  inventoryItems      InventoryItem[]
+
+  @@map("organizations")
+}
+
+model Branch {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  address        String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  students     Student[]
+  teachers     Teacher[]
+  classes      Class[]
+
+  @@index([organizationId])
+  @@map("branches")
+}
+
+model User {
+  id             String     @id   // = Supabase Auth uid (kimlik kaynağı; parola Supabase'de tutulur)
+  organizationId String
+  email          String
+  firstName      String?
+  lastName       String?
+  phone          String?  @unique
+  username       String?  @unique
+  role           UserRole
+  status         UserStatus @default(ACTIVE)
+  createdAt      DateTime   @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  student      Student?
+  parent       Parent?
+  teacher      Teacher?
+  notifications Notification[]
+  auditLogs    AuditLog[]
+
+  @@unique([organizationId, email])
+  @@index([organizationId])
+  @@map("users")
+}
+
+// MVP NOTU: rol = enum (admin/teacher/parent/student). Granüler izin
+// için `roles` + `permissions` tabloları V2'de eklenir.
+
+model AgeGroup {
+  id             String  @id @default(cuid())
+  organizationId String
+  name           String  // Minikler / Yıldızlar / Kaşifler / Mühendisler
+  minAge         Int
+  maxAge         Int
+  tone           String? // anlatım dili
+  testDifficulty String? // test zorluk profili
+  contentStyle   String? // görsel içerik tipi
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  students     Student[]
+  classes      Class[]
+
+  @@index([organizationId])
+  @@map("age_groups")
+}
+
+// =============== KİŞİLER ===============
+
+model Student {
+  id             String     @id @default(cuid())
+  organizationId String
+  branchId       String?
+  userId         String?    @unique
+  fullName       String     // profil fotoğrafı tutulmaz; UI baş-harf avatarı üretir
+  birthDate      DateTime?
+  school         String?
+  schoolGrade    String?
+  ageGroupId     String?
+  classId        String?
+  allergyNotes   String?    // sağlık / dikkat notu
+  registeredAt   DateTime   @default(now())
+  status         UserStatus @default(ACTIVE)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  branch       Branch?      @relation(fields: [branchId], references: [id])
+  user         User?        @relation(fields: [userId], references: [id])
+  ageGroup     AgeGroup?    @relation(fields: [ageGroupId], references: [id])
+  class        Class?       @relation(fields: [classId], references: [id])
+
+  parents       StudentParent[]
+  enrollments   ClassEnrollment[]
+  attendance    Attendance[]
+  evaluations   StudentEvaluation[]
+  teacherNotes  TeacherNote[]
+  aiSessions    AiTeacherSession[]
+  quizAnswers   AiQuizAnswer[]
+  parentReports ParentReport[]
+  teacherReports TeacherReport[]
+  projects      Project[]
+  badges        StudentBadge[]
+  certificates  Certificate[]
+  mediaConsent  MediaConsent?
+
+  @@index([organizationId])
+  @@index([classId])
+  @@map("students")
+}
+
+model Parent {
+  id              String  @id @default(cuid())
+  organizationId  String
+  userId          String? @unique
+  motherName      String?
+  fatherName      String?
+  phone           String?
+  whatsapp        String?
+  email           String?
+  emergencyContact String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id])
+  students     StudentParent[]
+
+  @@index([organizationId])
+  @@map("parents")
+}
+
+model StudentParent {
+  id        String  @id @default(cuid())
+  studentId String
+  parentId  String
+  relation  String? // anne / baba / vasi
+  canPickup Boolean @default(false) // teslim alabilecek kişi
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  parent  Parent  @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, parentId])
+  @@map("student_parents")
+}
+
+model Teacher {
+  id             String  @id @default(cuid())
+  organizationId String
+  branchId       String?
+  userId         String? @unique
+  fullName       String
+  specialty      String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  branch       Branch?      @relation(fields: [branchId], references: [id])
+  user         User?        @relation(fields: [userId], references: [id])
+
+  classesMain      Class[]        @relation("MainTeacher")
+  classesAssistant Class[]        @relation("AssistantTeacher")
+  lessons          Lesson[]
+  teacherNotes     TeacherNote[]
+  teacherReports   TeacherReport[]
+
+  @@index([organizationId])
+  @@map("teachers")
+}
+
+// =============== EĞİTİM YAPISI ===============
+
+model Class {
+  id                 String    @id @default(cuid())
+  organizationId     String
+  branchId           String?
+  name               String
+  ageGroupId         String?
+  level              String?
+  teacherId          String?
+  assistantTeacherId String?
+  day                String?   // ders günü
+  time               String?   // ders saati
+  capacity           Int       @default(0)
+  startDate          DateTime?
+  endDate            DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  branch       Branch?      @relation(fields: [branchId], references: [id])
+  ageGroup     AgeGroup?    @relation(fields: [ageGroupId], references: [id])
+  teacher      Teacher?     @relation("MainTeacher", fields: [teacherId], references: [id])
+  assistant    Teacher?     @relation("AssistantTeacher", fields: [assistantTeacherId], references: [id])
+
+  students           Student[]
+  enrollments        ClassEnrollment[]
+  curriculums        MonthlyCurriculum[]
+  lessons            Lesson[]
+  weeklyMaterials    WeeklyMaterial[]
+  inventoryAssignments InventoryAssignment[]
+
+  @@index([organizationId])
+  @@map("classes")
+}
+
+model ClassEnrollment {
+  id         String    @id @default(cuid())
+  classId    String
+  studentId  String
+  enrolledAt DateTime  @default(now())
+  leftAt     DateTime?
+
+  class   Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([classId])
+  @@index([studentId])
+  @@map("class_enrollments")
+}
+
+model MonthlyCurriculum {
+  id      String @id @default(cuid())
+  classId String
+  year    Int
+  month   Int
+
+  class        Class         @relation(fields: [classId], references: [id], onDelete: Cascade)
+  weeklyTopics WeeklyTopic[]
+
+  @@unique([classId, year, month])
+  @@map("monthly_curriculums")
+}
+
+model WeeklyTopic {
+  id                  String @id @default(cuid())
+  monthlyCurriculumId String
+  weekNo              Int    // 1..4
+  topic               String // ör: LED Yakma
+  description         String?
+
+  monthlyCurriculum MonthlyCurriculum @relation(fields: [monthlyCurriculumId], references: [id], onDelete: Cascade)
+
+  @@map("weekly_topics")
+}
+
+model Lesson {
+  id         String   @id @default(cuid())
+  classId    String
+  teacherId  String?
+  date       DateTime
+  topic      String?  // işlenen konu
+  nextTopic  String?  // sonraki ders konusu
+  lessonNote String?
+  homework   String?
+
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+  materials LessonMaterial[]
+  attendance Attendance[]
+
+  @@index([classId])
+  @@map("lessons")
+}
+
+model LessonMaterial {
+  // Yalnızca öğretim materyali (belge/kod/devre/3B). Çocuk foto/videosu BARINDIRILMAZ; harici içerik LINK olarak.
+  id       String       @id @default(cuid())
+  lessonId String
+  type     MaterialType
+  title    String?
+  url      String
+  extractedText String?  // materyalden çıkarılan ham metin (PDF/kod/not)
+  aiSummary     Json?    // Materyal Analizi agent'ının yapılandırılmış özeti
+  analyzedAt    DateTime?
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@map("lesson_materials")
+}
+
+// =============== TAKİP & DEĞERLENDİRME ===============
+
+model Attendance {
+  id            String             @id @default(cuid())
+  lessonId      String
+  studentId     String
+  status        AttendanceStatus
+  participation ParticipationLevel @default(NONE)
+  groupWork     Boolean            @default(false) // grup çalışmasına katıldı
+  didApplication Boolean           @default(false) // uygulama yaptı
+  homeworkDone  Boolean?           // ödevini yaptı/yapmadı
+
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, studentId])
+  @@index([studentId])
+  @@map("attendance")
+}
+
+model StudentEvaluation {
+  id        String   @id @default(cuid())
+  studentId String
+  period    String   // "YYYY-MM"
+  // 18 kriter (1-10) — esneklik için jsonb; aylık gelişim grafiği bundan üretilir
+  scores    Json
+  notes     Json?    // kriter başına açıklama: { criterionKey: "metin" }
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, period])
+  @@index([studentId])
+  @@map("student_evaluations")
+}
+
+model TeacherNote {
+  id              String  @id @default(cuid())
+  studentId       String
+  teacherId       String
+  note            String
+  visibleToParent Boolean @default(false)
+  createdAt       DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  @@index([studentId])
+  @@map("teacher_notes")
+}
+
+// =============== AI KATMANI ===============
+
+model AiTeacherSession {
+  id            String        @id @default(cuid())
+  studentId     String?
+  topic         String
+  ageGroupId    String?
+  content       Json          // yaşa uyarlı ders içeriği (adımlar, görseller, sorular)
+  learningStyle LearningStyle @default(UNKNOWN)
+  messages      Json?         // interaktif ders: konuşma geçmişi [{role, text, at}]
+  detectedStyle String?       // AI'nın cevaplardan çıkardığı öğrenme stili
+  weaknesses    Json?         // zayıflık tespiti: [{topic, level, note}]
+  status        String        @default("active")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime?     @updatedAt
+
+  student Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@map("ai_teacher_sessions")
+}
+
+model AiQuiz {
+  id         String   @id @default(cuid())
+  topic      String
+  ageGroupId String?
+  // zorluk dağılımı: 7 kolay / 8 orta / 5 zor
+  easyCount  Int      @default(7)
+  mediumCount Int     @default(8)
+  hardCount  Int      @default(5)
+  createdAt  DateTime @default(now())
+
+  questions AiQuizQuestion[]
+  answers   AiQuizAnswer[]
+
+  @@map("ai_quizzes")
+}
+
+model AiQuizQuestion {
+  id            String       @id @default(cuid())
+  quizId        String
+  type          QuestionType
+  difficulty    Difficulty
+  body          String
+  options       Json?        // çoktan seçmeli şıklar
+  correctAnswer String
+  conceptTag    String?      // hangi kavramı ölçüyor (zayıflık analizi için)
+
+  quiz    AiQuiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers AiQuizAnswer[]
+
+  @@index([quizId])
+  @@map("ai_quiz_questions")
+}
+
+model AiQuizAnswer {
+  id         String  @id @default(cuid())
+  quizId     String
+  studentId  String
+  questionId String
+  answer     String?
+  isCorrect  Boolean?
+  answeredAt DateTime @default(now())
+
+  quiz     AiQuiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student  Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  question AiQuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([quizId])
+  @@map("ai_quiz_answers")
+}
+
+model AiReport {
+  id        String     @id @default(cuid())
+  type      ReportType
+  subjectId String     // genelde studentId
+  payload   Json
+  createdAt DateTime   @default(now())
+
+  @@index([subjectId])
+  @@map("ai_reports")
+}
+
+model ParentReport {
+  id        String   @id @default(cuid())
+  studentId String
+  period    String   // "YYYY-MM"
+  content   Json     // konular, katılım, performans, AI analizi, öneriler
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@map("parent_reports")
+}
+
+model TeacherReport {
+  id        String   @id @default(cuid())
+  studentId String
+  teacherId String
+  week      String   // "YYYY-Www"
+  content   Json     // başarı yüzdeleri + AI önerisi
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  @@index([studentId])
+  @@map("teacher_reports")
+}
+
+// =============== PORTFÖY & OYUNLAŞTIRMA ===============
+
+model Project {
+  id          String   @id @default(cuid())
+  studentId   String
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+
+  student Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  files   ProjectFile[]
+
+  @@index([studentId])
+  @@map("projects")
+}
+
+model ProjectFile {
+  // Portföy: kod/3B/STL/devre/belge. Çocuk foto/videosu BARINDIRILMAZ.
+  id        String       @id @default(cuid())
+  projectId String
+  type      MaterialType
+  url       String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_files")
+}
+
+model Badge {
+  id       String  @id @default(cuid())
+  name     String  // ör: "İlk LED'imi Yaktım"
+  icon     String?
+  criteria String?
+
+  students StudentBadge[]
+
+  @@map("badges")
+}
+
+model StudentBadge {
+  id        String   @id @default(cuid())
+  studentId String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  badge   Badge   @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, badgeId])
+  @@map("student_badges")
+}
+
+model Certificate {
+  id        String   @id @default(cuid())
+  studentId String
+  title     String
+  fileUrl   String?
+  issuedAt  DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@map("certificates")
+}
+
+// =============== İŞLETME & İLETİŞİM ===============
+
+
+model Event {
+  id             String   @id @default(cuid())
+  organizationId String
+  title          String
+  date           DateTime
+  description    String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("events")
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String    // ders_basladi, yeni_odev, rapor_hazir, ...
+  title     String
+  body      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+// =============== KVKK ===============
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // CREATE / READ / UPDATE / DELETE / LOGIN
+  entity    String?
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model MediaConsent {
+  // İZİN KAYDI — medya BARINDIRILMAZ. Eğitmenin harici/anlık (WhatsApp vb.) paylaşımı için onay durumunu yönetir.
+  id           String  @id @default(cuid())
+  studentId    String  @unique
+  photoConsent Boolean @default(false)
+  videoConsent Boolean @default(false)
+  shareScope   String  @default("none") // none / parents_only_ephemeral
+  updatedAt    DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("media_consents")
+}
+
+model PhoneVerification {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  purpose   String   // register | login_2fa
+  verified  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@map("phone_verifications")
+}
+
+model PendingRegistration {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  firstName String
+  lastName  String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@map("pending_registrations")
+}
+
+// =============== YENİ MODELLER ===============
+
+model Invitation {
+  id             String    @id @default(cuid())
+  organizationId String
+  token          String    @unique @default(cuid())
+  type           String    // "teacher" | "parent"
+  role           String    // "TEACHER" | "PARENT"
+  firstName      String
+  lastName       String
+  phone          String?
+  email          String?
+  studentId      String?   // veli daveti için
+  teacherId      String?   // eğitmen profiline bağlama için
+  usedAt         DateTime?
+  expiresAt      DateTime
+  createdBy      String    // admin userId
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([organizationId])
+  @@map("invitations")
+}
+
+model InstitutionProject {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tasks        InstitutionProjectTask[]
+
+  @@index([organizationId])
+  @@map("institution_projects")
+}
+
+model InstitutionProjectTask {
+  id        String   @id @default(cuid())
+  projectId String
+  title     String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  project InstitutionProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("institution_project_tasks")
+}
+
+model InventoryItem {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  category       String?
+  totalQty       Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignments  InventoryAssignment[]
+
+  @@index([organizationId])
+  @@map("inventory_items")
+}
+
+model InventoryAssignment {
+  id          String   @id @default(cuid())
+  itemId      String
+  classId     String?
+  qty         Int      @default(1)
+  note        String?
+  assignedAt  DateTime @default(now())
+  returnedAt  DateTime?
+
+  item  InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  class Class?        @relation(fields: [classId], references: [id])
+
+  @@index([itemId])
+  @@map("inventory_assignments")
+}
+
+model WeeklyMaterial {
+  id      String @id @default(cuid())
+  classId String
+  weekLabel String  // "2026-W26" formatı
+  topic   String?
+  materials String? // JSON array olarak saklanır
+
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, weekLabel])
+  @@index([classId])
+  @@map("weekly_materials")
+}

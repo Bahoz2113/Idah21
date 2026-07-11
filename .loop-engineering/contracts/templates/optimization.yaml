@@ -1,0 +1,24 @@
+# Optimization Loop: Baseline → Bottleneck → Experiment → Benchmark → Compare → Accept/Reject
+target_score: 80
+quality_threshold: 70
+minimum_improvement: 10
+max_iterations: 6
+risk_level: medium
+verification_methods:
+  - benchmark
+  - baseline_comparison
+acceptance_criteria:
+  - Baseline ölçümü evidence olarak kaydedildi
+  - Yeni ölçüm baseline'a göre hedeflenen iyileşmeyi sağlıyor
+  - Regresyon yok
+stop_conditions:
+  - target_score_reached
+  - no_measurable_improvement
+  - max_iterations_reached
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - bench
+forbidden_actions:
+  - production_deploy

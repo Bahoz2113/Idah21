@@ -1,0 +1,21 @@
+# Research Loop: Question → Sources → Evidence → Synthesis → Critique → Report
+target_score: 75
+quality_threshold: 65
+max_iterations: 4
+risk_level: low
+verification_methods:
+  - source_check
+  - evidence_review
+acceptance_criteria:
+  - Araştırma sorusu birincil kaynaklarla yanıtlandı
+  - Kaynaklar evidence klasöründe listelendi
+  - Çelişen bulgular raporlandı
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - user_cancelled
+allowed_tools:
+  - fs
+  - web
+forbidden_actions:
+  - data_deletion

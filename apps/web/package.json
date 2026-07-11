@@ -1,0 +1,38 @@
+{
+  "name": "@cezeri/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "mkdir -p src/generated/client && cp ../../packages/database/src/generated/client/*.so.node src/generated/client/ && next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@cezeri/api": "workspace:*",
+    "@cezeri/auth": "workspace:*",
+    "@cezeri/config": "workspace:*",
+    "@cezeri/trpc": "workspace:*",
+    "@cezeri/features": "workspace:*",
+    "@trpc/client": "^11.0.0",
+    "@trpc/react-query": "^11.0.0",
+    "@tanstack/react-query": "^5.40.0",
+    "@supabase/supabase-js": "^2.43.0",
+    "superjson": "^2.2.0",
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@supabase/ssr": "^0.5.0",
+    "twilio": "^5.3.0",
+    "@cezeri/email": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/react": "^18.3.0",
+    "@types/node": "^20.12.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "prisma": "5.22.0"
+  }
+}

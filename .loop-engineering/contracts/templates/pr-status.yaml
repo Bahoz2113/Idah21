@@ -1,0 +1,23 @@
+# Open PR Status Loop — mevcut PR'ları raporla, yeni PR açma
+target_score: 75
+quality_threshold: 65
+max_iterations: 3
+risk_level: low
+verification_methods:
+  - report_check
+acceptance_criteria:
+  - Açık PR listesi ve health score raporu üretildi
+  - Bloke PR'lar tespit edildi ve öneriler yazıldı
+  - Yeni PR açılmadı, mükerrer PR oluşturulmadı
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - user_cancelled
+allowed_tools:
+  - fs
+  - git
+  - gh_readonly
+forbidden_actions:
+  - pr_create
+  - merge_main
+  - force_push_main

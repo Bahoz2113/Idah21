@@ -1,0 +1,25 @@
+# Security Audit Loop: Threat Model → Scan → Manual Review → Severity → Remediation → Retest
+target_score: 85
+quality_threshold: 80
+max_iterations: 5
+risk_level: high
+required_approvals:
+  - remediation_apply
+verification_methods:
+  - scan_report
+  - retest
+acceptance_criteria:
+  - Threat model belgelendi
+  - Tarama sonuçları evidence olarak kaydedildi
+  - Kritik bulgular kapatıldı veya onaylı istisna alındı
+stop_conditions:
+  - target_score_reached
+  - critical_security_risk
+  - human_approval_required
+  - user_cancelled
+allowed_tools:
+  - fs
+  - scanners
+forbidden_actions:
+  - secret_modification
+  - production_deploy

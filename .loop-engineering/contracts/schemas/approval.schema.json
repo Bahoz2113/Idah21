@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Approval",
+  "type": "object",
+  "required": ["approval_id","loop_id","requested_action","status"],
+  "properties": {
+    "approval_id": {"type": "string"},
+    "loop_id": {"type": "string"},
+    "requested_action": {"type": "string"},
+    "reason": {"type": "string"},
+    "risk": {"type": "string"},
+    "proposed_changes": {"type": "array"},
+    "rollback_available": {"type": "boolean"},
+    "requested_at": {"type": "string"},
+    "status": {"enum": ["pending","approved","rejected","expired"]},
+    "approved_by": {"type": ["string","null"]},
+    "decision_at": {"type": ["string","null"]},
+    "comments": {"type": "string"}
+  }
+}

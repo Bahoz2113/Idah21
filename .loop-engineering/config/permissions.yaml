@@ -1,0 +1,16 @@
+never_auto_execute:
+  - production_deploy
+  - payment_execution
+  - customer_message_send
+  - data_deletion
+  - db_migration_run
+  - secret_modification
+  - user_permission_change
+  - high_cost_api_burst
+  - security_policy_relaxation
+  - direct_merge_to_main
+  - irreversible_external_action
+  - legal_or_financial_decision
+dry_run_required:
+  - risk_level: high
+  - risk_level: critical

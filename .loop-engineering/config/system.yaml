@@ -1,0 +1,6 @@
+system_name: Loop Engineering OS
+version: 1.0.0
+principle: "Stop prompting. Design the loop."
+core_rule: "Bir ajanın çıktı üretmesi yeterli değildir. Çıktı kanıtlanmış, ölçülmüş, puanlanmış ve geri alınabilir olmalıdır."
+runtime: node
+min_node: 18

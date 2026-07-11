@@ -1,0 +1,19 @@
+# Generic Improvement Loop — herhangi bir ölçülebilir iyileştirme
+target_score: 75
+quality_threshold: 65
+minimum_improvement: 5
+max_iterations: 5
+risk_level: low
+verification_methods:
+  - file_check
+acceptance_criteria:
+  - Hedef ölçülebilir kanıtla karşılandı
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - no_measurable_improvement
+  - user_cancelled
+allowed_tools:
+  - fs
+forbidden_actions:
+  - data_deletion

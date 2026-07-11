@@ -1,0 +1,38 @@
+# Software Development Loop: Analyze → Plan → Implement → Test → Review → Score → Improve
+target_score: 80
+quality_threshold: 70
+minimum_improvement: 5
+max_iterations: 6
+max_retries_per_step: 2
+risk_level: medium
+verification_methods:
+  - test_run
+  - file_check
+  - regression_check
+in_scope:
+  - kaynak kod
+  - testler
+  - dokümantasyon
+out_of_scope:
+  - production deployment
+  - migration
+  - secret değişikliği
+acceptance_criteria:
+  - Tüm testler geçiyor
+  - Yeni özellik kabul kriterlerini karşılıyor
+  - Regresyon yok
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - same_failure_repeated
+  - budget_exhausted
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - git
+  - build
+forbidden_actions:
+  - production_deploy
+  - force_push_main
+  - data_deletion

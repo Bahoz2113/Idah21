@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LoopState",
+  "type": "object",
+  "required": ["loop_id","status","phase","iteration"],
+  "properties": {
+    "loop_id": {"type": "string"},
+    "status": {"enum": ["draft","initialized","planning","ready","running","verifying","scoring","criticizing","retrying","waiting_for_trigger","waiting_for_approval","blocked","paused","rolling_back","failed","completed","archived"]},
+    "phase": {"type": "string"},
+    "iteration": {"type": "integer", "minimum": 0},
+    "active_task": {"type": ["string","null"]},
+    "active_agent": {"type": ["string","null"]},
+    "last_successful_checkpoint": {"type": ["string","null"]},
+    "current_score": {"type": "number"},
+    "baseline_score": {"type": "number"},
+    "target_score": {"type": "number"},
+    "retry_count": {"type": "integer"},
+    "failure_signatures": {"type": "array"},
+    "blocked_reason": {"type": ["string","null"]},
+    "pending_approval": {"type": ["string","null"]},
+    "started_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "completed_at": {"type": ["string","null"]}
+  }
+}

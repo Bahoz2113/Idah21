@@ -1,0 +1,22 @@
+gate_a_contract_readiness:
+  - objective_defined
+  - scope_defined
+  - acceptance_criteria_measurable
+  - budget_set
+  - risk_level_set
+gate_b_plan_readiness:
+  - dependencies_identified
+  - test_strategy_exists
+  - rollback_plan_exists
+  - task_owners_assigned
+gate_c_implementation_acceptance:
+  - task_criteria_met
+  - tests_passed
+  - no_regression
+  - evidence_present
+gate_d_loop_completion:
+  - objective_met
+  - target_score_reached
+  - no_open_critical_risk
+  - documentation_complete
+  - learnings_recorded

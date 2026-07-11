@@ -1,0 +1,9 @@
+goal_alignment: 20
+functional_correctness: 20
+verification_strength: 15
+security: 10
+reliability: 10
+maintainability: 10
+performance: 5
+usability: 5
+documentation: 5

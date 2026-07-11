@@ -1,0 +1,17 @@
+# Trigger registry — manuel trigger her zaman aktif.
+# Scheduled/event/metric trigger'lar cron veya CI hook ile loop.mjs run çağırır.
+manual:
+  enabled: true
+scheduled:
+  enabled: false
+  note: "cron -> node .loop-engineering/scripts/loop.mjs run <loop-id>"
+event_based:
+  enabled: false
+  note: "git hook / CI webhook -> loop run"
+metric_based:
+  enabled: false
+  note: "metrik eşiği aşılınca loop init <template>"
+rules:
+  cooldown_minutes: 30
+  idempotency: true
+  max_concurrent_loops: 2

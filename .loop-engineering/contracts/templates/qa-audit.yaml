@@ -1,0 +1,21 @@
+# QA Loop: Requirements → Test Design → Execution → Defect Analysis → Fix Validation → Release Gate
+target_score: 85
+quality_threshold: 75
+max_iterations: 5
+risk_level: medium
+verification_methods:
+  - test_run
+  - coverage_check
+acceptance_criteria:
+  - Test planı gereksinimlerle eşleşiyor
+  - Testler çalıştırıldı ve sonuçlar evidence olarak kaydedildi
+  - Kritik defect kalmadı
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+forbidden_actions:
+  - production_deploy

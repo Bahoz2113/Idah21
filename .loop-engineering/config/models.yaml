@@ -1,0 +1,4 @@
+orchestrator: claude
+implementer: claude
+verifier: claude
+note: "Ajanlar Claude Code oturumunda rol dosyalarıyla çalışır; CLI durum/kanıt/skor altyapısını sağlar."

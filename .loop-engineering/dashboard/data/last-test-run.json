@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-07-11T08:19:56.972Z",
+  "passed": 17,
+  "failed": 0,
+  "results": [
+    "✅ Contract: eksik objective reddediliyor",
+    "✅ Contract: geçersiz template reddediliyor",
+    "✅ Init: geçerli loop oluşuyor",
+    "✅ State machine: geçersiz geçiş engelleniyor (initialized→archived değil, resume)",
+    "✅ Verification: kanıtsız completion reddediliyor",
+    "✅ Scoring: verifier reddi threshold'u geçemiyor",
+    "✅ Verification: kanıtla PASS + loop completed",
+    "✅ State machine: completed loop yeniden çalıştırılamıyor",
+    "✅ Event log: append-only ve geçerli JSONL",
+    "✅ Persistence: state atomic yazılıyor (tmp dosya kalmıyor)",
+    "✅ Budget: max_iterations aşımında loop duruyor",
+    "✅ Stop: aynı hata 3. tekrarda FAILED + escalation",
+    "✅ Rollback: checkpoint geri yükleniyor, state tutarlı, event yazılıyor",
+    "✅ Pause/Resume çalışıyor",
+    "✅ Locking: aktif kilit ikinci çalıştırmayı engelliyor",
+    "✅ Report: final rapor üretiliyor",
+    "✅ Security: config'te secret koruması tanımlı"
+  ]
+}

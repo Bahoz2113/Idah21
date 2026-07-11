@@ -1,0 +1,32 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createServiceClient } from "@cezeri/auth";
+
+export async function POST(req: NextRequest) {
+  try {
+    const { username, password } = await req.json();
+    if (!username || !password) {
+      return NextResponse.json({ error: "Kullanıcı adı ve şifre gerekli" }, { status: 400 });
+    }
+    const sb = createServiceClient();
+    const { data: users, error } = await sb
+      .from("users")
+      .select("email, status")
+      .eq("username", username.toLowerCase())
+      .single();
+    if (error || !users) {
+      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+    }
+    if (users.status === "PASSIVE") {
+      return NextResponse.json({ error: "Hesabınız pasif." }, { status: 403 });
+    }
+    const email = users.email ?? `${username.toLowerCase()}@cezeri.local`;
+    const { data: authData, error: authError } = await sb.auth.signInWithPassword({ email, password });
+    if (authError || !authData.session) {
+      return NextResponse.json({ error: "Kullanıcı adı veya şifre hatalı" }, { status: 401 });
+    }
+    return NextResponse.json({ email, role: authData.user?.user_metadata?.role ?? "PARENT", session: authData.session });
+  } catch (err) {
+    console.error("username-to-email error:", err);
+    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+  }
+}

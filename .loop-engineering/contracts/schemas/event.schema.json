@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LoopEvent",
+  "type": "object",
+  "required": ["event_id","timestamp","loop_id","event_type"],
+  "properties": {
+    "event_id": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "loop_id": {"type": "string"},
+    "iteration": {"type": ["integer","null"]},
+    "phase": {"type": "string"},
+    "agent": {"type": "string"},
+    "event_type": {"type": "string"},
+    "summary": {"type": "string"},
+    "inputs": {"type": "array"},
+    "outputs": {"type": "array"},
+    "tools_used": {"type": "array"},
+    "evidence": {"type": "array"},
+    "decision": {"type": "string"},
+    "score_before": {"type": "number"},
+    "score_after": {"type": "number"},
+    "duration_ms": {"type": "number"},
+    "token_usage": {"type": "number"},
+    "cost_estimate": {"type": "number"},
+    "error": {"type": ["string","null"]}
+  }
+}

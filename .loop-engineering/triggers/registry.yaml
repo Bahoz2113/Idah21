@@ -1,0 +1,8 @@
+triggers: []
+# Örnek:
+# - trigger_id: nightly-tests
+#   type: scheduled
+#   schedule: "0 2 * * *"
+#   action: { loop_template: qa-audit }
+#   cooldown_minutes: 60
+#   enabled: false

@@ -1,0 +1,12 @@
+allowlist:
+  - fs
+  - tests
+  - git
+  - build
+  - bench
+denylist:
+  - rm -rf /
+  - "curl | sh"
+  - force push
+secret_redaction: true
+env_files_readable: false

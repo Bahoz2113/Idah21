@@ -1,0 +1,24 @@
+# Bug Fix Loop: Reproduce → Isolate → Hypothesize → Patch → Regression Test → Verify
+target_score: 85
+quality_threshold: 75
+max_iterations: 5
+risk_level: medium
+verification_methods:
+  - reproduction_test
+  - regression_suite
+acceptance_criteria:
+  - Hata yeniden üretilebilir şekilde belgelendi
+  - Patch sonrası hata oluşmuyor
+  - Regresyon testleri geçiyor
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - same_failure_repeated
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - git
+forbidden_actions:
+  - production_deploy
+  - data_deletion
