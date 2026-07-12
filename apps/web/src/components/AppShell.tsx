@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { trpc } from "@cezeri/trpc";
+import { useRealtimeAll } from "@cezeri/features";
 import { OwlMark } from "@/components/OwlMark";
 
 interface NavItem { href: string; label: string; icon: string; }
@@ -13,6 +14,10 @@ export function AppShell({ roleLabel, nav, children }: Props) {
   const router   = useRouter();
   const [open, setOpen] = useState(false);
   const { data: me } = trpc.auth.me.useQuery();
+
+  // Tüm authenticated sayfalarda realtime: DB değişiklikleri anlık olarak
+  // her kullanıcının açık ekranına yansır (Supabase Realtime → tRPC cache invalidation).
+  useRealtimeAll();
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" }).catch(() => {});

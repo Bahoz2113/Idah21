@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { trpc } from "@cezeri/trpc";
-import { useRealtimeAll } from "@cezeri/features";
 
 type Role = "ADMIN"|"TEACHER"|"PARENT"|"STUDENT";
 
@@ -12,7 +11,6 @@ const ROLE_COLOR: Record<Role, string>  = { ADMIN:"bg-vurgu/10 text-vurgu", TEAC
 const EMPTY_FORM = { firstName: "", lastName: "", email: "", role: "TEACHER" as "ADMIN" | "TEACHER" };
 
 export default function AdminKullanicilarPage(): JSX.Element {
-  useRealtimeAll();
   const utils = trpc.useUtils();
   const users = trpc.adminUsers.list.useQuery();
 

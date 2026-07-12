@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import { trpc } from "@cezeri/trpc";
-import { useStudents, useRealtime } from "@cezeri/features";
+import { useStudents } from "@cezeri/features";
 
 export default function VeliyeNotPage(): JSX.Element {
-  useRealtime(["students"]);
   const students = useStudents();
   const [studentId, setStudentId] = useState("");
   const [note, setNote] = useState("");

@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
 import { trpc } from "@cezeri/trpc";
-import { useRealtimeAll } from "@cezeri/features";
 
 export default function AdminEtkinlikPage(): JSX.Element {
-  useRealtimeAll();
   const events = trpc.events.list.useQuery();
   const create = trpc.events.create.useMutation({ onSuccess: () => events.refetch() });
   const del = trpc.events.delete.useMutation({ onSuccess: () => events.refetch() });

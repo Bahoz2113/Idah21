@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@cezeri/trpc";
-import { useRealtime } from "@cezeri/features";
 
 export default function StudentDerslerimPage(): JSX.Element {
-  useRealtime(["lessons"]);
   const lessons = trpc.lessons.myLessons.useQuery();
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">

@@ -1,6 +1,6 @@
 "use client";
 import { trpc } from "@cezeri/trpc";
-import { useStudents, useRealtime } from "@cezeri/features";
+import { useStudents } from "@cezeri/features";
 import { useState, useEffect } from "react";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -8,7 +8,6 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function VeliDevamPage(): JSX.Element {
-  useRealtime(["attendance"]);
   const students = useStudents();
   const [studentId, setStudentId] = useState("");
   useEffect(() => { if (!studentId && students.data?.[0]) setStudentId(students.data[0].id); }, [students.data, studentId]);
