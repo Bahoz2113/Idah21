@@ -5,7 +5,11 @@
   "types": "./src/index.ts",
   "license": "UNLICENSED",
   "dependencies": {
+    "@cezeri/auth": "workspace:*",
     "@cezeri/trpc": "workspace:*",
     "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0"
   }
 }

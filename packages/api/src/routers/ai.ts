@@ -148,7 +148,7 @@ const quiz = router({
       const rows: any[] = [];
 
       for (const a of input.answers) {
-        const ques = qmap.get(a.questionId);
+        const ques: any = qmap.get(a.questionId);
         if (!ques) continue; // Bilinmeyen questionId'yi sessizce atla
         const ok = norm(a.answer) === norm(ques.correctAnswer);
         if (ok) correct++;

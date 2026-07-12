@@ -164,7 +164,7 @@ export const invitationsRouter = router({
         // Veli ise öğrenciyle ilişkilendir
         if (inv.role === "PARENT" && inv.studentId) {
           const parent = await ctx.prisma.parent.create({
-            data: { organizationId: ORG, userId: data.user!.id, firstName: inv.firstName, lastName: inv.lastName, phone: normalizedPhone },
+            data: { organizationId: ORG, userId: data.user!.id, phone: normalizedPhone },
           });
           await ctx.prisma.studentParent.create({
             data: { studentId: inv.studentId, parentId: parent.id },

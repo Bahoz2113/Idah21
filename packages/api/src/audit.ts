@@ -1,7 +1,7 @@
 import type { PrismaClient } from "@cezeri/database";
 
 type AuditAction =
-  | "student.create" | "student.update" | "student.delete"
+  | "student.create" | "student.update" | "student.delete" | "student.addQuizResult"
   | "evaluation.submit" | "report.generate" | "attendance.take"
   | "material.upload" | "material.delete" | "ai.lesson" | "ai.quiz";
 

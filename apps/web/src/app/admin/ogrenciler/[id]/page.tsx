@@ -1,10 +1,11 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { trpc } from "@cezeri/trpc";
+import { measureTTFD, markDetailMount } from "@/lib/perf-ttfd";
 import {
-  useStudent, useSubmitEvaluation, useAddTeacherNote,
+  useStudent, useSubmitEvaluation, useAddTeacherNote, useAddQuizResult,
 } from "@cezeri/features";
 import { RadarChart, LineChart } from "@/components/Charts";
 import { EVALUATION_CRITERIA } from "@cezeri/config";
@@ -20,6 +21,13 @@ export default function StudentDetailPage(): JSX.Element {
   const id = params.id as string;
   const student = useStudent(id);
   const [tab, setTab] = useState<Tab>("profil");
+
+  // TTFD profilleme (loop-mrgp6m54-2963ab): nav+route+mount segmenti. No-op unless localStorage.ttfd==="1".
+  useEffect(() => { markDetailMount(); }, []);
+  // veri ilk geldiginde toplam TTFD.
+  useEffect(() => {
+    if (student.data) measureTTFD();
+  }, [student.data]);
 
   if (student.isLoading) return <div className="p-6 text-gray-400">Yükleniyor…</div>;
   if (student.error || !student.data) return <div className="p-6 text-red-500">Öğrenci bulunamadı.</div>;
@@ -65,7 +73,7 @@ export default function StudentDetailPage(): JSX.Element {
 
       {tab === "profil"        && <ProfilTab s={s} />}
       {tab === "degerlendirme" && <DegerlendirmeTab studentId={id} evaluations={s.evaluations ?? []} />}
-      {tab === "sinavlar"      && <SinavlarTab quizReports={s.quizReports ?? []} />}
+      {tab === "sinavlar"      && <SinavlarTab studentId={id} quizReports={s.quizReports ?? []} />}
       {tab === "notlar"        && <NotlarTab studentId={id} notes={s.teacherNotes ?? []} />}
     </div>
   );
@@ -209,12 +217,64 @@ function DegerlendirmeTab({ studentId, evaluations }: { studentId: string; evalu
   );
 }
 
-// ─────────────── SINAVLAR (AI quiz sonuçları) ───────────────
-function SinavlarTab({ quizReports }: { quizReports: any[] }) {
-  if (quizReports.length === 0)
-    return <Card><p className="text-sm text-gray-400 text-center py-6">Henüz sınav/test sonucu yok.</p></Card>;
+// ─────────────── SINAVLAR (AI quiz sonuçları + elle ekleme) ───────────────
+function SinavlarTab({ studentId, quizReports }: { studentId: string; quizReports: any[] }) {
+  const add = useAddQuizResult();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ topic: "", correct: "", wrong: "", zorlanilan: "" });
+
+  function submit() {
+    const correct = parseInt(form.correct || "0", 10);
+    const wrong = parseInt(form.wrong || "0", 10);
+    if (!form.topic.trim() || correct + wrong === 0) return;
+    add.mutate(
+      { studentId, topic: form.topic.trim(), correct, wrong, zorlanilanKonu: form.zorlanilan.trim() || undefined },
+      { onSuccess: () => { setForm({ topic: "", correct: "", wrong: "", zorlanilan: "" }); setOpen(false); } }
+    );
+  }
+
   return (
     <div className="space-y-3">
+      {/* Sınav sonucu ekle */}
+      {!open ? (
+        <button onClick={() => setOpen(true)}
+          className="w-full border-2 border-dashed border-mavi/30 text-mavi py-2.5 rounded-xl font-semibold text-sm hover:bg-mavi/5 transition-colors">
+          + Sınav Sonucu Ekle
+        </button>
+      ) : (
+        <Card title="Yeni Sınav Sonucu">
+          <div className="space-y-2.5">
+            <input value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })}
+              placeholder="Konu (ör. LED Yakma)"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-mavi outline-none" />
+            <div className="flex gap-2">
+              <input type="number" min={0} value={form.correct} onChange={(e) => setForm({ ...form, correct: e.target.value })}
+                placeholder="Doğru sayısı"
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-mavi outline-none" />
+              <input type="number" min={0} value={form.wrong} onChange={(e) => setForm({ ...form, wrong: e.target.value })}
+                placeholder="Yanlış sayısı"
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-mavi outline-none" />
+            </div>
+            <input value={form.zorlanilan} onChange={(e) => setForm({ ...form, zorlanilan: e.target.value })}
+              placeholder="Zorlandığı konu (isteğe bağlı)"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-mavi outline-none" />
+            {add.error && <p className="text-xs text-red-500">{add.error.message}</p>}
+            <div className="flex gap-2 pt-1">
+              <button onClick={submit} disabled={add.isPending || !form.topic.trim()}
+                className="flex-1 bg-mavi text-white py-2 rounded-lg font-semibold text-sm disabled:opacity-40 hover:bg-lacivert transition-colors">
+                {add.isPending ? "Kaydediliyor…" : "Kaydet"}
+              </button>
+              <button onClick={() => { setOpen(false); add.reset(); }}
+                className="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600">İptal</button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Mevcut sonuçlar */}
+      {quizReports.length === 0 && (
+        <Card><p className="text-sm text-gray-400 text-center py-6">Henüz sınav/test sonucu yok.</p></Card>
+      )}
       {quizReports.map((r: any) => {
         const p = r.payload ?? {};
         const total = p.total ?? ((p.correct ?? 0) + (p.wrong ?? 0));

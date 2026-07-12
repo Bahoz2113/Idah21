@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { trpc } from "@cezeri/trpc";
 import { ExportButtons } from "@/components/ExportButtons";
+import { markNavStart } from "@/lib/perf-ttfd";
 
 export default function AdminOgrencilerPage(): JSX.Element {
   const utils     = trpc.useUtils();
@@ -66,8 +67,11 @@ export default function AdminOgrencilerPage(): JSX.Element {
             </div>
             <div className="flex-1 min-w-0">
               <Link href={`/admin/ogrenciler/${s.id}`}
+                onMouseDown={markNavStart}
+                onMouseEnter={() => utils.students.get.prefetch({ id: s.id })}
+                onFocus={() => utils.students.get.prefetch({ id: s.id })}
                 className="font-semibold text-lacivert text-sm hover:text-mavi transition-colors truncate block">
-                {s.fullName ?? `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || "İsimsiz"}
+                {s.fullName ?? (`${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || "İsimsiz")}
               </Link>
               <p className="text-xs text-gray-400">{s.class?.name ?? s.className ?? "Sınıfsız"} · {s.ageGroup?.name ?? s.ageGroupName ?? ""}</p>
             </div>

@@ -2,7 +2,6 @@ export * from "./useClasses";
 export * from "./useStudents";
 export * from "./useAttendance";
 export * from "./useLessons";
-export * from "./useEvaluation";
 export * from "./useAI";
 export * from "./useReports";
 export * from "./useNotifications";

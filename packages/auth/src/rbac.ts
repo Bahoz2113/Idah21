@@ -4,11 +4,11 @@ import type { Role } from "@cezeri/config";
 // ctx.user.orgId + sahiplik filtresiyle uygulanır.
 export type Permission =
   | "org:manage" | "branch:manage" | "user:manage"
-  | "student:read" | "student:write" | "student:create" | "student:update"
+  | "student:read" | "student:write" | "student:create" | "student:update" | "student:delete"
   | "teacher:read" | "teacher:write"
-  | "class:read" | "class:write"
+  | "class:read" | "class:write" | "class:manage"
   | "curriculum:read" | "curriculum:write"
-  | "lesson:read" | "lesson:write"
+  | "lesson:read" | "lesson:write" | "lesson:manage"
   | "attendance:read" | "attendance:write"
   | "evaluation:read" | "evaluation:write"
   | "ai:use" | "ai:read"
@@ -24,7 +24,7 @@ export const ROLE_PERMISSIONS: Record<Role, readonly (Permission | typeof ALL)[]
   TEACHER: [
     "student:read", "student:write", "student:create", "student:update", "teacher:read",
     "class:read", "curriculum:read", "curriculum:write",
-    "lesson:read", "lesson:write",
+    "lesson:read", "lesson:write", "lesson:manage",
     "attendance:read", "attendance:write",
     "evaluation:read", "evaluation:write",
     "ai:use", "ai:read", "report:read",

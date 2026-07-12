@@ -307,7 +307,7 @@ function AnalizTab() {
             <select className={inputCls()} value={studentId} onChange={(e) => setStudentId(e.target.value)}>
               <option value="">Öğrenci seç…</option>
               {(students.data as any[])?.map((s) => (
-                <option key={s.id} value={s.id}>{s.firstName} {s.lastName}</option>
+                <option key={s.id} value={s.id}>{s.fullName}</option>
               ))}
             </select>
           </Field>

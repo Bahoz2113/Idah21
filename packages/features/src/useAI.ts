@@ -12,3 +12,20 @@ export function useQuiz(quizId: string) {
 export function useSubmitQuiz() {
   return trpc.ai.quiz.submit.useMutation();
 }
+
+// ── TEACHER AI (yaşa uyarlı dijital öğretmen ajanları) ──
+export function useAdaptToAge() {
+  return trpc.aiTeacher.adaptToAge.useMutation();
+}
+export function useVisualStoryboard() {
+  return trpc.aiTeacher.visualStoryboard.useMutation();
+}
+export function useSimplify() {
+  return trpc.aiTeacher.simplify.useMutation();
+}
+export function useTutorChat() {
+  return trpc.aiTeacher.tutorChat.useMutation();
+}
+export function useDetectWeaknesses() {
+  return trpc.aiTeacher.detectWeaknesses.useMutation();
+}

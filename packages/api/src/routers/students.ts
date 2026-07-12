@@ -27,10 +27,12 @@ function levenshtein(a: string, b: string) {
 
 export const studentsRouter = router({
   list: permissionProcedure("student:read")
-    .input(z.object({ classId: z.string().optional() }).optional())
+    .input(z.object({ classId: z.string().optional(), includeArchived: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const where = await scopedStudentWhere(ctx);
       if (input?.classId) where.classId = input.classId;
+      // Arşivlenen (soft-delete = PASSIVE) öğrencileri varsayılan olarak gizle
+      if (!input?.includeArchived) where.status = "ACTIVE";
       return ctx.prisma.student.findMany({ where, orderBy: { fullName: "asc" }, include: { ageGroup: true, class: true } });
     }),
 
@@ -44,27 +46,30 @@ export const studentsRouter = router({
       });
       if (!s) throw new TRPCError({ code: "NOT_FOUND" });
 
-      // Değerlendirmeler (18 kriter + açıklamalar) — dönem sırasıyla
-      const evaluations = await ctx.prisma.studentEvaluation.findMany({
-        where: { studentId: s.id }, orderBy: { period: "asc" },
-      });
-
-      // Sınav sonuçları (AI quiz raporları)
-      const quizReports = await ctx.prisma.aiReport.findMany({
-        where: { type: "STUDENT_ANALYSIS", subjectId: s.id },
-        orderBy: { createdAt: "desc" }, take: 20,
-      });
-
-      // Öğretmen notları
-      const teacherNotes = await ctx.prisma.teacherNote.findMany({
-        where: { studentId: s.id }, orderBy: { createdAt: "desc" }, take: 30,
-        include: { teacher: { include: { user: { select: { firstName: true, lastName: true } } } } },
-      });
+      // Alt sorgular birbirinden bağımsız → sıralı await yerine PARALEL çalıştır.
+      // (Uzak Postgres'e 4 ayrı round-trip'i tek turda yapar; geçiş süresini domine eden maliyeti düşürür.)
+      const [evaluations, quizReports, teacherNotes, attendanceRows] = await Promise.all([
+        // Değerlendirmeler (18 kriter + açıklamalar) — dönem sırasıyla
+        ctx.prisma.studentEvaluation.findMany({
+          where: { studentId: s.id }, orderBy: { period: "asc" },
+        }),
+        // Sınav sonuçları (AI quiz raporları)
+        ctx.prisma.aiReport.findMany({
+          where: { type: "STUDENT_ANALYSIS", subjectId: s.id },
+          orderBy: { createdAt: "desc" }, take: 20,
+        }),
+        // Öğretmen notları
+        ctx.prisma.teacherNote.findMany({
+          where: { studentId: s.id }, orderBy: { createdAt: "desc" }, take: 30,
+          include: { teacher: { include: { user: { select: { firstName: true, lastName: true } } } } },
+        }),
+        // Devam kayıtları
+        ctx.prisma.attendance.findMany({
+          where: { studentId: s.id }, select: { status: true },
+        }),
+      ]);
 
       // Devam özeti
-      const attendanceRows = await ctx.prisma.attendance.findMany({
-        where: { studentId: s.id }, select: { status: true },
-      });
       const attendanceSummary = attendanceRows.reduce((acc: Record<string, number>, r) => {
         acc[r.status] = (acc[r.status] ?? 0) + 1; return acc;
       }, {});
@@ -160,7 +165,11 @@ export const studentsRouter = router({
   softDelete: permissionProcedure("student:delete")
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.$executeRaw`UPDATE students SET "deletedAt" = now() WHERE id = ${input.id}`;
+      // Kapsam kontrolü + arşivle (status=PASSIVE). "students" tablosunda deletedAt kolonu yok.
+      const where = await scopedStudentWhere(ctx);
+      const ex = await ctx.prisma.student.findFirst({ where: { ...where, id: input.id } });
+      if (!ex) throw new TRPCError({ code: "FORBIDDEN" });
+      return ctx.prisma.student.update({ where: { id: input.id }, data: { status: "PASSIVE" } });
     }),
 
   // Sınıf değiştir
@@ -171,5 +180,41 @@ export const studentsRouter = router({
         where: { id: input.studentId },
         data:  { classId: input.classId ?? null },
       });
+    }),
+
+  // Elle sınav/test sonucu ekle — Sınavlar sekmesindeki quizReports (aiReport) listesine yazar.
+  addQuizResult: permissionProcedure("evaluation:write")
+    .input(z.object({
+      studentId: z.string(),
+      topic: z.string().min(1).max(120),
+      correct: z.number().int().min(0).max(1000),
+      wrong: z.number().int().min(0).max(1000),
+      zorlanilanKonu: z.string().max(200).optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Kapsam kontrolü: öğrenci bu kullanıcının erişebildiği bir öğrenci mi?
+      const where = await scopedStudentWhere(ctx);
+      const student = await ctx.prisma.student.findFirst({ where: { ...where, id: input.studentId } });
+      if (!student) throw new TRPCError({ code: "FORBIDDEN" });
+
+      const total = input.correct + input.wrong;
+      if (total === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "Doğru + yanlış toplamı 0 olamaz." });
+
+      const report = await ctx.prisma.aiReport.create({
+        data: {
+          type: "STUDENT_ANALYSIS",
+          subjectId: input.studentId,
+          payload: {
+            topic: input.topic,
+            correct: input.correct,
+            wrong: input.wrong,
+            total,
+            "zorlanılanKonu": input.zorlanilanKonu || undefined,
+            manual: true,
+          } as any,
+        },
+      });
+      await auditLog(ctx.prisma, ctx.user.id, "student.addQuizResult", input.studentId);
+      return report;
     }),
 });

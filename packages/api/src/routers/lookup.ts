@@ -37,7 +37,7 @@ export const lookupRouter = router({
     .query(({ ctx, input }) =>
       ctx.prisma.student.findMany({
         where: { classId: input.classId, organizationId: ctx.user.organizationId },
-        orderBy: { firstName: "asc" },
+        orderBy: { fullName: "asc" },
       })
     ),
 });

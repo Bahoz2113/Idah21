@@ -21,7 +21,7 @@ export function useRealtime(tables: Table[]) {
       attendance:          () => utils.attendance.byLesson.invalidate(),
       notifications:       () => { utils.notifications.list.invalidate(); utils.notifications.unreadCount.invalidate(); },
       lessons:             () => utils.lessons.listByClass.invalidate(),
-      student_evaluations: () => utils.evaluations.studentGraph.invalidate(),
+      student_evaluations: () => utils.evaluations.graph.invalidate(),
     };
 
     let channel: ReturnType<typeof sb.channel> | null = null;
@@ -37,7 +37,7 @@ export function useRealtime(tables: Table[]) {
         if (cancelled) return;
         if (token) sb.realtime.setAuth(token);
         channel = sb.channel("cezeri-realtime-" + tables.join("-"))
-          .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
+          .on("postgres_changes", { event: "*", schema: "public" }, (payload: any) => {
             const tbl = payload.table as Table;
             if (tables.includes(tbl)) invalidators[tbl]?.();
           })

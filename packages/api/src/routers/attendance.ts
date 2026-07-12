@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, permissionProcedure } from "../trpc";
+import { scopedStudentWhere } from "../scope";
 
 const STATUS = z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
 const PART = z.enum(["ACTIVE", "PASSIVE", "NONE"]);

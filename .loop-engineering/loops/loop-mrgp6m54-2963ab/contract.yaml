@@ -1,0 +1,77 @@
+loop_id: loop-mrgp6m54-2963ab
+loop_name: "optimization: CZR CEOS ogrenci detay ekrani prefetch performans"
+version: 2
+created_at: 2026-07-11T18:28:11.044Z
+revised_at: 2026-07-11T19:09:03.095Z
+created_by: user
+revised_by: loop-design
+objective: >-
+  CZR CEOS admin ogrenci detay ekraninin (apps/web /admin/ogrenciler/[id]) acilis
+  gecis suresini, liste ekranindan gelen prefetch ile azalt: liste-tik -> detay
+  veri-hazir (time-to-first-data) medyan suresi baseline'a gore >=%30 iyilessin,
+  mevcut davranista regresyon olmasin.
+business_goal: >-
+  Egitmenlerin ogrenci profiline gecerken bekledigi "Yukleniyor..." suresini
+  hissedilir sekilde kisaltarak admin panel akiciligi ve kullanim verimini artirmak.
+
+template: optimization
+
+in_scope:
+  - apps/web/src/app/admin/ogrenciler/page.tsx (liste: hover/focus prefetch)
+  - apps/web/src/app/admin/ogrenciler/[id]/page.tsx (detay: olcum enstrumantasyonu)
+  - packages/features/src/useStudents.ts (prefetch helper / staleTime)
+  - React Query / tRPC cache konfig (staleTime, prefetch)
+out_of_scope:
+  - production deployment
+  - veri silme / migration
+  - secret degisikligi
+  - backend (@cezeri/api) router imza degisikligi
+  - yeni agir test bagimliligi (Playwright vb.) eklenmesi
+
+measurement:
+  metric: "time-to-first-data (TTFD): liste linkine tik anindan detay useStudent verisi geldigi ana kadar gecen sure"
+  method: "kod ici performance.mark/measure enstrumantasyonu (dev build, ayni makine/ayni ogrenci)"
+  samples: 20
+  aggregate: median
+  environment: "next dev, local, warm dev server, tek ogrenci id sabit, ayni ag kosulu"
+  baseline_artifact: evidence/ac1-baseline.md
+  after_artifact: evidence/ac2-after.md
+
+acceptance_criteria:
+  - id: ac1
+    text: "Baseline TTFD olculdu: N=20 kosu, medyan ms evidence/ac1-baseline.md icinde ham veriyle kayitli"
+    verify: benchmark
+  - id: ac2
+    text: "Prefetch sonrasi TTFD medyani baseline'a gore >=%30 dusuk: (base-after)/base >= 0.30, ham veri evidence/ac2-after.md"
+    verify: baseline_comparison
+  - id: ac3
+    text: "Regresyon yok (DIFERANSIYEL): degisikligimiz YENI tsc hatasi eklemiyor (tsc baseline zaten kirli), next lint bizim dosyalarda temiz, detay sekmeleri/veri/mutasyonlar degismedi; evidence/ac3-no-regression.md"
+    verify: differential_typecheck_lint_behavior
+
+verification_methods:
+  - benchmark
+  - baseline_comparison
+
+quality_threshold: 70
+baseline_score: 0
+target_score: 80
+minimum_improvement: 10
+max_iterations: 6
+max_retries_per_step: 2
+risk_level: medium
+required_approvals: []
+rollback_policy: checkpoint-before-risky-change
+stop_conditions:
+  - target_score_reached
+  - no_measurable_improvement
+  - max_iterations_reached
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - bench
+forbidden_actions:
+  - production_deploy
+  - data_delete
+  - secret_change
+data_classification: internal

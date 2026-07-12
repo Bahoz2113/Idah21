@@ -12,7 +12,7 @@ function getWeekLabel(offset = 0) {
 
 export default function TeacherDerslerPage(): JSX.Element {
   const utils   = trpc.useUtils();
-  const classes = trpc.classes.myClasses?.useQuery?.() ?? trpc.lookup.classes.useQuery();
+  const classes = trpc.lookup.classes.useQuery();
   const [selectedClass, setClass] = useState("");
   const [weekOffset, setWeek]     = useState(0);
   const weekLabel = getWeekLabel(weekOffset);

@@ -186,7 +186,7 @@ export const aiTeacherRouter = router({
 
       const student = await ctx.prisma.student.findFirst({
         where: { id: studentId },
-        select: { firstName: true, lastName: true },
+        select: { fullName: true },
       });
 
       // Son quiz raporları
@@ -205,7 +205,7 @@ export const aiTeacherRouter = router({
       });
 
       const report = await detectWeaknesses({
-        studentName: student ? `${student.firstName} ${student.lastName ?? ""}`.trim() : undefined,
+        studentName: student ? student.fullName : undefined,
         quizResults: quizResults.length ? quizResults : undefined,
         evaluationScores: (evalRow?.scores as any) ?? undefined,
       });

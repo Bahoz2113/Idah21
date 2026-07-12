@@ -3,7 +3,7 @@ import { trpc } from "@cezeri/trpc";
 export function useStudentEvaluations(studentId: string) {
   return trpc.evaluations.forStudent.useQuery({ studentId }, { enabled: !!studentId });
 }
-export function useEvaluationGraph(studentId: string) {
+export function useStudentGraph(studentId: string) {
   return trpc.evaluations.graph.useQuery({ studentId }, { enabled: !!studentId });
 }
 export function useSubmitEvaluation() {
