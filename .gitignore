@@ -35,6 +35,9 @@ Thumbs.db
 # Test
 coverage/
 .nyc_output
+test-results/
+playwright-report/
+blob-report/
 
 # Expo / Mobile
 .expo/
@@ -44,3 +47,4 @@ apps/mobile/android/
 
 .vercel
 .env*
+!**/.env.example

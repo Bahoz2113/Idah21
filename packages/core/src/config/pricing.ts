@@ -20,13 +20,19 @@ export interface PricingTable {
   };
 }
 
-/** VARSAYILAN — Faz 0 dogrulamasindan once yalnizca tahmindir. */
+/**
+ * Faz 0'da dogrulandi (bkz. docs/adr/0002, 0003, 0004). Sonnet 5 fiyati
+ * 2026-08-31'e kadar gecerli giris (intro) fiyatidir; bu tarihten sonra
+ * standart fiyata (input 3.0, output 15.0, cacheRead 0.3, cacheWrite 3.75)
+ * donecek ve pricing.ts tekrar guncellenmeli (bkz. ADR 0004).
+ * apify.freeMonthlyCreditUsd DOGRULANAMADI (bkz. ADR 0003) — tahmindir.
+ */
 export const DEFAULT_PRICING: PricingTable = {
-  verifiedAt: null,
+  verifiedAt: "2026-07-26",
   anthropic: {
     models: {
       "claude-haiku-4-5": { input: 1.0, output: 5.0, cacheRead: 0.1, cacheWrite: 1.25 },
-      "claude-sonnet-5": { input: 3.0, output: 15.0, cacheRead: 0.3, cacheWrite: 3.75 },
+      "claude-sonnet-5": { input: 2.0, output: 10.0, cacheRead: 0.2, cacheWrite: 2.5 },
     },
     batchMultiplier: 0.5,
   },
@@ -35,7 +41,7 @@ export const DEFAULT_PRICING: PricingTable = {
     postCreateNoLink: 0.015,
     postCreateWithLink: 0.2,
     replyCreate: 0.015,
-    readOwnPost: 0.001,
+    readOwnPost: 0.005,
     readThirdPartyPost: 0.005,
   },
 };
