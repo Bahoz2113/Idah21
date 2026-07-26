@@ -1,4 +1,4 @@
-# IMPLEMENTATION_PLAN.md — HEP-SEN Batman (Faz 0 + Faz 1)
+# IMPLEMENTATION_PLAN.md — HEP-SEN Batman (Faz 0 + Faz 1 + Faz 2)
 
 Master prompt: `HEPSEN_Batman_Baskanlik_Iletisim_OS_Claude_Code_Master_Prompt.pdf`
 (kullanıcı tarafından sağlandı, repo köküne eklenmedi — kaynak PDF harici).
@@ -7,8 +7,8 @@ oluştur" kuralı gereği yazıldı.
 
 ## Kapsam
 
-Bu tur **yalnızca Faz 0 (Keşif/doğrulama) ve Faz 1 (Güvenli çekirdek)**'i
-kapsar. Faz 2 (gündem/taslak), Faz 3 (onay/yayın), Faz 4 (öğrenme/analiz),
+Bu tur **Faz 0 (Keşif/doğrulama), Faz 1 (Güvenli çekirdek) ve Faz 2 (Gündem
+ve taslak üretimi)**'ni kapsar. Faz 3 (onay/yayın), Faz 4 (öğrenme/analiz),
 Faz 5 (köşe yazısı) bilinçli olarak bu turda YOK.
 
 Konum: bu monorepoda (`Bahoz2113/Idah21`, CEZERİ ROBOTECH Education OS ile
@@ -48,14 +48,45 @@ dokunulmadı.
 8. **Testler**: Vitest (env, token-cipher, PKCE, rate-limit) + Playwright
    smoke (login sayfası, auth guard, health endpoint).
 
+## Faz 2 — Gündem ve taslak üretimi (TAMAMLANDI)
+
+1. **`packages/core` boşluk giderme**: eksik `prompts/topic-scoring.ts` ve
+   `prompts/tone-review.ts` eklendi (şemaları zaten vardı). 72/72 test.
+2. **Şema**: `0003_extend_topics_and_sources.sql` (topics'e rights_impact/
+   discussion_potential skorları, sources'a unique kısıt) uygulandı.
+   `supabase/seed/0001_sources.sql` — admin hesabı açıldıktan sonra
+   kullanıcının çalıştıracağı kaynak seed'i (Resmi Gazete aktif; Sağlık
+   Bakanlığı/HEP-SEN resmi sitesi pasif, HTML yapısı doğrulanamadı).
+3. **`lib/sources/`**: RSS (RSS 2.0 + Atom) ve genel official-site
+   adaptörleri + Apify client (kod hazır, token yokken sessizce atlanır).
+4. **`lib/topics/`**: deterministik ön-sinyaller (trend, hukuki risk cezası)
+   + benzerlik tabanlı gündem kümeleme.
+5. **`lib/ai/`**: provider-independent LLM Gateway (yalnızca Anthropic
+   uygulandı, OpenAI/Gemini açıkça "uygulanmadı"), iki katmanlı prompt
+   caching, Zod doğrulama + tek retry.
+6. **`lib/drafts/generate-draft.ts`**: taslak üretim sırasının tam
+   orkestrasyonu (md. 11) — iki aşamalı hukuk guard, ton kontrolü, hashtag,
+   zamanlama, durum atama.
+7. **Jobs**: `/api/internal/jobs/{collect,generate-drafts}` (Vercel Cron,
+   GET+POST, CRON_SECRET korumalı) — `apps/hepsen-web/vercel.json`.
+8. **Paneller**: Bugün ve Taslaklar artık gerçek veri gösteriyor (salt-okur;
+   onay/red Faz 3'te).
+9. Detaylı kararlar: `docs/adr/0005-faz2-gundem-ve-taslak-uretimi.md`.
+
 ## Bilinen sınırlamalar / sonraki adım
 
 - `SUPABASE_SERVICE_ROLE_KEY` ve `DATABASE_URL` MCP üzerinden alınamaz
   (kasıtlı güvenlik kısıtı) — kullanıcı bunları Supabase Dashboard'dan alıp
   `apps/hepsen-web/.env.local`'e kendisi girmeli.
 - Tek yönetici hesabı Supabase Auth'ta henüz oluşturulmadı (kullanıcı
-  Dashboard'dan veya `supabase.auth.admin.createUser` ile kendisi açmalı).
-- Apify/gerçek X paylaşımı/AI taslak üretimi Faz 2-3 kapsamında.
+  Dashboard'dan veya `supabase.auth.admin.createUser` ile kendisi açmalı) —
+  bu olmadan kaynak seed'i de çalıştırılamaz.
+- Apify token yok — kod hazır ama canlı bağlanmadı.
+- Sağlık Bakanlığı/HEP-SEN resmi-site adaptörü gerçek sayfaya karşı
+  doğrulanmadı (WebFetch bu ortamda engellendi) — kullanıcı test edip
+  aktifleştirmeli.
+- Gerçek AI taslak üretimi (ANTHROPIC_API_KEY ile) canlı denenmedi, yalnızca
+  mock'lu test edildi — kullanıcı kendi ortamında ilk denemeyi yapmalı.
 - Rate limit in-memory (tek instance); ölçeklenirse Redis'e taşınmalı.
 - `FINAL_AUDIT.md` bu turda YAZILMADI — sistem tamamlanmadı (master prompt
   md. 30: "İş tamamlandığında FINAL_AUDIT.md oluştur").

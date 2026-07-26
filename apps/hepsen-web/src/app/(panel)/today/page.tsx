@@ -1,36 +1,48 @@
-import { evaluate, type BudgetState, type Provider } from "@hepsen/core";
+import { evaluate } from "@hepsen/core";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { buildBudgetConfig } from "@/lib/budget-config";
+import { loadBudgetState } from "@/lib/budget-state";
 import { BudgetGauge } from "@/components/budget/budget-gauge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
-async function loadBudgetState(): Promise<BudgetState> {
-  const supabase = getServerSupabase();
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
+interface TopicRow {
+  id: string;
+  title: string;
+  final_score: number | null;
+  category: string | null;
+}
 
-  const { data, error } = await supabase
-    .from("budget_usage")
-    .select("provider, estimated_cost_usd")
-    .gte("occurred_at", startOfMonth.toISOString());
+async function loadTodaysTopics(supabase: ReturnType<typeof getServerSupabase>): Promise<TopicRow[]> {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const { data } = await supabase
+    .from("topics")
+    .select("id, title, final_score, category")
+    .gte("created_at", startOfDay.toISOString())
+    .order("final_score", { ascending: false })
+    .limit(3);
+  return (data ?? []) as TopicRow[];
+}
 
-  const spentByProvider: Record<Provider, number> = { anthropic: 0, apify: 0, x_api: 0 };
-  if (error || !data) return { spentByProvider, totalSpent: 0 };
-
-  let totalSpent = 0;
-  for (const row of data as { provider: Provider; estimated_cost_usd: number }[]) {
-    spentByProvider[row.provider] += Number(row.estimated_cost_usd);
-    totalSpent += Number(row.estimated_cost_usd);
-  }
-  return { spentByProvider, totalSpent };
+async function loadPendingDraftsCount(supabase: ReturnType<typeof getServerSupabase>): Promise<number> {
+  const { count } = await supabase
+    .from("drafts")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "REVIEW_REQUIRED");
+  return count ?? 0;
 }
 
 export default async function TodayPage() {
+  const supabase = getServerSupabase();
   const cfg = buildBudgetConfig();
-  const state = await loadBudgetState();
+  const [state, topics, pendingDrafts] = await Promise.all([
+    loadBudgetState(supabase),
+    loadTodaysTopics(supabase),
+    loadPendingDraftsCount(supabase),
+  ]);
   // Bilgilendirme amaçlı: bu ayki genel durumu göstermek için 0 USD'lik bir
   // "discovery_query" değerlendirmesi kullanılıyor (gerçek harcama tetiklemez).
   const decision = evaluate(cfg, state, "anthropic", "discovery_query", 0);
@@ -46,9 +58,20 @@ export default async function TodayPage() {
           <CardTitle>Günün sağlık gündemi</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-hepsenNavy/60">
-            Gündem toplama ve puanlama motoru Faz 2&apos;de aktif olacak.
-          </p>
+          {topics.length === 0 ? (
+            <p className="text-sm text-hepsenNavy/60">
+              Bugün için henüz puanlanmış gündem yok. Toplama/üretim işleri çalıştıktan sonra burada görünecek.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {topics.map((t) => (
+                <li key={t.id} className="flex items-center justify-between text-sm">
+                  <span>{t.title}</span>
+                  <Badge>{t.final_score ?? "—"} puan</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
@@ -58,8 +81,8 @@ export default async function TodayPage() {
             <CardTitle>Onay bekleyen taslak</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">—</p>
-            <p className="text-xs text-hepsenNavy/60">Taslak üretimi Faz 2&apos;de aktif olacak.</p>
+            <p className="text-2xl font-bold">{pendingDrafts}</p>
+            <p className="text-xs text-hepsenNavy/60">Onay/red işlemleri Faz 3&apos;te eklenecek.</p>
           </CardContent>
         </Card>
         <Card>
@@ -68,7 +91,7 @@ export default async function TodayPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">—</p>
-            <p className="text-xs text-hepsenNavy/60">Zamanlama/yayın Faz 3&apos;te aktif olacak.</p>
+            <p className="text-xs text-hepsenNavy/60">Zamanlanmış yayın Faz 3&apos;te aktif olacak.</p>
           </CardContent>
         </Card>
       </div>

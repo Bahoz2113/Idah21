@@ -15,6 +15,11 @@ out/
 build/
 *.tsbuildinfo
 
+# Serwist build ciktisi (src/app/sw.ts'ten derlenir, kaynak degil)
+apps/hepsen-web/public/sw.js
+apps/hepsen-web/public/sw.js.map
+apps/hepsen-web/public/swe-worker-*.js
+
 # Prisma generate çıktısı
 packages/database/src/generated/
 
