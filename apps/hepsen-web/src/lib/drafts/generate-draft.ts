@@ -18,6 +18,7 @@ import {
   type SlotPerformance,
   type HashtagCandidate,
   type RiskLevel,
+  type BlocklistHit,
 } from "@hepsen/core";
 import type { LlmGateway } from "@/lib/ai/types";
 import { runStructured } from "@/lib/ai/run-structured";
@@ -30,7 +31,7 @@ export interface TopicForDraft {
   category: string;
 }
 
-export interface GenerateDraftParams {
+export interface ProductionPipelineParams {
   supabase: SupabaseClient;
   gateway: LlmGateway;
   userId: string;
@@ -38,22 +39,39 @@ export interface GenerateDraftParams {
   presidentialContext: string;
   accountHistory: SlotPerformance[];
   accountStartedAt: Date;
+  /** Faz 3 "yeniden uret" akisi icin — bkz. lib/drafts/regenerate-draft.ts. */
+  regenerationHint?: string;
 }
 
-export interface GenerateDraftResult {
-  draftId: string;
-  status: string;
+export interface ProductionPipelineResult {
+  text: string;
+  altHooks: string[];
+  hashtags: string[];
+  sourceSummary: string;
+  toneScore: number;
+  corporateAlignmentScore: number;
+  humanStyleScore: number;
+  hookStrength: number;
   riskLevel: RiskLevel;
+  legalRiskReasons: string[];
+  blocklistHits: BlocklistHit[];
+  recommendedPublishAt: string;
+  timingScore: number;
+  timingConfidence: number;
+  timingReason: string;
+  promptVersion: string;
 }
 
 /**
- * Master prompt md. 11 "Taslak uretim sirasi": kaynak -> ilk taslak (AI) ->
- * iki asamali hukuk taramasi (blocklist ONCE, LLM SONRA, blocklist ezer) ->
- * ton/anti-AI kontrolu -> hook kontrolu -> hashtag -> zamanlama -> durum atama.
+ * Master prompt md. 11 "Taslak uretim sirasi": ilk taslak (AI) -> iki asamali
+ * hukuk taramasi (blocklist ONCE, LLM SONRA, blocklist ezer) -> ton/anti-AI
+ * kontrolu -> hook kontrolu -> hashtag -> zamanlama. Hem ilk uretim
+ * (generateDraftForTopic) hem yeniden uretim (regenerateDraft) bu ORTAK
+ * pipeline'i kullanir — DB yazma sekli (insert vs update) cagiran tarafta.
  * HER LLM cagrisi sonrasi gercek maliyet budget_usage'a yazilir.
  */
-export async function generateDraftForTopic(params: GenerateDraftParams): Promise<GenerateDraftResult | null> {
-  const { supabase, gateway, userId, topic, presidentialContext, accountHistory, accountStartedAt } = params;
+export async function runProductionPipeline(params: ProductionPipelineParams): Promise<ProductionPipelineResult> {
+  const { supabase, gateway, userId, topic, presidentialContext, accountHistory, accountStartedAt, regenerationHint } = params;
 
   const draftTask = buildDraftPostTask({
     topicTitle: topic.title,
@@ -62,6 +80,7 @@ export async function generateDraftForTopic(params: GenerateDraftParams): Promis
     uncertainties: [],
     contentCategory: topic.category,
     benchmarkHints: [],
+    regenerationHint,
   });
   const { data: draftOutput, usage: draftUsage } = await runStructured(
     gateway,
@@ -121,7 +140,38 @@ export async function generateDraftForTopic(params: GenerateDraftParams): Promis
     accountStartedAt,
   });
 
-  const status = canPublish(riskLevel) ? transition("DRAFT", "submit_for_review") : transition("DRAFT", "block_by_risk");
+  return {
+    text: finalText,
+    altHooks: draftOutput.altHooks,
+    hashtags: hashtagDecision.selected,
+    sourceSummary: draftOutput.sourceSummary,
+    toneScore: toneOutput.toneScore,
+    corporateAlignmentScore: toneOutput.corporateAlignmentScore,
+    humanStyleScore: toneOutput.humanStyleScore,
+    hookStrength: hookResult.score,
+    riskLevel,
+    legalRiskReasons: legalOutput.reasons,
+    blocklistHits: blocklistResult.hits,
+    recommendedPublishAt: timing.primary.publishAt.toISOString(),
+    timingScore: timing.primary.score,
+    timingConfidence: timing.primary.confidence,
+    timingReason: timing.primary.reason,
+    promptVersion: draftOutput.promptVersion,
+  };
+}
+
+export interface GenerateDraftParams extends ProductionPipelineParams {}
+
+export interface GenerateDraftResult {
+  draftId: string;
+  status: string;
+  riskLevel: RiskLevel;
+}
+
+export async function generateDraftForTopic(params: GenerateDraftParams): Promise<GenerateDraftResult | null> {
+  const { supabase, userId, topic } = params;
+  const result = await runProductionPipeline(params);
+  const status = canPublish(result.riskLevel) ? transition("DRAFT", "submit_for_review") : transition("DRAFT", "block_by_risk");
 
   const { data: inserted, error } = await supabase
     .from("drafts")
@@ -129,29 +179,29 @@ export async function generateDraftForTopic(params: GenerateDraftParams): Promis
       user_id: userId,
       topic_id: topic.id,
       content_type: "post",
-      text: finalText,
-      alt_hooks: draftOutput.altHooks,
-      hashtags: hashtagDecision.selected,
-      source_summary: draftOutput.sourceSummary,
-      tone_score: toneOutput.toneScore,
-      corporate_alignment_score: toneOutput.corporateAlignmentScore,
-      human_style_score: toneOutput.humanStyleScore,
-      hook_strength: hookResult.score,
-      legal_risk_level: riskLevel,
-      legal_risk_reasons: legalOutput.reasons,
-      blocklist_hits: blocklistResult.hits,
-      recommended_publish_at: timing.primary.publishAt.toISOString(),
-      timing_score: timing.primary.score,
-      timing_confidence: timing.primary.confidence,
-      timing_reason: timing.primary.reason,
+      text: result.text,
+      alt_hooks: result.altHooks,
+      hashtags: result.hashtags,
+      source_summary: result.sourceSummary,
+      tone_score: result.toneScore,
+      corporate_alignment_score: result.corporateAlignmentScore,
+      human_style_score: result.humanStyleScore,
+      hook_strength: result.hookStrength,
+      legal_risk_level: result.riskLevel,
+      legal_risk_reasons: result.legalRiskReasons,
+      blocklist_hits: result.blocklistHits,
+      recommended_publish_at: result.recommendedPublishAt,
+      timing_score: result.timingScore,
+      timing_confidence: result.timingConfidence,
+      timing_reason: result.timingReason,
       status,
-      prompt_version: draftOutput.promptVersion,
+      prompt_version: result.promptVersion,
     })
     .select("id")
     .single();
 
   if (error || !inserted) return null;
-  return { draftId: inserted.id as string, status, riskLevel };
+  return { draftId: inserted.id as string, status, riskLevel: result.riskLevel };
 }
 
 /**
@@ -159,7 +209,7 @@ export async function generateDraftForTopic(params: GenerateDraftParams): Promis
  * Turkiye saglik kitlesinin genel olarak aktif oldugu aksam saatleri agirlikli.
  * Faz 4'te gercek benchmark verisiyle degistirilecek (bkz. docs/budget-model.md benzeri not).
  */
-const DEFAULT_GENERAL_ACTIVITY_BY_HOUR: Record<number, number> = {
+export const DEFAULT_GENERAL_ACTIVITY_BY_HOUR: Record<number, number> = {
   7: 40, 8: 55, 9: 60, 10: 55, 11: 50, 12: 60, 13: 55, 14: 50,
   15: 55, 16: 60, 17: 65, 18: 70, 19: 80, 20: 85, 21: 75, 22: 60, 23: 40,
 };

@@ -11,6 +11,11 @@ interface XAccountRow {
   revoked_at: string | null;
 }
 
+interface AppSettingsRow {
+  emergency_stop: boolean;
+  emergency_stop_reason: string | null;
+}
+
 export default async function SettingsPage() {
   const supabase = getServerSupabase();
   const { data: account } = await supabase
@@ -20,6 +25,12 @@ export default async function SettingsPage() {
     .order("connected_at", { ascending: false })
     .limit(1)
     .maybeSingle<XAccountRow>();
+
+  const { data: settings } = await supabase
+    .from("app_settings")
+    .select("emergency_stop, emergency_stop_reason")
+    .maybeSingle<AppSettingsRow>();
+  const emergencyStop = settings?.emergency_stop ?? false;
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,6 +69,42 @@ export default async function SettingsPage() {
               </a>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Acil Durdurma</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <Badge variant={emergencyStop ? "blocked" : "low"}>
+                {emergencyStop ? "Yayın durduruldu" : "Aktif"}
+              </Badge>
+            </div>
+            <p className="text-xs text-hepsenNavy/60">
+              Açıldığında tüm otomatik X yayınları (saatlik yayın işi) hemen durur;
+              onaylanmış/zamanlanmış taslaklar etkilenmez, sadece gerçek paylaşım askıya alınır.
+            </p>
+            {settings?.emergency_stop_reason && (
+              <p className="text-xs text-hepsenNavy/50">Gerekçe: {settings.emergency_stop_reason}</p>
+            )}
+            <form action="/api/settings/emergency-stop" method="post" className="flex flex-col gap-2">
+              <input type="hidden" name="enabled" value={(!emergencyStop).toString()} />
+              {!emergencyStop && (
+                <input
+                  type="text"
+                  name="reason"
+                  placeholder="Durdurma gerekçesi (opsiyonel)"
+                  className="rounded-md border border-black/15 px-3 py-2 text-sm"
+                />
+              )}
+              <Button type="submit" variant={emergencyStop ? "default" : "destructive"} size="sm">
+                {emergencyStop ? "Yayını yeniden başlat" : "Acil durdur"}
+              </Button>
+            </form>
+          </div>
         </CardContent>
       </Card>
     </div>

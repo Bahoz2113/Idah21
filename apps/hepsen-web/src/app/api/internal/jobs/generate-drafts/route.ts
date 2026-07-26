@@ -6,11 +6,9 @@ import {
   llmCostUsd,
   DEFAULT_PRICING,
   buildTopicScoringTask,
-  buildPresidentialContext,
   SYSTEM_POLICY,
   TopicScoringOutput,
   type TopicSignals,
-  type MemoryExample,
 } from "@hepsen/core";
 import { getEnv } from "@/lib/env";
 import { getServiceRoleClient } from "@/lib/supabase/server";
@@ -22,6 +20,7 @@ import { runStructured } from "@/lib/ai/run-structured";
 import { clusterItems, type ClusterableItem } from "@/lib/topics/cluster";
 import { computeTrendStrength, blocklistPenalty } from "@/lib/topics/signals";
 import { generateDraftForTopic } from "@/lib/drafts/generate-draft";
+import { loadDraftGenerationContext } from "@/lib/drafts/context";
 import { writeAuditLog } from "@/lib/audit/log";
 import { isAuthorizedCronRequest } from "@/lib/cron-auth";
 
@@ -183,35 +182,7 @@ async function handleGenerateDraftsJob(request: NextRequest) {
   // 5) Gunluk hedef kadar taslak uret (max 5, gundem zayifsa sayi ZORLANMAZ)
   const topicsForDrafting = createdTopics.slice(0, DAILY_MAX_DRAFTS);
 
-  const { data: memoryRows } = await supabase
-    .from("presidential_memory")
-    .select("memory_type, content, weight")
-    .eq("is_active", true);
-  const presidentialContext = buildPresidentialContext(
-    (memoryRows ?? []).map(
-      (m): MemoryExample => ({ memoryType: m.memory_type as string, content: m.content as string, weight: Number(m.weight) }),
-    ),
-  );
-
-  const { data: history } = await supabase
-    .from("time_slot_performance")
-    .select("day_of_week, hour_bucket, sample_size, avg_engagement_rate, confidence_score");
-  const accountHistory = (history ?? []).map((h) => ({
-    dayOfWeek: h.day_of_week as number,
-    hourBucket: h.hour_bucket as number,
-    sampleSize: h.sample_size as number,
-    avgEngagementRate: Number(h.avg_engagement_rate ?? 0),
-    confidenceScore: Number(h.confidence_score ?? 0),
-  }));
-
-  const { data: xAccount } = await supabase
-    .from("x_accounts")
-    .select("connected_at")
-    .is("revoked_at", null)
-    .order("connected_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-  const accountStartedAt = xAccount ? new Date(xAccount.connected_at as string) : new Date();
+  const { presidentialContext, accountHistory, accountStartedAt } = await loadDraftGenerationContext(supabase);
 
   let draftsCreated = 0;
   const draftErrors: string[] = [];

@@ -9,12 +9,17 @@ export function buildDraftPostTask(input: {
   uncertainties: string[];
   contentCategory: string;
   benchmarkHints: string[];
+  /** Faz 3 "yeniden uret" akisi — kullanicinin sectigi somut yonerge (zorunlu, oneri degil). */
+  regenerationHint?: string;
 }): string {
   const facts = input.facts
     .map((f) => `- [${f.verified ? "DOGRULANMIS" : "IDDIA"}] ${f.claim} (${f.url}, ${f.publishedAt})`)
     .join("\n");
   const hints = input.benchmarkHints.length
     ? `\nBU HAFTA DENENECEK KALIPLAR (zorunlu degil):\n${input.benchmarkHints.map((h) => `- ${h}`).join("\n")}`
+    : "";
+  const regenBlock = input.regenerationHint
+    ? `\nYENIDEN URETME YONERGESI (dikkate al, tercih et):\n- ${input.regenerationHint}`
     : "";
 
   return `GOREV: Asagidaki gundem icin tek bir X gonderisi taslagi yaz.
@@ -29,7 +34,7 @@ ${facts}
 
 BELIRSIZLIKLER (bunlari kesinmis gibi yazma):
 ${input.uncertainties.map((u) => `- ${u}`).join("\n") || "- yok"}
-</untrusted_source>${hints}
+</untrusted_source>${hints}${regenBlock}
 
 YAZIM KURALLARI:
 - 280 karakteri asma.
