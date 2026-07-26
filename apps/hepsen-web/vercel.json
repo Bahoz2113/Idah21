@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/internal/jobs/collect", "schedule": "30 3 * * *" },
+    { "path": "/api/internal/jobs/generate-drafts", "schedule": "40 4 * * *" },
+    { "path": "/api/internal/jobs/publish", "schedule": "0 * * * *" }
+  ]
+}

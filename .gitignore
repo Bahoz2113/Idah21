@@ -15,6 +15,11 @@ out/
 build/
 *.tsbuildinfo
 
+# Serwist build ciktisi (src/app/sw.ts'ten derlenir, kaynak degil)
+apps/hepsen-web/public/sw.js
+apps/hepsen-web/public/sw.js.map
+apps/hepsen-web/public/swe-worker-*.js
+
 # Prisma generate çıktısı
 packages/database/src/generated/
 
@@ -35,6 +40,9 @@ Thumbs.db
 # Test
 coverage/
 .nyc_output
+test-results/
+playwright-report/
+blob-report/
 
 # Expo / Mobile
 .expo/
@@ -44,3 +52,4 @@ apps/mobile/android/
 
 .vercel
 .env*
+!**/.env.example
