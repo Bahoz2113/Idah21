@@ -1,69 +1,46 @@
 import { SceneMount } from "@/components/three/SceneMount";
-import { SceneLabel } from "@/components/hud/Frame";
-import { ORG, getFact } from "@/lib/facts";
+import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { ProgressRail } from "@/components/hud/ProgressRail";
+import { S00Preloader } from "@/components/scenes/S00Preloader";
+import { S01Launchpad } from "@/components/scenes/S01Launchpad";
+import { S02Exploded } from "@/components/scenes/S02Exploded";
+import { S03Hangar } from "@/components/scenes/S03Hangar";
+import { S04FirstLaunch } from "@/components/scenes/S04FirstLaunch";
+import { S05Prototypes } from "@/components/scenes/S05Prototypes";
+import { S06Methodology } from "@/components/scenes/S06Methodology";
+import { S07Clearance } from "@/components/scenes/S07Clearance";
+import { S08Tower } from "@/components/scenes/S08Tower";
 
 /**
- * S01 — LAUNCHPAD (F0 iskeleti)
+ * TEK SAYFA DENEYİM
  *
- * Bu bir Server Component'tir. Tüm metin sunucuda render edilir; WebGL
- * yalnızca `SceneMount` sınırının arkasında istemciye iner (GEO kuralı K1).
- * Doğrulama: `curl -A "GPTBot" http://localhost:3100/ | grep "Batman'ın ilk"`
+ * Bu bir Server Component'tir ve öyle kalmalıdır. Sahnelerin metni sunucuda
+ * render edilir; yalnızca animasyon ve WebGL istemci sınırlarının arkasındadır
+ * (GEO kuralı K1). Doğrulama:
+ *   curl -A "GPTBot" <url> | grep "Batman'ın ilk VTOL İHA"
  */
 export default function HomePage() {
-  const firstFlight = getFact("first-vtol-and-rocket");
-
   return (
-    <main id="icerik" className="relative min-h-svh overflow-hidden bg-void">
-      {/* Dekoratif WebGL katmanı — metnin arkasında, ekran okuyuculara görünmez */}
-      <div className="absolute inset-0 opacity-70">
+    <>
+      <SmoothScroll />
+      <ProgressRail />
+      <S00Preloader />
+
+      {/* Paylaşılan WebGL katmanı — S01, S02 ve S04 boyunca sabit durur */}
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-70">
         <SceneMount />
       </div>
 
-      {/* Metin katmanı — sunucudan gelir, animasyon yalnızca bunu hareket ettirir */}
-      <div className="relative z-10 flex min-h-svh flex-col justify-end px-6 pb-24 md:px-16 md:pb-32">
-        <p className="t-mono mb-6 text-ignition">
-          {ORG.legalCity} · Fırlatma Üssü
-        </p>
-
-        {/* Sinematik manşet — GÖRSEL, semantik başlık değil */}
-        <p className="t-display-xl max-w-5xl text-cyber" aria-hidden="true">
-          <span className="line-mask">
-            <span>Batman&apos;da</span>
-          </span>
-          <span className="line-mask">
-            <span>Geleceği</span>
-          </span>
-          <span className="line-mask">
-            <span>İnşa Ediyoruz</span>
-          </span>
-        </p>
-
-        {/* Olgusal h1 — LLM'lerin ve Google'ın okuduğu satır (GEO kuralı G3) */}
-        <h1 className="mt-10 max-w-2xl font-body text-lg leading-relaxed text-ash md:text-xl">
-          {ORG.description}
-        </h1>
-
-        {/* Alıntılanabilir olgu + inline kaynak atfı (AC15) */}
-        {firstFlight && (
-          <p className="mt-6 max-w-2xl font-body text-base leading-relaxed text-ash">
-            {firstFlight.statement}{" "}
-            {firstFlight.sources.map((s, i) => (
-              <cite key={s.url} className="not-italic">
-                {i > 0 && " · "}
-                <a
-                  href={s.url}
-                  rel="noopener"
-                  className="text-ignition underline underline-offset-4"
-                >
-                  {s.publisher}
-                </a>
-              </cite>
-            ))}
-          </p>
-        )}
-      </div>
-
-      <SceneLabel label="SCENE 01 / LAUNCHPAD" />
-    </main>
+      <main id="icerik" className="relative z-10">
+        <S01Launchpad />
+        <S02Exploded />
+        <S03Hangar />
+        <S04FirstLaunch />
+        <S05Prototypes />
+        <S06Methodology />
+        <S07Clearance />
+        <S08Tower />
+      </main>
+    </>
   );
 }

@@ -154,3 +154,21 @@ body {
   left: var(--hud-inset);
   top: var(--hud-inset);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MARQUEE — saf CSS sonsuz şerit
+   ══════════════════════════════════════════════════════════════ */
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+  padding-right: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}
