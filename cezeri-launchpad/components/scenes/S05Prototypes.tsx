@@ -29,7 +29,7 @@ export function S05Prototypes() {
           <article className="relative flex h-[58svh] w-[78vw] shrink-0 flex-col justify-between bg-ignition p-8 md:w-[30rem]">
             <p className="t-mono text-void/70">Kilometre Taşı</p>
             <div>
-              <p className="t-display-l leading-none text-void">
+              <p className="font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-void md:text-5xl">
                 Batman&apos;ın ilki
               </p>
               <p className="mt-4 font-body text-void/80">

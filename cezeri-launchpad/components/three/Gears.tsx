@@ -88,9 +88,9 @@ export function Gear({
   return (
     <mesh ref={ref} geometry={geometry} position={position}>
       <meshStandardMaterial
-        color="#1a1a1a"
-        metalness={0.9}
-        roughness={0.35}
+        color="#121212"
+        metalness={0.95}
+        roughness={0.42}
         emissive="#ff6f00"
         emissiveIntensity={heat}
       />
@@ -109,7 +109,7 @@ export function GearCluster({ heat = 0 }: { heat?: number }) {
         boreRadius={0.5}
         thickness={0.34}
         speed={0.18}
-        position={[0, 0, 0]}
+        position={[3.4, 0.6, 0]}
         heat={heat}
       />
       <Gear
@@ -119,7 +119,7 @@ export function GearCluster({ heat = 0 }: { heat?: number }) {
         boreRadius={0.34}
         thickness={0.3}
         speed={-0.27}
-        position={[3.5, 1.1, -0.4]}
+        position={[6.6, 2.4, -0.6]}
         heat={heat}
       />
       <Gear
@@ -129,7 +129,7 @@ export function GearCluster({ heat = 0 }: { heat?: number }) {
         boreRadius={0.26}
         thickness={0.26}
         speed={0.36}
-        position={[-3.0, -1.4, -0.8]}
+        position={[1.1, -2.4, -1.1]}
         heat={heat}
       />
     </group>

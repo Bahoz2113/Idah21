@@ -27,7 +27,7 @@ export default function HomePage() {
       <S00Preloader />
 
       {/* Paylaşılan WebGL katmanı — S01, S02 ve S04 boyunca sabit durur */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-70">
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-45">
         <SceneMount />
       </div>
 

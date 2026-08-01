@@ -74,11 +74,13 @@ body {
    TİPOGRAFİ ÖLÇEĞİ (fluid)
    ══════════════════════════════════════════════════════════════ */
 
+/* Ölçek, 4 satırlık manşet + gövde metni 900px yüksekliğe sığacak şekilde
+   sınırlandı. Daha büyük bir tavan masaüstünde ilk satırı kadraj dışına itiyor. */
 .t-display-xl {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 11vw, 12.5rem);
+  font-size: clamp(2.75rem, 6.4vw, 7.25rem);
   font-weight: 800;
-  line-height: 0.88;
+  line-height: 0.9;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   font-stretch: 112%;
@@ -109,6 +111,10 @@ body {
 .line-mask {
   display: block;
   overflow: hidden;
+  /* Türkçe İ, Ğ, Ş üst işaretlerine baş boşluğu — sıkı satır yüksekliğinde
+     maske aksi halde noktayı kırpıyor. Negatif margin düzeni bozmaz. */
+  padding-top: 0.1em;
+  margin-top: -0.1em;
 }
 
 .line-mask > span {

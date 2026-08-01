@@ -102,7 +102,7 @@ export function ClearanceForm() {
           {AGE_GROUPS.map((g) => (
             <label
               key={g}
-              className="t-mono cursor-pointer border border-[var(--hairline)] px-4 py-2 text-ash transition-colors has-[:checked]:border-ignition has-[:checked]:text-ignition"
+              className="t-mono cursor-pointer border border-[var(--hairline)] px-4 py-2 text-ash transition-colors has-[:checked]:border-ignition has-[:checked]:text-ignition has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ignition"
             >
               <input
                 type="radio"
@@ -125,7 +125,7 @@ export function ClearanceForm() {
           {MISSIONS.map((m) => (
             <label
               key={m.value}
-              className="t-mono cursor-pointer border border-[var(--hairline)] px-4 py-2 text-ash transition-colors has-[:checked]:border-ignition has-[:checked]:text-ignition"
+              className="t-mono cursor-pointer border border-[var(--hairline)] px-4 py-2 text-ash transition-colors has-[:checked]:border-ignition has-[:checked]:text-ignition has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ignition"
             >
               <input
                 type="radio"

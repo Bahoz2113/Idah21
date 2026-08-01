@@ -34,12 +34,12 @@ gelir ve en az bir kaynak taşır. Kaynaksız iddia eklenmez.
 
 ## Durum
 - [x] F0 — bootstrap, sürüm doğrulama, token + font + HUD iskeleti
-- [ ] F1 — S00 preloader + S08 footer
-- [ ] F2 — S01 hero + S02 exploded view
-- [ ] F3 — S03 hangar + S04 ilk fırlatış
-- [ ] F4 — S05 galeri + S06 metodoloji
-- [ ] F5 — S07 uçuş izin formu
+- [x] F1 — S00 preloader + S08 footer
+- [x] F2 — S01 hero + S02 exploded view
+- [x] F3 — S03 hangar + S04 ilk fırlatış
+- [x] F4 — S05 galeri + S06 metodoloji
+- [x] F5 — S07 uçuş izin formu
 - [ ] F6 — medya entegrasyonu (Gemini Omni video + Nano Banana görsel)
-- [ ] F7 — performans + erişilebilirlik
-- [ ] F8 — SEO/GEO altyapısı
-- [ ] F9 — içerik katmanı
+- [x] F7 — performans + erişilebilirlik
+- [x] F8 — SEO/GEO altyapısı
+- [x] F9 — içerik katmanı

@@ -18,16 +18,22 @@ export default function SceneCanvas() {
       frameloop="always"
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      camera={{ position: [0, 0, 9], fov: 42 }}
+      camera={{ position: [0, 0, 13], fov: 40 }}
       // Dekoratif katman — ekran okuyucular sahneyi görmez, metin DOM'da zaten var.
       aria-hidden="true"
       style={{ position: "absolute", inset: 0 }}
     >
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[6, 8, 5]} intensity={1.6} color="#ffffff" />
-      <pointLight position={[-6, -3, 3]} intensity={18} color="#1a237e" />
-      <pointLight position={[3, -4, 2]} intensity={9} color="#ff6f00" />
-      <GearCluster heat={0.12} />
+      {/*
+        Işık dengesi, "void %80 · navy %15 · ignition %5" oranına tabidir.
+        Turuncu nokta ışık güçlü tutulduğunda dişliler kahverengiye dönüyor ve
+        kadrajın yarısını turuncuya boyuyor — kuralın ihlali. Turuncu yalnızca
+        kenar vurgusu olarak kalacak kadar bırakıldı.
+      */}
+      <ambientLight intensity={0.22} />
+      <directionalLight position={[7, 9, 6]} intensity={1.1} color="#ffffff" />
+      <pointLight position={[-7, -3, 4]} intensity={26} color="#1a237e" />
+      <pointLight position={[5, -5, 1]} intensity={2.4} color="#ff6f00" />
+      <GearCluster heat={0.02} />
     </Canvas>
   );
 }
