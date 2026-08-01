@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════
+   CEZERİ ROBOTECH — LAUNCHPAD TASARIM TOKEN'LARI
+   Oranlama kuralı: void %80 · navy %15 · ignition %5 · beyaz tipografi
+   Turuncu SADECE ateşleme anıdır. Az olduğu için güçlüdür.
+   ══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ——— Çekirdek palet ——— */
+  --color-void: #121212;
+  --color-navy: #1a237e;
+  --color-ignition: #ff6f00;
+  --color-cyber: #ffffff;
+
+  /* ——— Türetilenler (yalnızca bu kadarı) ——— */
+  --color-navy-deep: #0d1240;
+  --color-navy-lift: #2a35a8;
+  --color-ash: #8a8f98;
+
+  /* ——— Tipografi ——— */
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* ——— Hareket ——— */
+  --ease-launch: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-thrust: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+  --hairline: rgba(255, 255, 255, 0.08);
+  /* HUD çerçeve kalınlığı — sahne kadrajları buna göre hizalanır */
+  --hud-inset: 16px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --hud-inset: 24px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMEL
+   ══════════════════════════════════════════════════════════════ */
+
+html {
+  background-color: var(--color-void);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-cyber);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Odak halkası — turuncu, 2px, her zaman görünür */
+:focus-visible {
+  outline: 2px solid var(--color-ignition);
+  outline-offset: 3px;
+}
+
+::selection {
+  background-color: var(--color-ignition);
+  color: var(--color-void);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TİPOGRAFİ ÖLÇEĞİ (fluid)
+   ══════════════════════════════════════════════════════════════ */
+
+.t-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 11vw, 12.5rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-stretch: 112%;
+}
+
+.t-display-l {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 8rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 0.9vw, 0.875rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SATIR MASKESİ
+   GEO kuralı K2: metin sunucudan gelir, GSAP yalnızca var olanı
+   animasyonlar. Maske DOM'u değiştirmez, sadece kırpar.
+   ══════════════════════════════════════════════════════════════ */
+
+.line-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.line-mask > span {
+  display: block;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ERİŞİLEBİLİRLİK — prefers-reduced-motion tam geri çekilme
+   Site hareketsiz de eksiksiz okunur kalır (AC4).
+   ══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .line-mask > span {
+    transform: none !important;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-ignition);
+  color: var(--color-void);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.skip-link:focus {
+  left: var(--hud-inset);
+  top: var(--hud-inset);
+}
