@@ -15,6 +15,14 @@
 | Kod yerleşimi | **Ayrı repo** | `Idah21` monorepo'suna dokunulmaz. Yeni repo: `bahoz2113/cezeri-launchpad` (F0'da oluşturulacak). |
 | Instagram arşivi | **Elle seçilmiş 15-20 görsel** | 3.1 GB / 78 parçalı bölünmüş 7z indirilmeyecek. Kullanıcı ayrı Drive klasörü hazırlayacak. |
 
+### REVİZYON v2 — SEO/GEO kararları (2026-08-01)
+
+| Konu | Karar | Etkisi |
+|---|---|---|
+| Başarı iddiaları | **Yalnızca doğrulanmış olanlar** | "TEKNOFEST birinciliği" ve "650m" hiçbir kaynakta doğrulanamadı → **siteye girmez**. Yerine: *Batman'ın ilk VTOL İHA uçuşu ve model roket fırlatışı* + *BESO protokolü*. Ayrıntı: `artifacts/seo-arastirma-ve-haber-envanteri.md` |
+| Mimari | **Hibrit** | `/` sinematik one-page olarak kalır + arkasına hafif, indekslenebilir içerik katmanı (bkz. §8). Kapsam ~%40 büyür. |
+| Alan adı | **`cezerirobotech.com` devralınır** | Mevcut sitenin yerine geçer. **301 yönlendirme haritası zorunlu** — alan adı yaşı ve mevcut backlink'ler korunacak. |
+
 ### Devralınan zorunlu kısıt
 `Idah21/CLAUDE.md` → *"Çocuk fotoğrafı/videosu sistemde BARINDIRILMAZ."*
 → **Sitede tanınabilir çocuk yüzü kullanılmayacak** — ne gerçek fotoğrafta, ne AI üretiminde.
@@ -122,10 +130,13 @@ Toplam scroll uzunluğu ≈ **900vh**. Her sahnede `data-scene` özniteliği var
 | 0.55–0.85 | Dişli mesh'leri **noktacık bulutuna** çözülür, İHA/roket siluetinin kontur noktalarına `lerp` ile akar (attribute morph — GPGPU değil, mobilde de çalışsın diye). |
 | 0.85–1.00 | Siluet netleşir, altında turuncu egzoz izi. Scroll ipucu kaybolur. |
 
-**Tipografi:**
+**Tipografi:** *(v2 — yalnızca doğrulanmış ifade)*
 > **BATMAN'DA GELECEĞİ İNŞA EDİYORUZ**
 > **CEZERİ ROBOTECH**
-> `TEKNOFEST ŞAMPİYONU · GELECEĞİN MÜHENDİSLERİ YETİŞİYOR`
+> `BATMAN'IN İLK VTOL İHA UÇUŞU VE MODEL ROKET FIRLATIŞI · GELECEĞİN MÜHENDİSLERİ YETİŞİYOR`
+
+> ⚠️ Bu satır aynı zamanda sayfanın **birincil alıntılanabilir cümlesidir** —
+> `<h1>` ve `EducationalOrganization` JSON-LD `description` alanıyla birebir eşleşir.
 
 **HUD:** sağ üst `37°52′N 41°08′E · UTC+3 hh:mm:ss` · sol alt `SCENE 01 / LAUNCHPAD`
 **Fallback:** `prefers-reduced-motion` veya WebGL yok → statik poster + CSS fade.
@@ -165,7 +176,15 @@ Kapı açıldığında arkasındaki medya (Higgsfield video slot'u) oynar; kapan
 
 ---
 
-### S04 · 650 METRE — "İRTİFA TESTİ"
+### S04 · İLK FIRLATIŞ — "BATMAN'IN İLK MODEL ROKETİ" *(v2'de yeniden çerçevelendi)*
+
+> **v2 notu:** Bu sahne önce "650 m irtifa testi" üzerine kurgulanmıştı. 650 m rakamı
+> doğrulanamadığı için sahne, **doğrulanmış olan olaya** taşındı: Yediiki Robot ve
+> Teknoloji Yarışması'nda gerçekleştirilen *Batman'ın ilk model roket fırlatışı*.
+> İrtifa sayacı korunur ama **rakam bir veri slot'udur** — kullanıcı gerçek telemetri
+> değerini verene kadar sayaç `APOGEE` yerine `İLK FIRLATIŞ / BATMAN` ibaresiyle biter.
+> Gerçek rakam gelirse tek satır değişiklikle devreye girer (`lib/facts.ts`).
+
 **Pin:** 100svh · mesafe 350% · `scrub: true` (yumuşatmasız — sayaç birebir scroll'a kilitli)
 **Mekanik:** Ekranın ortasında sabit roket; etrafındaki dünya aşağı akar.
 
@@ -173,11 +192,15 @@ Kapı açıldığında arkasındaki medya (Higgsfield video slot'u) oynar; kapan
 - Arkada 4 katmanlı paralaks: yer → alçak bulut → yüksek bulut → yıldız alanı (farklı hızlarda)
 - Gökyüzü scroll ile `#1A237E → #0D1240 → #121212`; 400 m'den sonra yıldızlar `opacity 0→1`
 - Roketin altında sürekli turuncu egzoz + arkada duman izi (instanced particles)
-- **Apogee (650 m):** tek kare beyaz flash → veri kartı açılır:
+- **Tepe noktasında:** tek kare beyaz flash → veri kartı açılır *(v2 — doğrulanmış içerik)*:
   ```
-  APOGEE ......... 650 m        MAX HIZ ........ 178 km/h
-  UÇUŞ SÜRESİ .... 41 s         KURTARMA ....... PARAŞÜT / NOMINAL
+  OLAY ........... BATMAN'IN İLK MODEL ROKET FIRLATIŞI
+  ORGANİZASYON ... YEDİİKİ ROBOT VE TEKNOLOJİ YARIŞMASI / BATMAN VALİLİĞİ
+  EKİP ........... CEZERİ ROBOTECH
+  DURUM .......... NOMINAL
   ```
+  Sayısal telemetri (apogee, max hız, uçuş süresi) `lib/facts.ts`'te **boş slot** olarak
+  durur; kullanıcı gerçek değerleri verdiğinde kartta görünür.
 - Ardından paraşüt açılır, iniş başlar, S05'e geçilir
 
 ---
@@ -188,7 +211,10 @@ Kapı açıldığında arkasındaki medya (Higgsfield video slot'u) oynar; kapan
 `ROKET / ARI-1` · `GEZGİN ROBOT / KEŞİF` · `İHA / GÖZCÜ` · `ROBOT KOL / 6-DOF` · `ÇİZGİ İZLEYEN` · `PCB / KENDİ TASARIMIMIZ`
 
 - Hover: WebGL `displacementMap` ile hafif dalgalanma + etiketin turuncuya dönmesi
-- **TEKNOFEST KUPASI** kartı diziyi böler: tam yükseklik, turuncu zemin, siyah tipografi, kupa render'ı
+- **KİLOMETRE TAŞI kartı** diziyi böler *(v2 — kupa yerine doğrulanmış olay)*: tam yükseklik,
+  turuncu zemin, siyah tipografi —
+  `BATMAN'IN İLKİ · VTOL İHA UÇUŞU + MODEL ROKET FIRLATIŞI · YEDİİKİ ROBOT VE TEKNOLOJİ YARIŞMASI`
+  Kart tıklanabilir → `/basinda-biz/batmanin-ilk-vtol-iha-ucusu` sayfasına gider (iç link gücü).
 - Üstte ince mono şerit: `PROJE 03 / 06 — TASARIM: KADET EKİBİ — YIL: 2025`
 - Alt not: `Görsellerde KVKK gereği öğrenci kimliği paylaşılmaz.`
 
@@ -315,7 +341,7 @@ Tüm çıktılar `public/media/` altına; `lib/media.ts` üzerinden bağlanır. 
 | `V4_mech` | S03-C hangar | Robot kolun tek eksen hareketi, makro, turuncu servo LED'i. |
 
 ### Görsel — **GPT Image 2** (7 adet, 2048px, stüdyo)
-`I1_rocket` · `I2_rover` · `I3_uav` · `I4_arm` · `I5_pcb` · `I6_trophy` (TEKNOFEST kupası) · `I7_og` (1200×630 OG kartı)
+`I1_rocket` · `I2_rover` · `I3_uav` · `I4_arm` · `I5_pcb` · `I6_milestone` (kilometre taşı kartı görseli) · `I7_og` (1200×630 OG kartı)
 Hepsi: siyah sonsuz zemin, tek anahtar ışık + turuncu kenar ışığı, ürün fotoğrafçılığı dili.
 
 ### Instagram arşivinden (kullanıcı seçecek)
@@ -336,6 +362,8 @@ Filtre: yüz görünmeyen; prototip / atölye / kupa odaklı kareler.
 | **F5** | S07 form + API + doğrulama | `evidence/ac7-*.md` |
 | **F6** | Medya entegrasyonu (Higgsfield kredisi geldiğinde) + arşiv görselleri | `evidence/ac2-*.md` |
 | **F7** | Performans + erişilebilirlik + mobil geçişi, Lighthouse ölçümü, `loop verify` + `loop score` | `evidence/ac3,4,6-*.md` |
+| **F8** | **SEO/GEO altyapısı:** metadata, `sitemap.ts`, `robots.ts` (AI crawler izinleri), JSON-LD (`schema-dts`), `llms.txt` + `llms-full.txt`, 301 haritası | `evidence/ac8-*.md` |
+| **F9** | **İçerik katmanı:** `/basinda-biz` haber sayfaları, `/sss` (FAQPage), yerel sorgu sayfaları, `/hakkimizda` | `evidence/ac9,10-*.md` |
 
 ### Kabul kriterleri (ölçülebilir — `loop verify` bunları arar)
 
@@ -348,6 +376,10 @@ Filtre: yüz görünmeyen; prototip / atölye / kupa odaklı kareler.
 | **AC5** | `next build` + `tsc --noEmit` sıfır hata (strict) | Ham terminal çıktısı |
 | **AC6** | 390 / 768 / 1440 / 2560 px'te düzen bozulmuyor; mobilde 3D fallback devrede | 4 ekran görüntüsü |
 | **AC7** | Form doğrulaması ve gönderimi çalışıyor; hatalı girişte anlamlı mesaj | API testi + ekran görüntüsü |
+| **AC8** | Her rota benzersiz title/description/canonical taşıyor; `sitemap.xml` + `robots.txt` üretiliyor; JSON-LD **Rich Results Test'ten hatasız** geçiyor | Doğrulayıcı çıktısı + rota tablosu |
+| **AC9** | İçerik sayfalarında **WebGL yok**, LCP < 1.2 s | Lighthouse ham çıktısı (sayfa başına) |
+| **AC10** | Sitedeki **her olgusal iddia** `artifacts/seo-arastirma…md`'deki doğrulanmış listeye dayanıyor; kaynaksız iddia yok | İddia→kaynak eşleme tablosu |
+| **AC11** | AI crawler'lara (`GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, `OAI-SearchBot`, `Applebot-Extended`, `CCBot`) izin veriliyor; `llms.txt` erişilebilir | `robots.txt` + `llms.txt` ham içerik |
 
 ---
 
@@ -369,3 +401,68 @@ Filtre: yüz görünmeyen; prototip / atölye / kupa odaklı kareler.
 - Production deploy / domain / DNS → **human approval** gerektirir, otomatik yapılmaz
 - Öğrenci verisi tutan gerçek veritabanı → form şimdilik e-posta/webhook'a düşer
 - Higgsfield çağrısı → kullanıcı kredi yüklediğini bildirene kadar YOK
+
+---
+
+## 8. HİBRİT MİMARİ + SEO/GEO KATMANI *(v2)*
+
+Strateji ayrıntısı: `artifacts/seo-arastirma-ve-haber-envanteri.md`
+
+### 8.1 Rota haritası
+
+| Rota | Ağırlık | Birincil hedef sorgu | Şema |
+|---|---|---|---|
+| `/` | Ağır (WebGL) | `cezeri robotech`, marka sorguları | `EducationalOrganization` + `LocalBusiness` |
+| `/hakkimizda` | Hafif | `cezeri robotech kimdir`, `metin özer` | `AboutPage` + `Person` |
+| `/laboratuvarlar/yapay-zeka` | Hafif | `batman yapay zeka eğitimi` | `Course` |
+| `/laboratuvarlar/iha-roket` | Hafif | `batman iha eğitimi`, `batman drone kursu` | `Course` |
+| `/laboratuvarlar/mekatronik` | Hafif | `batman mekatronik atölye`, `3d yazıcı` | `Course` |
+| `/batman-robotik-kodlama-kursu` | Hafif | `batman robotik kodlama kursu` ⭐ | `Course` + `LocalBusiness` |
+| `/batman-cocuk-yazilim-kursu` | Hafif | `batman çocuk yazılım kursu` | `Course` |
+| `/basinda-biz` | Hafif | `cezeri robotech haber` | `CollectionPage` |
+| `/basinda-biz/[slug]` | Hafif | uzun kuyruk | `NewsArticle` |
+| `/sss` | Hafif | soru biçimli sorgular ⭐ **AEO** | `FAQPage` |
+| `/iletisim` | Hafif | `batman robotik kurs adres/telefon` | `LocalBusiness` + `ContactPage` |
+
+**Kural:** `/` dışındaki hiçbir rota Three.js **import etmez**. Ayrı chunk, ayrı bütçe.
+
+### 8.2 İlk `/basinda-biz` içerikleri (doğrulanmış)
+
+| Slug | Başlık | Kaynak |
+|---|---|---|
+| `batmanin-ilk-vtol-iha-ucusu` | Batman'ın ilk VTOL İHA uçuşu ve model roket fırlatışı | ilkha · Batman Gazetesi · Batman Rehber · batmansonsoz |
+| `beso-dijital-donusum-protokolu` | BESO ile dijital dönüşüm protokolü (Nisan 2025) | Batman Gazetesi · Batman Yön |
+| `yediiki-robot-teknoloji-yarismasi` | Yediiki Robot ve Teknoloji Yarışması / Batman Valiliği | malatyaensonhaber · Batman Rehber |
+
+Her sayfa: özet + **doğrudan kaynak linki** (`rel="nofollow noopener"` değil — kaynağa
+gerçek atıf) + `NewsArticle` JSON-LD + one-page'deki ilgili sahneye iç link.
+⚠️ Yayın öncesi her haber **kaynağından birebir teyit edilecek** (ortam kısıtı nedeniyle
+şu an yalnızca arama özeti mevcut).
+
+### 8.3 `robots.txt` politikası
+```
+User-agent: GPTBot            Allow: /     # ChatGPT eğitim/arama
+User-agent: OAI-SearchBot     Allow: /     # ChatGPT arama
+User-agent: ChatGPT-User      Allow: /     # ChatGPT gezinme
+User-agent: ClaudeBot         Allow: /     # Claude
+User-agent: Claude-SearchBot  Allow: /
+User-agent: PerplexityBot     Allow: /
+User-agent: Google-Extended    Allow: /    # ⚠️ Gemini görünürlüğünün ÖN KOŞULU
+User-agent: Applebot-Extended Allow: /
+User-agent: CCBot             Allow: /
+Sitemap: https://cezerirobotech.com/sitemap.xml
+```
+
+### 8.4 Alan adı devri — 301 haritası
+`cezerirobotech.com` devralınacağı için **mevcut URL'lerin envanteri çıkarılmalı** ve
+her biri yeni karşılığına 301 ile yönlendirilmeli. Aksi halde alan adının mevcut
+backlink ve yaş değeri kaybolur.
+**Bu ortamdan `cezerirobotech.com` okunamıyor (proxy 403)** → mevcut URL listesi
+kullanıcıdan veya Search Console'dan alınacak. `next.config.js` `redirects()` içine yazılır.
+
+### 8.5 Kod ile çözülemeyen, kullanıcının yapması gerekenler
+1. **Google Business Profile** — yerel sıralamadaki tek en büyük faktör
+2. **NAP tutarlılığı** — ad/adres/telefon sitede, Instagram bio'da, GBP'de birebir aynı
+3. **Google Search Console + Bing Webmaster** — doğrulama + sitemap gönderimi
+4. **Yerel backlink** — BESO (`beso.org.tr`) ve Batman Valiliği etkinlik sayfalarından link talebi
+5. **Instagram içi SEO** — bio anahtar kelimesi, alt-text, konum etiketi (site dışı iş)
