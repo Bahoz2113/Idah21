@@ -29,8 +29,15 @@ export function S03Hangar() {
                   slot={lab.videoSlot}
                   label={`${lab.title} — ${lab.subtitle}. Cezeri Robotech laboratuvarı, Batman.`}
                   sizes="100vw"
-                  className="h-full w-full object-cover opacity-45"
+                  className="h-full w-full object-cover object-[70%_center] opacity-45 md:object-center"
                 />
+                {/*
+                  Okunabilirlik perdesi. Videoların parlak bölgesi (monitörler,
+                  yazıcı) sağda; masaüstünde metin solda olduğu için soldan
+                  koyulaşan perde yeterli. Mobilde metin videonun üstünde tam
+                  genişlikte durduğundan perde aşağıdan yukarı çalışır.
+                */}
+                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/75 to-void/25 md:bg-gradient-to-r md:from-void md:via-void/65 md:to-transparent" />
               </div>
 
               {/* Uyarı şeridi */}

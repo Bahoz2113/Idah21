@@ -123,3 +123,39 @@ Course + syllabusSections + typicalAgeRange  şemada
 three.js /mufredat sayfalarında              0
 Tarayıcı paketi                              13/13 geçti
 ```
+
+## Mobil denetimi (2026-08-01) — 390×844, dpr 2
+
+13 ekran görüntüsü alındı (8 sahne + 5 içerik sayfası). Sağlık ölçümü:
+```
+yatay taşma        0 px
+canvas             1
+video              4
+```
+
+### Bulunan ve düzeltilen 3 kusur
+
+**1. Hero videosu mobilde kayboluyordu.** Video 16:9; dikey ekranda
+`object-cover` genişliğin yalnızca ~%26'sını gösteriyor ve merkez kırpması
+duman sütununu kadraj dışında bırakıyordu — arka plan boş karanlığa dönüyordu.
+→ Mobilde `object-position` %78'e kaydırıldı, masaüstünde merkez korundu.
+
+**2. Hangar videosunda metin okunabilirliği zayıftı.** Perde (scrim) yoktu;
+monitör parıltısı doğrudan metnin arkasına geliyordu.
+→ Mobilde alttan, masaüstünde soldan koyulaşan perde eklendi.
+
+**3. `v3-lab` videosundaki uydurma yazı geri gelmişti — ilk düzeltme yetersizdi.**
+Önceki turda sabit bir bölgeye `boxblur` uygulanmıştı. Ancak yazıcı kafası
+video boyunca **hareket ediyor**: ekran x≈1215→1560, y≈565→665 aralığında
+geziyor. Sabit kutu yalnızca tek pozisyonu yakalıyordu.
+
+Denenen ikinci çözüm (tüm hareket aralığını kapsayan geniş bulanıklık) net bir
+**sansür dikdörtgeni** üretti — bozuk yazıdan daha kötü.
+
+Kabul edilen çözüm: videoyu ekranın hiç girmediği kadraja **kırpmak**
+(`crop=1180:664:0:230`). Sonuç hem sorunu tamamen çözdü hem kompozisyonu
+iyileştirdi: sol yarı tam karanlık (metin için), sağda odak dışı monitörler.
+"AI & Deep Learning Lab" teması için monitörler zaten 3B yazıcıdan daha uygun.
+Dosya 345 KB → 196 KB'ye indi.
+
+Düzeltmelerden sonra tarayıcı paketi yeniden çalıştırıldı: **13/13 geçti.**

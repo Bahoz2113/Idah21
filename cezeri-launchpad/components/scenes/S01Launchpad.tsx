@@ -17,12 +17,18 @@ export function S01Launchpad() {
       {/* Fırlatma videosu — aynalandı, duman sütunu sağda; manşetin arkası
           temiz gece gökyüzü kalıyor. WebGL dişli katmanının altında durur. */}
       <div className="pointer-events-none absolute inset-0 -z-10">
+        {/*
+          Kadraj kaydırma: video 16:9. Dikey ekranda `object-cover` genişliğin
+          yalnızca ~%26'sını gösteriyor ve merkez kırpması duman sütununu
+          kadraj dışında bırakıyordu — arka plan boş karanlığa dönüyordu.
+          Mobilde odak sağa (%78) kaydırıldı; masaüstünde merkez kalıyor.
+        */}
         <MediaSlot
           slot="v1-launch"
           label="Gece yapılan model roket fırlatışı; turuncu alev ve yükselen duman sütunu."
-          className="h-full w-full object-cover opacity-55"
+          className="h-full w-full object-cover object-[78%_center] opacity-60 md:object-center md:opacity-55"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/55 to-void/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/15 md:via-void/55 md:to-void/20" />
       </div>
 
       <div className="relative flex h-full flex-col justify-end px-6 pb-24 md:px-16 md:pb-32">
