@@ -10,7 +10,10 @@ export interface Lab {
   readonly question: string;
   readonly answer: string;
   readonly equipment: readonly string[];
+  /** İçerik sayfası hero görseli — hafif, WebGL/video yok. */
   readonly mediaSlot: string;
+  /** Hangar sahnesi arka plan videosu (yalnızca `/` üzerinde). */
+  readonly videoSlot: string;
 }
 
 export const LABS: readonly Lab[] = [
@@ -26,6 +29,7 @@ export const LABS: readonly Lab[] = [
       "Cezeri Robotech, Batman'da çocuklara ve gençlere yapay zekâ ve otonom kodlama eğitimi veren bir öğrenme merkezidir. AI & Deep Learning Lab'de görüntü işleme, nesne tanıma ve otonom karar sistemleri üzerine uygulamalı çalışmalar yapılır.",
     equipment: ["PYTHON", "OPENCV", "TENSORFLOW", "JETSON NANO"],
     mediaSlot: "l1-ai-lab",
+    videoSlot: "v3-lab",
   },
   {
     slug: "iha-roket",
@@ -39,6 +43,7 @@ export const LABS: readonly Lab[] = [
       "Cezeri Robotech, Batman'da insansız hava aracı ve model roket eğitimi vermektedir. Kurum, Batman Valiliği'nin düzenlediği Yediiki Robot ve Teknoloji Yarışması'nda Batman'ın ilk VTOL İHA uçuşunu ve ilk model roket fırlatışını gerçekleştirmiştir.",
     equipment: ["CFD", "KATI YAKIT", "TELEMETRİ", "KURTARMA SİSTEMİ"],
     mediaSlot: "l2-uav-lab",
+    videoSlot: "v2-uav",
   },
   {
     slug: "mekatronik",
@@ -52,6 +57,7 @@ export const LABS: readonly Lab[] = [
       "Cezeri Robotech'in mekatronik atölyesinde öğrenciler CAD tasarımı, 3B baskı, PCB tasarımı ve montaj süreçlerini uçtan uca uygular. Atölye, robotik biliminin öncüsü İsmail el-Cezeri'nin adını taşır.",
     equipment: ["FUSION 360", "FDM / SLA", "CNC", "PCB TASARIM"],
     mediaSlot: "l3-mechatronics",
+    videoSlot: "v4-mech",
   },
 ];
 

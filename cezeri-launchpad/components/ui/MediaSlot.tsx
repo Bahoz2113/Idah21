@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { MEDIA, hasMedia } from "@/lib/media";
+import { AutoVideo } from "./AutoVideo";
 
 /**
  * MEDYA SLOT'U
@@ -28,20 +29,7 @@ export function MediaSlot({
 
   if (hasMedia(slot) && asset) {
     if (asset.kind === "video") {
-      return (
-        <video
-          className={`object-cover ${className}`}
-          poster={asset.poster}
-          preload="none"
-          muted
-          loop
-          playsInline
-          aria-label={label}
-        >
-          <source src={asset.webm} type="video/webm" />
-          <source src={asset.mp4} type="video/mp4" />
-        </video>
-      );
+      return <AutoVideo asset={asset} label={label} className={`object-cover ${className}`} />;
     }
     return (
       <Image

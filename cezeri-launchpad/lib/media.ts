@@ -5,8 +5,9 @@
  * PNG kaynaktan WebP'ye indirgendi (toplam 0.45 MB). `blur` alanları 16px
  * genişliğinde gömülü LQIP yer tutuculardır — yükleme sırasında düzen kaymaz.
  *
- * Videolar (Gemini Omni) henüz gelmedi; o slot'lar kayıtta olmadığı için
- * `MediaSlot` prosedürel yer tutucuya düşer. Site medyasız da çalışır.
+ * Videolar Kling ile üretildi: 1920×1080, 24fps, 8 sn kaynaklar sesi silinip
+ * 1600×900'e ölçeklendi ve kuyruk→baş çapraz geçişiyle 7 sn KESİNTİSİZ DÖNGÜYE
+ * çevrildi. Kayıtta olmayan slot prosedürel yer tutucuya düşer.
  */
 
 export interface VideoAsset {
@@ -27,6 +28,31 @@ export interface ImageAsset {
 export type MediaAsset = VideoAsset | ImageAsset;
 
 export const MEDIA: Readonly<Record<string, MediaAsset | undefined>> = {
+  // ——— Videolar (Kling, 1920×1080 24fps 8s → 1600×900 7s kesintisiz döngü) ———
+  "v1-launch": {
+    kind: "video",
+    webm: "/media/v1-launch.webm",
+    mp4: "/media/v1-launch.mp4",
+    poster: "/media/v1-launch-poster.webp",
+  },
+  "v2-uav": {
+    kind: "video",
+    webm: "/media/v2-uav.webm",
+    mp4: "/media/v2-uav.mp4",
+    poster: "/media/v2-uav-poster.webp",
+  },
+  "v3-lab": {
+    kind: "video",
+    webm: "/media/v3-lab.webm",
+    mp4: "/media/v3-lab.mp4",
+    poster: "/media/v3-lab-poster.webp",
+  },
+  "v4-mech": {
+    kind: "video",
+    webm: "/media/v4-mech.webm",
+    mp4: "/media/v4-mech.mp4",
+    poster: "/media/v4-mech-poster.webp",
+  },
   "g1-rocket": {
     kind: "image",
     src: "/media/g1-rocket.webp",

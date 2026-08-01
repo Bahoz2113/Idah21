@@ -53,8 +53,38 @@ overflow-hidden` ile sarmalandı; ekran görüntüsüyle doğrulandı.
 
 Medya entegrasyonundan sonra tarayıcı paketi yeniden çalıştırıldı: **13/13 geçti.**
 
-**Video slot'ları (Gemini Omni) hâlâ boş** — `MediaSlot` o slot'larda prosedürel
-yer tutucuya düşüyor, site çalışmaya devam ediyor.
+## F6 — Video entegrasyonu (2026-08-01, tamamlandı)
+
+Videolar **Kling** ile üretildi (Gemini Omni yerine). 6 dosya geldi: 4 farklı
+sahne + mekatronik ve İHA için birer yedek varyant. Hepsi 1920×1080, 24 fps,
+8 sn, H.264 + AAC. Filigran yok.
+
+**Kaynak tespiti:** dosya adları zaman damgalıydı; her videodan orta kare
+çıkarılıp kontak sayfası oluşturularak sahneler eşlendi. İlk eşlemede alfabetik
+sıralama ile kontak numaraları karıştırıldı ve `v3-lab` yanlış kaynağı aldı;
+kontrol karesinde yakalandı ve düzeltildi.
+
+**Varyant seçimi** — şartnamedeki negatif alan kuralına göre:
+- Mekatronik: A varyantı (sol yarı tamamen siyah) seçildi, B elendi.
+- İHA: B varyantı (İHA daha sağda, sol yarı daha temiz) seçildi, A elendi.
+
+**İşleme:**
+| İş | Ayrıntı |
+|---|---|
+| Ses | Silindi — 4/4 çıktıda ses akışı yok |
+| Ölçek | 1920×1080 → 1600×900 (lanczos) |
+| **Kesintisiz döngü** | Kuyruk (7–8 sn) baştaki 1 sn'ye karıştırıldı → 7 sn sorunsuz dönen klip. İlk/son kare karşılaştırmasıyla doğrulandı. |
+| **v1 aynalandı** | Duman sütunu solda, manşet de solda kalıyordu. `hflip` ile sütun sağa geçti; manşetin arkası temiz gece gökyüzü oldu. |
+| **v3 yazı temizliği** | 3B yazıcı ekranında AI'ın uydurduğu bozuk yazı vardı ("yazı yok" kuralının ihlali). Bölgesel `boxblur` uygulandı — turuncu parıltı korundu, harf formları odak dışı ekrana dönüştü. `delogo` yerine bulanıklık tercih edildi: parıltıyı öldürmüyor. |
+| Çıktı | WebM (VP9) + MP4 (H.264) + WebP poster |
+
+**Boyutlar:** en büyük klip 546 KB WebM — hedef klip başına <2.5 MB idi.
+
+**Oynatma:** `AutoVideo` bileşeni IntersectionObserver ile yalnızca görünürken
+oynatır; üç hangar videosu aynı anda kod çözmez. `prefers-reduced-motion`
+altında video hiç oynatılmaz, poster karesi kalır (AC4).
+
+Video entegrasyonundan sonra tarayıcı paketi yeniden çalıştırıldı: **13/13 geçti.**
 
 ## Ayrıntı
 `detay-sistem-kurulumu.md`, `detay-ham-html-gptbot.md`, `detay-tarayici-dogrulamasi.md`

@@ -1,5 +1,6 @@
 import { ORG, getFact } from "@/lib/facts";
 import { Reveal } from "@/components/ui/Reveal";
+import { MediaSlot } from "@/components/ui/MediaSlot";
 import { ScrollScene } from "./ScrollScene";
 
 /**
@@ -13,6 +14,17 @@ export function S01Launchpad() {
 
   return (
     <ScrollScene id="s01" index={0} length={3} progressKey="launchpad">
+      {/* Fırlatma videosu — aynalandı, duman sütunu sağda; manşetin arkası
+          temiz gece gökyüzü kalıyor. WebGL dişli katmanının altında durur. */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <MediaSlot
+          slot="v1-launch"
+          label="Gece yapılan model roket fırlatışı; turuncu alev ve yükselen duman sütunu."
+          className="h-full w-full object-cover opacity-55"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/55 to-void/20" />
+      </div>
+
       <div className="relative flex h-full flex-col justify-end px-6 pb-24 md:px-16 md:pb-32">
         <Reveal>
           <p className="t-mono mb-6 text-ignition">
