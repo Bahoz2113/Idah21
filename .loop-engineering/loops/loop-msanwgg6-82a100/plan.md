@@ -135,8 +135,16 @@ Toplam scroll uzunluğu ≈ **900vh**. Her sahnede `data-scene` özniteliği var
 > **CEZERİ ROBOTECH**
 > `BATMAN'IN İLK VTOL İHA UÇUŞU VE MODEL ROKET FIRLATIŞI · GELECEĞİN MÜHENDİSLERİ YETİŞİYOR`
 
-> ⚠️ Bu satır aynı zamanda sayfanın **birincil alıntılanabilir cümlesidir** —
-> `<h1>` ve `EducationalOrganization` JSON-LD `description` alanıyla birebir eşleşir.
+> **v3 — GEO düzeltmesi (bkz. `artifacts/geo-optimizasyon-spec.md`):**
+> Sinematik manşet `<h1>` **olamaz** — LLM'lerin ilk okuduğu satır olgusal olmalı.
+> Doğru kurulum:
+> ```html
+> <p class="display-xl">BATMAN'DA GELECEĞİ İNŞA EDİYORUZ</p>   <!-- görsel manşet -->
+> <h1>Cezeri Robotech — Batman'da yazılım, yapay zekâ ve havacılık
+>     eğitimi veren öğrenme merkezi</h1>                        <!-- olgusal h1 -->
+> ```
+> `<h1>` metni, meta description ve `EducationalOrganization` JSON-LD `description`
+> alanıyla **birebir aynı** olur. Görsel hiyerarşi CSS ile kurulur, HTML anlamı bozulmaz.
 
 **HUD:** sağ üst `37°52′N 41°08′E · UTC+3 hh:mm:ss` · sol alt `SCENE 01 / LAUNCHPAD`
 **Fallback:** `prefers-reduced-motion` veya WebGL yok → statik poster + CSS fade.
@@ -380,6 +388,10 @@ Filtre: yüz görünmeyen; prototip / atölye / kupa odaklı kareler.
 | **AC9** | İçerik sayfalarında **WebGL yok**, LCP < 1.2 s | Lighthouse ham çıktısı (sayfa başına) |
 | **AC10** | Sitedeki **her olgusal iddia** `artifacts/seo-arastirma…md`'deki doğrulanmış listeye dayanıyor; kaynaksız iddia yok | İddia→kaynak eşleme tablosu |
 | **AC11** | AI crawler'lara (`GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, `OAI-SearchBot`, `Applebot-Extended`, `CCBot`) izin veriliyor; `llms.txt` erişilebilir | `robots.txt` + `llms.txt` ham içerik |
+| **AC12** ⭐ | `curl -A "GPTBot"` ile alınan **ham HTML'de** (JS render'sız) her olgusal cümle bulunuyor | curl + grep çıktısı |
+| **AC13** | Her H2 bloğu kendi kendine yeter: özne açık, tarihli, rakamlı, kaynaklı | Blok denetim tablosu |
+| **AC14** | İçerik katmanında öznel ifade taraması ("bence", "bize göre", "inanıyoruz") 0 sonuç | grep çıktısı |
+| **AC15** | Her olgusal iddianın inline kaynak atfı (`<cite>` + link) var | İddia→kaynak eşleme tablosu |
 
 ---
 
