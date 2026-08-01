@@ -14,6 +14,7 @@ const NAV = [
   { href: "/laboratuvarlar/yapay-zeka", label: "Yapay Zekâ Laboratuvarı" },
   { href: "/laboratuvarlar/iha-roket", label: "İHA & Roket Atölyesi" },
   { href: "/laboratuvarlar/mekatronik", label: "Mekatronik Atölyesi" },
+  { href: "/mufredat", label: "Müfredat — 169 Haftalık Ders Planı" },
   { href: "/batman-robotik-kodlama-kursu", label: "Batman Robotik Kodlama Kursu" },
   { href: "/basinda-biz", label: "Basında Biz" },
   { href: "/sss", label: "Sık Sorulan Sorular" },

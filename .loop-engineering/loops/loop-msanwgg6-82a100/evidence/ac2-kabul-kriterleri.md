@@ -88,3 +88,38 @@ Video entegrasyonundan sonra tarayıcı paketi yeniden çalıştırıldı: **13/
 
 ## Ayrıntı
 `detay-sistem-kurulumu.md`, `detay-ham-html-gptbot.md`, `detay-tarayici-dogrulamasi.md`
+
+## F10 — Müfredat ve tema animasyonları (2026-08-01)
+
+Dört müfredat (169 hafta) `lib/curriculum.ts`'e işlendi ve 18 temaya eşlendi.
+
+| Program | Hafta | Animasyon |
+|---|---|---|
+| İlkokul Atölye | 59 | 12 |
+| Elektronik | 26 | 9 |
+| Yazılım | 31 | 10 |
+| Arduino İleri | 53 | 12 |
+
+**Düzeltilen tasarım hatası:** Animasyon önce "tema değiştiğinde" gösteriliyordu.
+Temalar dönüşümlü ilerlediği için (P2'de lehim haftaları bir atlayarak geliyor)
+26 haftalık programda **24 animasyon** çıktı — neredeyse her hafta, yani
+"önemli başlıkta animasyon" fikri boşa çıkıyordu. Kural **"temanın programda
+ilk geçtiği hafta"** olarak değiştirildi; sayı 9-12'ye indi.
+
+**Animasyon türü ayrımı:** 8 soyut tema saf CSS'li SVG (döngü, PWM, ultrasonik,
+transistör, ses, sıcaklık, batarya, veri akışı) — JS yok, sunucudan render
+ediliyor. 10 fiziksel tema video slot'u; 8'i Kling'den beklenirken 2'si
+(`v2-uav`, `v4-mech`) mevcut kliplerle karşılanıyor.
+
+**Kaynak notu:** Arduino İleri programının dönem aralıkları kaynak belgede
+çakışıyordu (1-13, 13-27, 25-37, 37-49) ve öğe sayısıyla uyuşmuyordu.
+Öğeler ardışık numaralandı ve program 53 hafta olarak işlendi.
+
+**Doğrulamalar:**
+```
+/mufredat + 4 program sayfası                200
+GPTBot ham HTML: hafta metinleri             bulundu
+Course + syllabusSections + typicalAgeRange  şemada
+three.js /mufredat sayfalarında              0
+Tarayıcı paketi                              13/13 geçti
+```

@@ -178,3 +178,47 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MÜFREDAT TEMA ANİMASYONLARI — saf CSS, JS yok
+   Her animasyon, durağan hâlinde de anlamlı olacak şekilde tasarlandı;
+   prefers-reduced-motion altında hepsi durur ve diyagram okunur kalır.
+   ══════════════════════════════════════════════════════════════ */
+
+@keyframes czr-wiper   { 0%,100% { transform: translateX(-24px); } 50% { transform: translateX(24px); } }
+@keyframes czr-glow    { 0%,100% { opacity: .15; } 50% { opacity: .85; } }
+@keyframes czr-wave    { 0% { opacity: 0; transform: translateX(-6px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateX(10px); } }
+@keyframes czr-blink   { 0%,55% { opacity: .12; } 65%,90% { opacity: .9; } 100% { opacity: .12; } }
+@keyframes czr-mercury { 0%,100% { transform: scaleY(.35); } 55% { transform: scaleY(1); } }
+@keyframes czr-ping    { 0% { opacity: 0; transform: translateX(0); } 15% { opacity: 1; } 50% { opacity: 1; transform: translateX(112px); } 51% { opacity: .35; } 100% { opacity: 0; transform: translateX(0); } }
+@keyframes czr-flow    { to { stroke-dashoffset: -24; } }
+@keyframes czr-fill    { 0%,20% { opacity: 0; } 40%,100% { opacity: .85; } }
+@keyframes czr-step    { 0%,100% { stroke: var(--color-ash); } 20%,40% { stroke: var(--color-ignition); } }
+@keyframes czr-spin    { to { transform: rotate(360deg); } }
+@keyframes czr-packet  { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(76px); opacity: 0; } }
+@keyframes czr-char    { 0%,30% { opacity: 0; } 45%,100% { opacity: .9; } }
+
+.czr-wiper      { animation: czr-wiper 4s ease-in-out infinite; }
+.czr-glow       { animation: czr-glow 4s ease-in-out infinite; opacity: .15; }
+.czr-wave       { animation: czr-wave 1.6s ease-out infinite; }
+.czr-blink      { animation: czr-blink 2.6s ease-in-out infinite; opacity: .12; }
+.czr-mercury    { animation: czr-mercury 5s ease-in-out infinite; transform-origin: 55px 86px; }
+.czr-ping       { animation: czr-ping 2.4s linear infinite; opacity: 0; }
+.czr-flow       { animation: czr-flow 1.2s linear infinite; }
+.czr-flow-fat   { animation: czr-flow 0.7s linear infinite; }
+.czr-fill       { animation: czr-fill 3.6s ease-in-out infinite; opacity: 0; }
+.czr-step       { animation: czr-step 2.4s ease-in-out infinite; }
+.czr-spin-arrow { animation: czr-spin 3.2s linear infinite; transform-origin: 168px 82px; }
+.czr-packet     { animation: czr-packet 2.4s linear infinite; opacity: 0; }
+.czr-char       { animation: czr-char 2.4s ease-in-out infinite; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .czr-wiper, .czr-glow, .czr-wave, .czr-blink, .czr-mercury, .czr-ping,
+  .czr-flow, .czr-flow-fat, .czr-fill, .czr-step, .czr-spin-arrow,
+  .czr-packet, .czr-char {
+    animation: none !important;
+  }
+  /* Hareket kapalıyken diyagram anlamını korusun: gizli öğeler görünür olur */
+  .czr-glow, .czr-blink, .czr-fill, .czr-char { opacity: .8 !important; }
+  .czr-ping { opacity: 1 !important; }
+}

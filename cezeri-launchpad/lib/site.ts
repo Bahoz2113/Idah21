@@ -1,4 +1,5 @@
 import { LABS } from "./content";
+import { PROGRAMS } from "./curriculum";
 
 export const SITE_URL = "https://cezerirobotech.com";
 
@@ -117,5 +118,7 @@ export function allRoutes(): readonly string[] {
     ...PRESS.map((p) => `/basinda-biz/${p.slug}`),
     ...LABS.map((l) => `/laboratuvarlar/${l.slug}`),
     ...LOCAL_PAGES.map((p) => `/${p.slug}`),
+    "/mufredat",
+    ...PROGRAMS.map((p) => `/mufredat/${p.slug}`),
   ];
 }
