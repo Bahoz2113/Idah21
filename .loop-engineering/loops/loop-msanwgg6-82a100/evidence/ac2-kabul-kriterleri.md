@@ -27,5 +27,34 @@ Plandaki AC1–AC15'in tek tablodaki durumu.
 **14/15 karşılandı.** AC3 ortam kısıtı nedeniyle beklemede; yapısal ön koşulları
 (tam statik rotalar, izole three.js chunk'ı) sağlanmış durumda.
 
+## F6 — Medya entegrasyonu (2026-08-01, tamamlandı)
+
+Nano Banana ile üretilen **11/11 görsel** teslim alındı ve entegre edildi.
+Adlandırma ve oranlar `artifacts/gorsel-senaryolari.md` şartnamesine birebir uydu.
+
+| Denetim | Sonuç |
+|---|---|
+| Dosya sayısı | 11/11 |
+| Oranlar (galeri 3:4, lab 16:9, OG 1.91:1, dişli 1:1) | ✅ tümü uyumlu |
+| Yüz / insan | ✅ yok |
+| Yazı / logo | ✅ yok |
+| Palet (lacivert + turuncu + kömür) | ✅ uyumlu |
+| Negatif alan (lab görsellerinde sol yarı karanlık) | ✅ metin okunur |
+| C1 dişli görselinde hat sanatı riski | ✅ gerçekleşmedi, saf mekanik |
+
+**İşleme:** 18 MB PNG → **484 KB WebP** (%97 küçülme). Her görsele 16px
+gömülü LQIP blur yer tutucu üretildi; `next/image` responsive `sizes` ile
+bağlandı. OG kartı tam 1200×630'a kırpıldı ve `openGraph` + `twitter`
+metadata'sına bağlandı.
+
+**Düzeltilen kusur:** Galeri kartlarında görsel intrinsic yüksekliği alt bilgi
+bloğunu kartın dışına itiyordu. Görsel kutusu `relative min-h-0 flex-1
+overflow-hidden` ile sarmalandı; ekran görüntüsüyle doğrulandı.
+
+Medya entegrasyonundan sonra tarayıcı paketi yeniden çalıştırıldı: **13/13 geçti.**
+
+**Video slot'ları (Gemini Omni) hâlâ boş** — `MediaSlot` o slot'larda prosedürel
+yer tutucuya düşüyor, site çalışmaya devam ediyor.
+
 ## Ayrıntı
 `detay-sistem-kurulumu.md`, `detay-ham-html-gptbot.md`, `detay-tarayici-dogrulamasi.md`

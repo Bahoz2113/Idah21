@@ -50,11 +50,16 @@ export function S05Prototypes() {
               key={p.id}
               className="relative flex h-[58svh] w-[70vw] shrink-0 flex-col border border-[var(--hairline)] md:w-[24rem]"
             >
-              <MediaSlot
-                slot={p.mediaSlot}
-                label={`${p.name} — ${p.category}. Cezeri Robotech öğrenci prototipi.`}
-                className="h-full w-full flex-1"
-              />
+              {/* Görsel kutusu: `flex-1 min-h-0` olmadan intrinsic yükseklik
+                  alt bilgi bloğunu kartın dışına itiyor. */}
+              <div className="relative min-h-0 flex-1 overflow-hidden">
+                <MediaSlot
+                  slot={p.mediaSlot}
+                  label={`${p.name} — ${p.category}. ${p.note} Cezeri Robotech öğrenci prototipi, stüdyo çekimi.`}
+                  sizes="(max-width: 768px) 70vw, 384px"
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
               <div className="border-t border-[var(--hairline)] bg-void p-5">
                 <p className="t-mono mb-2 text-ash">
                   Proje {String(i + 1).padStart(2, "0")} / {String(PROTOTYPES.length).padStart(2, "0")} — {p.category}

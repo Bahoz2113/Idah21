@@ -27,8 +27,10 @@ export function S03Hangar() {
               <div className="pointer-events-none absolute inset-0 -z-10">
                 <MediaSlot
                   slot={lab.mediaSlot}
-                  label={`${lab.title} — laboratuvar görüntüsü`}
-                  className="h-full w-full opacity-30"
+                  label={`${lab.title} — ${lab.subtitle}. Cezeri Robotech laboratuvarı, Batman.`}
+                  sizes="100vw"
+                  priority={i === 0}
+                  className="h-full w-full object-cover opacity-40"
                 />
               </div>
 

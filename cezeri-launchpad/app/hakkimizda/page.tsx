@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ContentPage, CitableBlock } from "@/components/content/ContentPage";
 import { ORG, verifiedFacts } from "@/lib/facts";
+import { MediaSlot } from "@/components/ui/MediaSlot";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -13,6 +14,18 @@ export default function HakkimizdaPage() {
 
   return (
     <ContentPage eyebrow="Hakkımızda" title="Cezeri Robotech" lead={ORG.description}>
+      <figure className="mb-12">
+        <MediaSlot
+          slot="c1-gears"
+          label="İsmail el-Cezeri dönemi otomat mekanizmasına ait pirinç dişli çarklar, makro çekim."
+          sizes="(max-width: 768px) 100vw, 768px"
+          className="w-full"
+        />
+        <figcaption className="t-mono mt-3 text-ash/70">
+          Programlanabilir otomatların mekaniği — el-Cezeri&apos;nin mirası
+        </figcaption>
+      </figure>
+
       <CitableBlock question="Cezeri Robotech nedir?">
         <p>
           Cezeri Robotech, {ORG.legalCity}&apos;da yazılım, yapay zekâ ve havacılık

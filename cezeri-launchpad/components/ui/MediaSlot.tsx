@@ -15,11 +15,14 @@ export function MediaSlot({
   label,
   className = "",
   priority = false,
+  sizes = "(max-width: 768px) 100vw, 50vw",
 }: {
   slot: string;
   label: string;
   className?: string;
   priority?: boolean;
+  /** Responsive srcset ipucu — yanlış değer gereksiz büyük dosya indirtir. */
+  sizes?: string;
 }) {
   const asset = MEDIA[slot];
 
@@ -47,6 +50,9 @@ export function MediaSlot({
         width={asset.width}
         height={asset.height}
         priority={priority}
+        placeholder="blur"
+        blurDataURL={asset.blur}
+        sizes={sizes}
         className={`object-cover ${className}`}
       />
     );

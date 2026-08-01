@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import type { EducationalOrganization, WithContext } from "schema-dts";
 import { ORG } from "@/lib/facts";
+import { OG_IMAGE } from "@/lib/media";
 import { Frame } from "@/components/hud/Frame";
 import { Telemetry } from "@/components/hud/Telemetry";
 import "./globals.css";
@@ -41,6 +42,18 @@ export const metadata: Metadata = {
     siteName: ORG.name,
     title: "Cezeri Robotech — Batman'da yazılım, yapay zekâ ve havacılık eğitimi",
     description: ORG.description,
+    images: [
+      {
+        url: OG_IMAGE.src,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: "Gece gökyüzünde yükselen model roket — Cezeri Robotech, Batman.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_IMAGE.src],
   },
   robots: { index: true, follow: true },
 };

@@ -39,7 +39,7 @@ gelir ve en az bir kaynak taşır. Kaynaksız iddia eklenmez.
 - [x] F3 — S03 hangar + S04 ilk fırlatış
 - [x] F4 — S05 galeri + S06 metodoloji
 - [x] F5 — S07 uçuş izin formu
-- [ ] F6 — medya entegrasyonu (Gemini Omni video + Nano Banana görsel)
+- [x] F6 — medya entegrasyonu (Gemini Omni video + Nano Banana görsel)
 - [x] F7 — performans + erişilebilirlik
 - [x] F8 — SEO/GEO altyapısı
 - [x] F9 — içerik katmanı
