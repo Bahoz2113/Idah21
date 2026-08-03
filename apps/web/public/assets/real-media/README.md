@@ -29,6 +29,23 @@ koymak yetmez, manifest'e kayıt eklenmelidir.
 Her videonun yanında `<ad>-poster.webp` bulunur. Galeri kartı **yalnızca
 posteri** yükler; video dosyası kullanıcı kartı açtığında indirilir.
 
+## Yüz anonimleştirme
+
+Çocukların ve katılımcıların yüzleri, KVKK gereği tanınmayacak şekilde
+maskelenmiştir. İşlem `scripts/anonymize-faces.py` ile yapılır:
+YuNet yüz tespiti + zamansal iz sürme + pikselleştirme.
+
+Anonimleştirilmiş varlıklar:
+`saha-roket-firlatma-01`, `saha-roket-mizrak-01`, `saha-hava-cekimi-01`,
+`atolye-ldr-dersi-01`, `etkinlik-avm-standi-01`, `ekip-iha-takim-01`,
+`saha-roket-ekip-01`.
+
+`ekip-egitmenler-01` (eğitmen kadrosu portresi) KASITLI olarak maskelenmedi —
+fotoğrafın konusu kurumun kendi çalışanları ve tanıtım amacıyla çekilmiş.
+
+**Yeni varlık eklerken:** içinde yüz varsa önce anonimleştirme betiğinden
+geçirin. Ham dosyayı doğrudan manifest'e bağlamayın.
+
 ## Hâlâ eksik olanlar
 
 Manifest'teki `3d-baski` ve `robotik` kategorileri şu an boş — filtre listesi
@@ -41,6 +58,42 @@ gelirse otomatik açılırlar:
 | Bitmiş 3D baskı parçasının ölçülmesi / montajı | `3d-baski` |
 | Çizgi izleyen robot testi, robot yarışı | `robotik` |
 | Öğrencinin robot kolu / paletli robot programlaması | `robotik` |
+
+### Higgsfield ile üretilmiş bekleyen konsept görseller
+
+Bu iki kategori için GPT Image 2 ile fotogerçekçi konsept görseli üretildi.
+Dosyalar Higgsfield hesabında duruyor; bu ortamın ağ politikası CloudFront
+dağıtımını engellediği için repoya otomatik indirilemedi.
+
+İndirip bu dizine koyduktan sonra manifest'e eklenecek kayıtlar:
+
+```ts
+{
+  kind: "image",
+  id: "3d-baski-uretim-01",
+  src: "/assets/real-media/3d-baski-uretim-01.webp",
+  alt: "3D yazıcıda turuncu filamentle üretilen İHA gövde parçasının yakın görünümü",
+  caption: "3D baskı istasyonu",
+  category: "3d-baski",
+  span: "wide",
+  source: "generated",   // ← "Konsept" etiketi bunu görünce çıkar
+  width: 0, height: 0,   // ← gerçek boyutu yazın
+},
+{
+  kind: "image",
+  id: "robotik-montaj-01",
+  src: "/assets/real-media/robotik-montaj-01.webp",
+  alt: "Ultrasonik sensörlü paletli robot şasisinin mikrodenetleyici ile monte edilmesi",
+  caption: "Robot montajı",
+  category: "robotik",
+  span: "normal",
+  source: "generated",
+  width: 0, height: 0,
+},
+```
+
+`source: "generated"` alanı zorunludur — kart üstünde "Konsept" etiketi
+gösterir. Gerçek çekim geldiğinde dosyayı değiştirip bu alanı silin.
 
 ## Teknik gereksinimler
 

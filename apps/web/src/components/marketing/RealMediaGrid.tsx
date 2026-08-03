@@ -100,15 +100,30 @@ export function RealMediaGrid() {
                 loading="lazy"
               />
 
-              {/* Video rozeti — süre + oynat simgesi */}
-              {isVideo ? (
-                <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-czr-base/70 px-2.5 py-1 czr-mono text-[10px] text-white backdrop-blur">
-                  <svg viewBox="0 0 20 20" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
-                    <path d="M6 4l10 6-10 6z" />
-                  </svg>
-                  {item.durationSec}sn
-                </span>
-              ) : null}
+              <span className="absolute inset-x-4 top-4 z-20 flex items-start justify-between gap-2">
+                {/* Video rozeti — süre + oynat simgesi */}
+                {isVideo ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-czr-base/70 px-2.5 py-1 czr-mono text-[10px] text-white backdrop-blur">
+                    <svg viewBox="0 0 20 20" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
+                      <path d="M6 4l10 6-10 6z" />
+                    </svg>
+                    {item.durationSec}sn
+                  </span>
+                ) : (
+                  <span />
+                )}
+
+                {/*
+                  Konsept etiketi — üretilmiş varlıkları gerçek çekimlerden
+                  ayırır. Bölüm "Simülasyon Değil. Gerçek Atölye." diyor;
+                  etiketsiz bir üretilmiş kare bu cümleyi yanlış beyana çevirir.
+                */}
+                {item.source === "generated" ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-czr-orange/40 bg-czr-base/70 px-2.5 py-1 czr-mono text-[10px] uppercase text-czr-orange backdrop-blur">
+                    Konsept
+                  </span>
+                ) : null}
+              </span>
 
               {/* Etiket şeridi */}
               <span className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-3 p-4">

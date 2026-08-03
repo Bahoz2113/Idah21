@@ -25,6 +25,7 @@ acceptance_criteria:
   - 10 disiplin ve SSS içeriği tek kaynaktan hem DOM'a hem schema'ya beslenir
   - Web uygulaması build hatasız tamamlanır ve çalışan sunucuda 200 döner
   - CSP güvenlik politikası değişmemiş, dış kaynak isteği eklenmemiş
+  - Galerideki çocuk ve katılımcı yüzleri KVKK gereği tanınmayacak şekilde maskelenmiş
 verification_methods:
   - test_run
   - file_check

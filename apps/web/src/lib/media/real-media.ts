@@ -30,6 +30,23 @@ export type MediaCategory =
 /** Bento ızgarasında kapladığı alan. */
 export type MediaSpan = "normal" | "wide" | "tall" | "hero";
 
+/**
+ * Varlığın kaynağı.
+ *
+ * `documentary` — kurumun kendi atölyesinde/sahasında çekilmiş gerçek kayıt.
+ * `generated`   — henüz çekimi olmayan bir disiplini temsil eden, yapay zeka
+ *                 ile üretilmiş konsept görsel.
+ *
+ * Bu ayrım kozmetik değil: bölümün başlığı "Simülasyon Değil. Gerçek Atölye."
+ * diyor. Üretilmiş bir kare, gerçek çekimlerle ayrımsız sunulursa o cümle
+ * yanlış beyan hâline gelir. Bu yüzden `generated` varlıklar kartın üstünde
+ * görünür bir "konsept" etiketi taşır ve schema'da da ayrı işaretlenir.
+ *
+ * Gerçek çekim geldiğinde: dosyayı değiştir, `source` alanını sil. Etiket
+ * kendiliğinden kaybolur.
+ */
+export type MediaSource = "documentary" | "generated";
+
 type MediaBase = {
   id: string;
   /** SEO taşıyıcısı. Anahtar kelime içermeli, dosya adı tekrarı OLMAMALI. */
@@ -38,6 +55,8 @@ type MediaBase = {
   caption: string;
   category: MediaCategory;
   span?: MediaSpan;
+  /** Belirtilmezse `documentary` kabul edilir. */
+  source?: MediaSource;
   /** Gerçek piksel boyutu — CLS'i sıfırlamak için zorunlu. */
   width: number;
   height: number;
@@ -214,7 +233,7 @@ export const realMedia: readonly RealMediaItem[] = [
     category: "ekip",
     span: "normal",
     width: 828,
-    height: 1280,
+    height: 1118,
   },
 ];
 
