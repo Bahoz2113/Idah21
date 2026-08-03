@@ -160,7 +160,7 @@ export default function HomePage() {
               code="BÖLÜM 04"
               eyebrow="Atölye ve Saha"
               title={<span id="atolye-baslik">Simülasyon Değil. Gerçek Atölye.</span>}
-              lead="Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır."
+              lead="Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Öğrencilerin yüzleri gizliliğe saygı gereği bulanıklaştırılmıştır."
             />
 
             <div className="mt-14">

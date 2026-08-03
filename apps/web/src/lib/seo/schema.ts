@@ -211,11 +211,18 @@ function websiteNodes() {
 function mediaNodes() {
   return realMedia.map((m) => {
     const id = `${SITE_URL}/#medya-${m.id}`;
+    const generated = m.source === "generated";
     const common = {
       "@id": id,
       name: m.caption,
       description: m.alt,
-      contentLocation: { "@id": ID.place },
+      // `contentLocation` "bu kare şu mekânda çekildi" demektir. Üretilmiş
+      // konsept görselleri Batman atölyesine bağlamak yanlış beyan olur —
+      // yalnızca belgesel kayıtlarda yer alır.
+      ...(generated ? {} : { contentLocation: { "@id": ID.place } }),
+      // Üretim aracı schema'da açıkça bildirilir; arama motorları da
+      // insanlar da kaynağı ayırt edebilsin.
+      ...(generated ? { creditText: "Yapay zeka ile üretilmiş konsept görsel" } : {}),
       copyrightHolder: { "@id": ID.org },
       creator: { "@id": ID.org },
       inLanguage: "tr-TR",

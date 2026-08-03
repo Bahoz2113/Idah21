@@ -75,7 +75,14 @@ export function RealMediaGrid() {
         })}
       </div>
 
-      <div className="mt-8 grid auto-rows-[200px] grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4">
+      {/*
+        `grid-flow-row-dense`: bento ızgarasında geniş (2 kolon) bir kart
+        satırın kalanına sığmadığında bir sonraki satıra düşer ve arkasında
+        boş hücre bırakır. Dense yerleşim, sonraki küçük kartları o boşluklara
+        geri doldurur — ızgarada delik kalmaz. Görsel sıra bozulur ama kartlar
+        bağımsız olduğu için okuma sırası anlam taşımıyor.
+      */}
+      <div className="mt-8 grid auto-rows-[200px] grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4">
         {items.map((item, i) => {
           const isVideo = item.kind === "video";
           // Video kartında gösterilen görsel posterdir; ölçüleri de posterin.
