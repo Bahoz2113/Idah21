@@ -7,10 +7,32 @@
 // cezası alınır. Bu yüzden içerik DEĞİŞİKLİĞİ SADECE BURADA yapılır.
 // ══════════════════════════════════════════════════════════════════
 
-/** Kanonik site kökü. Vercel/prod ortamında NEXT_PUBLIC_SITE_URL ile ezilir. */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://cezerirobotech.com"
-).replace(/\/$/, "");
+/**
+ * Kanonik site kökü.
+ *
+ * Öncelik sırası:
+ *   1. NEXT_PUBLIC_SITE_URL — elle tanımlanan gerçek domain (production)
+ *   2. VERCEL_URL — deployment'ın kendi adresi (preview)
+ *   3. Sabit varsayılan
+ *
+ * (2) neden var: preview deployment'ta (1) tanımlı olmayabilir. O durumda
+ * schema'daki 31 düğümün medya adresleri ve canonical, henüz yayında olmayan
+ * bir domaini gösterir — preview'da hiçbir görsel/video URL'i çözülmez ve
+ * structured data test araçları kırık çıkar. VERCEL_URL kullanmak preview'u
+ * kendi içinde tutarlı kılar; Vercel preview'lara zaten `noindex` verdiği
+ * için arama motoru tarafında bir risk oluşmaz.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercelHost = process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.VERCEL_URL;
+  if (vercelHost) return `https://${vercelHost.replace(/\/$/, "")}`;
+
+  return "https://cezerirobotech.com";
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 export const org = {
   name: "CEZERİ ROBOTECH",
