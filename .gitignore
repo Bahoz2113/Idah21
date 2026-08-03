@@ -17,6 +17,8 @@ build/
 
 # Prisma generate çıktısı
 packages/database/src/generated/
+# Build script'inin web'e kopyaladığı Prisma engine binary'si
+apps/web/src/generated/
 
 # Loglar
 *.log

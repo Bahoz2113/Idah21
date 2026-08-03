@@ -1,5 +1,18 @@
 import nodemailer, { type Transporter } from "nodemailer";
-import type { EmailProvider } from "./index";
+import type { ContactLead, EmailProvider } from "./index";
+
+/**
+ * Kullanıcıdan gelen metni HTML gövdesine gömmeden önce kaçırır.
+ * Başvuru formu herkese açıktır; kaçırılmamış girdi, e-postayı okuyan
+ * kurum çalışanına karşı HTML enjeksiyonu vektörü oluşturur.
+ */
+function esc(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 const BRAND = "CEZERİ Education OS";
 
@@ -83,6 +96,35 @@ export class SmtpEmailProvider implements EmailProvider {
       email,
       "Güvenlik Uyarısı — CEZERİ Education OS",
       wrap("Güvenlik uyarısı", `<p style="color:#5b6472;">${hi}</p><p style="color:#5b6472;">${message}</p>`)
+    );
+  }
+
+  async sendContactLead(to: string, lead: ContactLead) {
+    const rows: [string, string][] = [
+      ["Veli / İlgili", lead.parentName],
+      ["Telefon", lead.phone],
+      ["E-posta", lead.email ?? "—"],
+      ["Öğrenci yaşı", lead.studentAge],
+      ["İlgi alanı", lead.interest],
+      ["Mesaj", lead.message ?? "—"],
+    ];
+
+    const table = rows
+      .map(
+        ([k, v]) =>
+          `<tr><td style="padding:8px 12px;color:#8a94a3;font-size:13px;white-space:nowrap;">${esc(k)}</td>` +
+          `<td style="padding:8px 12px;color:#0f2a4a;font-size:14px;font-weight:600;">${esc(v)}</td></tr>`,
+      )
+      .join("");
+
+    await this.send(
+      to,
+      `Yeni Başvuru: ${lead.parentName} — Aday Mühendis Uçuş İzin Formu`,
+      wrap(
+        "Yeni aday mühendis başvurusu",
+        `<p style="color:#5b6472;">Tanıtım sitesindeki başvuru formundan yeni bir kayıt geldi.</p>
+         <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin-top:12px;">${table}</table>`,
+      ),
     );
   }
 }

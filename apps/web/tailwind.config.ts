@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
-import { tokens } from "@cezeri/config";
+import { tokens, marketingTokens } from "@cezeri/config";
 
 const c = tokens.colors;
+const m = marketingTokens.colors;
 
 export default {
   content: ["./src/**/*.{ts,tsx}"],
@@ -33,6 +34,20 @@ export default {
         warning: c.warning,
         danger: c.danger,
         info: c.info,
+
+        // ——— Marketing yüzeyi (yalnızca public tanıtım sayfası) ———
+        czr: {
+          teal: m.teal,
+          "teal-deep": m.tealDeep,
+          "teal-soft": m.tealSoft,
+          orange: m.orange,
+          "orange-deep": m.orangeDeep,
+          emerald: m.emerald,
+          "emerald-deep": m.emeraldDeep,
+          base: m.base,
+          "base-alt": m.baseAlt,
+          ice: m.ice,
+        },
       },
       borderRadius: {
         sm: `${tokens.radius.sm}px`,
@@ -53,9 +68,17 @@ export default {
         "gradient-darktech": tokens.gradients.darkTech,
         "gradient-accent": tokens.gradients.accent,
         "gradient-glass": tokens.gradients.glass,
+        // Marketing
+        "czr-hero": marketingTokens.gradients.hero,
+        "czr-launch": marketingTokens.gradients.launch,
+        "czr-signal": marketingTokens.gradients.signal,
+        "czr-hangar": marketingTokens.gradients.hangar,
+        "czr-glass": marketingTokens.gradients.glass,
+        "czr-vignette": marketingTokens.grade.vignette,
       },
       transitionTimingFunction: {
         czr: "cubic-bezier(0.33, 1, 0.68, 1)",
+        "czr-cine": marketingTokens.motion.ease,
       },
       keyframes: {
         "fade-up": {
@@ -66,10 +89,37 @@ export default {
           "0%,100%": { boxShadow: "0 0 16px rgba(99,182,242,0.10)" },
           "50%": { boxShadow: "0 0 28px rgba(99,182,242,0.22)" },
         },
+        // ——— Marketing hareket seti ———
+        "gear-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "gear-spin-rev": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(-360deg)" },
+        },
+        "scan-line": {
+          "0%": { transform: "translateY(-100%)", opacity: "0" },
+          "50%": { opacity: "0.55" },
+          "100%": { transform: "translateY(100%)", opacity: "0" },
+        },
+        "pulse-signal": {
+          "0%,100%": { opacity: "0.35", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.06)" },
+        },
+        "hover-drift": {
+          "0%,100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 250ms cubic-bezier(0.33,1,0.68,1)",
         "soft-glow": "soft-glow 3s ease-in-out infinite",
+        "gear-spin": "gear-spin 26s linear infinite",
+        "gear-spin-rev": "gear-spin-rev 34s linear infinite",
+        "scan-line": "scan-line 5s ease-in-out infinite",
+        "pulse-signal": "pulse-signal 2.4s ease-in-out infinite",
+        "hover-drift": "hover-drift 6s ease-in-out infinite",
       },
     },
   },

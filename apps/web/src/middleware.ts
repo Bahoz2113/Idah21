@@ -18,6 +18,10 @@ const PUBLIC_PREFIXES = [
   "/login", "/ilk-kurulum", "/sifremi-unuttum", "/register",
   "/api/", "/_next", "/favicon",
   "/icon", "/manifest", "/sw.js", "/apple-touch-icon", "/robots",
+  // Public tanıtım sitesi varlıkları ve SEO uç noktaları.
+  // Bunlar kimlik doğrulaması ARDINA DÜŞERSE arama motorları ve AI
+  // tarayıcıları /login'e yönlendirilir; site indekslenemez.
+  "/sitemap", "/llms.txt", "/opengraph-image", "/twitter-image", "/assets/",
 ];
 
 export async function middleware(req: NextRequest) {

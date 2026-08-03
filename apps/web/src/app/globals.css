@@ -51,3 +51,124 @@ button:focus-visible, a:focus-visible {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #E7EDF4; border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MARKETING KATMANI — yalnızca public tanıtım sayfası (kök rota)
+   Kapsam `.czr-site` altına hapsedilmiştir; yönetim paneli etkilenmez.
+   ══════════════════════════════════════════════════════════════════ */
+
+.czr-site {
+  background: #0A191D;
+  color: #F2F8F8;
+  /* Koyu yüzeyde tarayıcı varsayılanlarının (form, scrollbar) uyumlanması */
+  color-scheme: dark;
+}
+
+/* Kök layout `body`'ye açık zemin verir (panel için doğru). Tanıtım sayfası
+   koyu olduğundan, aşırı kaydırmada (iOS lastik bandı) beyaz şerit
+   görünmesin diye body zemini de koyuya alınır. Bunu `:has()` ile yapmak,
+   kök layout'a marketing'e özel bir sınıf eklemekten daha temiz — panel
+   tarafında hiçbir şey değişmez. Destekleyemeyen tarayıcıda tek etki,
+   aşırı kaydırmada açık zeminin görünmesidir. */
+body:has(> .czr-site) {
+  background: #0A191D;
+}
+
+.czr-site ::-webkit-scrollbar-thumb { background: #163C46; }
+.czr-site ::-webkit-scrollbar-thumb:hover { background: #1B6E7E; }
+.czr-site ::selection { background: #FF8C00; color: #0A191D; }
+
+/* Koyu zeminde turuncu odak halkası — panelin mavi odağını ezmez */
+.czr-site :is(a, button, [tabindex]):focus-visible {
+  outline: 2px solid #FF8C00;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.czr-site :is(input, textarea, select):focus-visible {
+  outline: none;
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.22);
+}
+
+/* ── Görsel bütünlük filtresi ───────────────────────────────────────
+   Gerçek fotoğraf ve videolar farklı kamera, ışık ve beyaz ayarıyla
+   çekilir; ham hâlde yan yana konduklarında galeri dağınık görünür.
+   Bu iki katman (petrol yeşili tonlama + vignette) hepsini tek bir
+   sinematik dünyada birleştirir. */
+.czr-grade { position: relative; isolation: isolate; }
+.czr-grade > img,
+.czr-grade > video {
+  filter: saturate(0.88) contrast(1.06) brightness(0.94);
+}
+.czr-grade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(10, 25, 29, 0.72) 100%),
+    linear-gradient(180deg, rgba(15, 76, 92, 0.30) 0%, rgba(10, 25, 29, 0.55) 100%);
+  mix-blend-mode: multiply;
+}
+/* Hover'da tonlama geri çekilir — fotoğrafın kendisi öne çıkar */
+.czr-grade-hover::after {
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.czr-grade-hover:hover::after { opacity: 0.45; }
+
+/* ── Cam yüzey (hangar kapısı / kart) ───────────────────────────── */
+.czr-glass-panel {
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* ── Teknik ızgara dokusu (kontrol merkezi hissi) ───────────────── */
+.czr-grid-texture {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ── Scroll ile ortaya çıkış (IntersectionObserver ile tetiklenir) ── */
+.czr-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--czr-delay, 0ms);
+}
+.czr-reveal[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Bölüm numarası / teknik etiket tipografisi ─────────────────── */
+.czr-mono {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.18em;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ERİŞİLEBİLİRLİK: hareket azaltma
+   Sistem "azaltılmış hareket" istiyorsa sinematik katman tamamen
+   durur ve içerik doğrudan görünür hâle gelir. Reveal'lerin görünür
+   kalması kritiktir — aksi hâlde içerik kalıcı olarak gizlenirdi.
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .czr-site *,
+  .czr-site *::before,
+  .czr-site *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .czr-reveal { opacity: 1 !important; transform: none !important; }
+}
