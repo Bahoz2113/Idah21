@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { contact, org, sections } from "@/lib/seo/site";
 
@@ -75,9 +76,16 @@ export function MarketingNav() {
 
       <nav aria-label="Ana navigasyon" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
         <a href="#us" className="group flex items-center gap-3">
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-czr-orange/35 bg-czr-teal/40">
-            <span className="h-2 w-2 animate-pulse-signal rounded-full bg-czr-orange" />
-          </span>
+          {/* Kurumun robotik baykuş amblemi. `priority`: sabit başlıkta,
+              ilk ekranda görünür — tembel yüklenirse logo geç belirir. */}
+          <Image
+            src="/logo.png"
+            alt={`${org.name} robotik baykuş amblemi`}
+            width={40}
+            height={40}
+            priority
+            className="h-9 w-9 shrink-0 object-contain transition-transform duration-500 ease-czr-cine group-hover:scale-105"
+          />
           <span className="text-[15px] font-extrabold tracking-tight text-white">
             {org.name}
           </span>

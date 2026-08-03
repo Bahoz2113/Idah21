@@ -10,6 +10,7 @@
 // tekrarlanmaz. Böylece DOM ile structured data arasında sapma oluşmaz.
 // ══════════════════════════════════════════════════════════════════
 
+import { realMedia } from "../media/real-media";
 import { SITE_URL, contact, disciplines, faqs, org, sameAs } from "./site";
 
 const ID = {
@@ -198,6 +199,52 @@ function websiteNodes() {
   ];
 }
 
+/**
+ * Atölye ve saha medyası — ImageObject / VideoObject.
+ *
+ * Görsel ve video aramada görünürlüğü bunlar sağlar. `uploadDate` KASITLI
+ * olarak yazılmadı: çekimlerin gerçek tarihleri elimizde yok ve uydurulmuş
+ * bir tarih, structured data'yı doğrulanamaz hâle getirir. Alan eksik
+ * olduğunda Google video zengin sonucu üretmeyebilir — ama yanlış veri
+ * yayımlamaktan iyidir. Tarihler netleştiğinde buraya eklenmelidir.
+ */
+function mediaNodes() {
+  return realMedia.map((m) => {
+    const id = `${SITE_URL}/#medya-${m.id}`;
+    const common = {
+      "@id": id,
+      name: m.caption,
+      description: m.alt,
+      contentLocation: { "@id": ID.place },
+      copyrightHolder: { "@id": ID.org },
+      creator: { "@id": ID.org },
+      inLanguage: "tr-TR",
+    };
+
+    if (m.kind === "video") {
+      return {
+        "@type": "VideoObject",
+        ...common,
+        thumbnailUrl: `${SITE_URL}${m.poster}`,
+        contentUrl: `${SITE_URL}${m.src}`,
+        duration: `PT${m.durationSec}S`,
+        width: m.width,
+        height: m.height,
+      };
+    }
+
+    return {
+      "@type": "ImageObject",
+      ...common,
+      contentUrl: `${SITE_URL}${m.src}`,
+      thumbnailUrl: `${SITE_URL}${m.src}`,
+      caption: m.caption,
+      width: m.width,
+      height: m.height,
+    };
+  });
+}
+
 /** Sayfaya gömülecek eksiksiz JSON-LD grafiği. */
 export function buildSchemaGraph() {
   return {
@@ -207,6 +254,7 @@ export function buildSchemaGraph() {
       placeNode(),
       ...courseNodes(),
       faqNode(),
+      ...mediaNodes(),
       ...websiteNodes(),
     ],
   };

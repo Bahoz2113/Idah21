@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { BaseMap } from "@/components/marketing/BaseMap";
+import { BrandSequence } from "@/components/marketing/BrandSequence";
 import { ContactChannels } from "@/components/marketing/ContactChannels";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
 import { HangarGrid } from "@/components/marketing/HangarGrid";
@@ -186,8 +187,16 @@ export default function HomePage() {
               lead="Kurumun adı, programlanabilir otomatların ilk sistematik kaydını bırakan İsmail el-Cezerî'den gelir. Bugün aynı disiplin mikrodenetleyici, sensör ve algoritmayla sürüyor."
             />
 
-            <div className="mt-16">
-              <LegacyTimeline />
+            <div className="mt-16 grid gap-12 lg:grid-cols-5 lg:items-center lg:gap-16">
+              {/* Marka sekansı: dişliler → mekanik baykuş. Bölümün anlatısının
+                  görsel karşılığı. */}
+              <div className="mx-auto w-full max-w-sm lg:col-span-2 lg:mx-0">
+                <BrandSequence />
+              </div>
+
+              <div className="lg:col-span-3">
+                <LegacyTimeline />
+              </div>
             </div>
           </div>
         </section>

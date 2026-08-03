@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { channels, contact, disciplines, org, sections } from "@/lib/seo/site";
 
 /**
@@ -16,8 +17,18 @@ export function MarketingFooter() {
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-4 lg:px-10">
         {/* Kurum bloğu — NAP */}
         <div className="lg:col-span-2">
-          <p className="text-lg font-extrabold tracking-tight text-white">{org.name}</p>
-          <p className="mt-2 czr-mono text-[11px] uppercase text-czr-orange">{org.slogan}</p>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt={`${org.name} robotik baykuş amblemi`}
+              width={48}
+              height={48}
+              loading="lazy"
+              className="h-11 w-11 shrink-0 object-contain"
+            />
+            <p className="text-lg font-extrabold tracking-tight text-white">{org.name}</p>
+          </div>
+          <p className="mt-3 czr-mono text-[11px] uppercase text-czr-orange">{org.slogan}</p>
 
           <address className="mt-6 not-italic text-[14px] leading-relaxed text-czr-ice/60">
             {contact.address.full}

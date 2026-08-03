@@ -20,9 +20,14 @@ import { VideoModal } from "./VideoModal";
  * Kurumun Batman atölyesinde ve sahada çekilmiş gerçek fotoğraf/videolarının
  * bento ızgarası. İçerik `lib/media/real-media.ts` manifest'inden gelir.
  *
+ * PERFORMANS KARARI — poster öncelikli:
+ * Izgaradaki video kartları video DOSYASINI YÜKLEMEZ; yalnızca poster
+ * görselini gösterir. Videolar ancak kullanıcı bir kartı açtığında indirilir.
+ * Altı videoyu otomatik oynatan bir ızgara, bu sayfada ~8 MB'lık istenmemiş
+ * indirme demekti — üstelik çoğu ziyaretçi hiçbirini izlemeden geçiyor.
+ *
  * Manifest boşken bileşen ÇÖKMEZ: planlanan çekimleri gösteren bir hangar
- * iskeletine düşer. Böylece sayfa medya teslim edilmeden de yayına
- * alınabilir ve galeri, varlıklar eklendiği anda kendiliğinden dolar.
+ * iskeletine düşer.
  */
 export function RealMediaGrid() {
   const [filter, setFilter] = useState<MediaCategory | "tumu">("tumu");
@@ -70,61 +75,61 @@ export function RealMediaGrid() {
         })}
       </div>
 
-      <div className="mt-8 grid auto-rows-[190px] grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4">
-        {items.map((item, i) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setActiveIndex(i)}
-            aria-label={`${item.alt} — büyüt`}
-            className={`czr-grade czr-grade-hover group relative overflow-hidden rounded-2xl border border-white/8 text-left transition duration-500 ease-czr-cine hover:border-czr-orange/40 ${
-              spanClass[item.span ?? "normal"]
-            }`}
-          >
-            {item.kind === "image" ? (
+      <div className="mt-8 grid auto-rows-[200px] grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4">
+        {items.map((item, i) => {
+          const isVideo = item.kind === "video";
+          // Video kartında gösterilen görsel posterdir; ölçüleri de posterin.
+          const thumb = isVideo ? item.poster : item.src;
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveIndex(i)}
+              aria-label={`${item.caption} — ${isVideo ? "videoyu oynat" : "görseli büyüt"}`}
+              className={`czr-grade czr-grade-hover group relative overflow-hidden rounded-2xl border border-white/8 text-left transition duration-500 ease-czr-cine hover:border-czr-orange/40 ${
+                spanClass[item.span ?? "normal"]
+              }`}
+            >
               <Image
-                src={item.src}
+                src={thumb}
                 alt={item.alt}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 ease-czr-cine group-hover:scale-105"
                 loading="lazy"
               />
-            ) : (
-              <video
-                src={item.src}
-                poster={item.poster}
-                muted
-                loop
-                playsInline
-                // Otomatik oynatma yalnızca sessiz ve döngüsel önizleme içindir;
-                // ses ve kontroller modal'da açılır.
-                autoPlay
-                preload="none"
-                aria-label={item.alt}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            )}
 
-            {/* Etiket şeridi */}
-            <span className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-3 p-4">
-              <span className="text-[13px] font-semibold leading-snug text-white drop-shadow">
-                {item.caption ?? item.alt}
-              </span>
-              <span className="shrink-0 rounded-full border border-white/25 bg-czr-base/60 p-2 text-white backdrop-blur transition group-hover:border-czr-orange group-hover:text-czr-orange">
-                {item.kind === "video" ? (
-                  <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+              {/* Video rozeti — süre + oynat simgesi */}
+              {isVideo ? (
+                <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-czr-base/70 px-2.5 py-1 czr-mono text-[10px] text-white backdrop-blur">
+                  <svg viewBox="0 0 20 20" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
                     <path d="M6 4l10 6-10 6z" />
                   </svg>
-                ) : (
-                  <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-                    <path d="M4 4h5v2H6v3H4zm7 0h5v5h-2V6h-3zm5 7v5h-5v-2h3v-3zM4 11h2v3h3v2H4z" />
-                  </svg>
-                )}
+                  {item.durationSec}sn
+                </span>
+              ) : null}
+
+              {/* Etiket şeridi */}
+              <span className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-3 p-4">
+                <span className="text-[13px] font-semibold leading-snug text-white drop-shadow">
+                  {item.caption}
+                </span>
+                <span className="shrink-0 rounded-full border border-white/25 bg-czr-base/60 p-2 text-white backdrop-blur transition group-hover:border-czr-orange group-hover:text-czr-orange">
+                  {isVideo ? (
+                    <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                      <path d="M6 4l10 6-10 6z" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                      <path d="M4 4h5v2H6v3H4zm7 0h5v5h-2V6h-3zm5 7v5h-5v-2h3v-3zM4 11h2v3h3v2H4z" />
+                    </svg>
+                  )}
+                </span>
               </span>
-            </span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
 
       <ProjectLightbox
@@ -173,7 +178,6 @@ function PendingMediaState() {
             className={`relative overflow-hidden rounded-2xl border border-dashed border-white/12 bg-czr-base-alt/40 ${slot.span}`}
           >
             <div className="czr-grid-texture absolute inset-0 opacity-40" />
-            {/* Tarama çizgisi — "kayıt bekleniyor" hissi */}
             <span className="absolute inset-x-0 top-0 h-1/3 animate-scan-line bg-gradient-to-b from-transparent via-czr-teal-soft/20 to-transparent" />
             <div className="relative flex h-full flex-col justify-end p-4">
               <span className="czr-mono text-[10px] uppercase text-czr-ice/35">Yakında</span>
