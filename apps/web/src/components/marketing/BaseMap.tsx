@@ -15,7 +15,17 @@ import { contact } from "@/lib/seo/site";
  */
 export function BaseMap() {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-czr-base-alt">
+    // Haritanın TAMAMI bağlantıdır. Önceki tasarımda alt-ortada ayrı bir
+    // "Yol Tarifi Al" butonu vardı; buton yüksekliği sabit, harita ise
+    // en-boy oranıyla küçüldüğü için dar ekranda koordinat etiketinin
+    // üstüne biniyordu. Tüm yüzeyi tıklanabilir yapmak hem çakışmayı
+    // kaldırır hem dokunma hedefini büyütür.
+    <a
+      href={contact.directionsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-czr-base-alt transition duration-500 ease-czr-cine hover:border-czr-orange/40"
+    >
       <svg
         viewBox="0 0 640 420"
         className="h-full w-full"
@@ -73,18 +83,17 @@ export function BaseMap() {
         </text>
       </svg>
 
-      <a
-        href={contact.directionsUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-czr-orange/40 bg-czr-base/85 px-5 py-2.5 text-[13px] font-semibold text-czr-orange backdrop-blur transition duration-300 ease-czr-cine hover:bg-czr-orange hover:text-czr-base"
-      >
+      {/* Eylem ipucu — üst köşede, alttaki koordinat etiketlerinden uzakta */}
+      <span className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full border border-czr-orange/40 bg-czr-base/85 px-4 py-2 text-[12px] font-semibold text-czr-orange backdrop-blur transition duration-300 ease-czr-cine group-hover:bg-czr-orange group-hover:text-czr-base">
         Yol Tarifi Al
-        <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+        <svg viewBox="0 0 20 20" className="h-3 w-3" fill="currentColor" aria-hidden="true">
           <path d="M6 4h10v10h-2V7.4L5.7 15.7 4.3 14.3 12.6 6H6z" />
         </svg>
-        <span className="sr-only">(yeni sekmede harita uygulamasında açılır)</span>
-      </a>
-    </div>
+      </span>
+
+      <span className="sr-only">
+        Yol tarifi al — yeni sekmede harita uygulamasında açılır
+      </span>
+    </a>
   );
 }

@@ -59,6 +59,38 @@ export const contact = {
 } as const;
 
 // ──────────────────────────────────────────────────────────────────
+// İLETİŞİM KANALLARI
+//
+// Ziyaretçi bu kanallara tek dokunuşla ulaşır. `sameAs` alanına giren
+// Instagram profili aynı zamanda bir SEO varlık sinyalidir: arama motorları
+// kurumun sosyal profilini schema üzerinden doğrulayınca bilgi panelini
+// (Knowledge Panel) daha güvenle oluşturur.
+// ──────────────────────────────────────────────────────────────────
+
+export const channels = {
+  instagram: {
+    handle: "@cezerirobotech",
+    url: "https://www.instagram.com/cezerirobotech/",
+    label: "Instagram",
+    hint: "Atölye kareleri, proje paylaşımları ve duyurular",
+  },
+  whatsapp: {
+    // wa.me formatı ülke kodu dahil, işaret ve boşluksuz numara ister.
+    url: `https://wa.me/${contact.phoneE164.replace(/\D/g, "")}`,
+    label: "WhatsApp",
+    hint: "Kayıt, ders programı ve fiyat bilgisi için anında yazın",
+  },
+  maps: {
+    url: contact.mapsPlaceUrl,
+    label: "Google Maps",
+    hint: "Belde Mahallesi'ndeki üssümüze yol tarifi alın",
+  },
+} as const;
+
+/** Schema.org `sameAs` — kurumun doğrulanabilir dış profilleri. */
+export const sameAs: readonly string[] = [channels.instagram.url];
+
+// ──────────────────────────────────────────────────────────────────
 // 10 TEMEL DİSİPLİN — "Eğitim ve Faaliyet Hangarları"
 // Her kayıt hem hangar kartını hem Course schema'sını üretir.
 // ──────────────────────────────────────────────────────────────────
@@ -223,7 +255,7 @@ export const faqs: readonly Faq[] = [
   },
   {
     q: "Batman'da robotik ve kodlama kursu arıyorum, nereden başlamalıyım?",
-    a: "Başlangıç için CEZERİ ROBOTECH'in ücretsiz tanışma atölyesine katılabilirsiniz. Öğrencinin yaşı ve ilgi alanı belirlendikten sonra uygun hangar patikası önerilir. Kayıt için sayfadaki Aday Mühendis Uçuş İzin Formu doldurulabilir veya 0540 662 72 72 numarası aranabilir.",
+    a: "Başlangıç için CEZERİ ROBOTECH'in ücretsiz tanışma atölyesine katılabilirsiniz. Öğrencinin yaşı ve ilgi alanı belirlendikten sonra uygun hangar patikası önerilir. Kayıt için 0540 662 72 72 numarasını arayabilir, aynı numaradan WhatsApp ile yazabilir veya Instagram'dan @cezerirobotech hesabına mesaj gönderebilirsiniz.",
   },
   {
     q: "Ön bilgi veya bilgisayar deneyimi gerekiyor mu?",
@@ -239,7 +271,7 @@ export const faqs: readonly Faq[] = [
   },
   {
     q: "Ders programı ve süresi nasıl?",
-    a: "Dersler haftalık düzende, okul saatleri dışına ve hafta sonuna planlanır. Her hangar modülü dönemlik ilerler ve dönem sonunda öğrenci kendi projesini teslim eder. Güncel gün ve saat seçenekleri için iletişim formundan bilgi talep edebilirsiniz.",
+    a: "Dersler haftalık düzende, okul saatleri dışına ve hafta sonuna planlanır. Her hangar modülü dönemlik ilerler ve dönem sonunda öğrenci kendi projesini teslim eder. Güncel gün ve saat seçenekleri için 0540 662 72 72 numarasından WhatsApp ile bilgi alabilirsiniz.",
   },
   {
     q: "Veliler öğrencinin gelişimini nasıl takip ediyor?",

@@ -10,7 +10,7 @@
 // tekrarlanmaz. Böylece DOM ile structured data arasında sapma oluşmaz.
 // ══════════════════════════════════════════════════════════════════
 
-import { SITE_URL, contact, disciplines, faqs, org } from "./site";
+import { SITE_URL, contact, disciplines, faqs, org, sameAs } from "./site";
 
 const ID = {
   org: `${SITE_URL}/#organization`,
@@ -71,6 +71,8 @@ function organizationNode() {
     image: `${SITE_URL}/opengraph-image`,
     telephone: contact.phoneE164,
     email: contact.email,
+    // Doğrulanabilir sosyal profiller — Knowledge Panel varlık eşleştirmesi
+    sameAs: [...sameAs],
     address: postalAddress,
     geo: geoCoordinates,
     hasMap: contact.mapsPlaceUrl,

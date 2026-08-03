@@ -1,4 +1,4 @@
-import type { ContactLead, EmailProvider } from "./index";
+import type { EmailProvider } from "./index";
 
 /**
  * SMTP yapılandırılmamışken kullanılan geliştirme sağlayıcısı.
@@ -19,22 +19,5 @@ export class ConsoleEmailProvider implements EmailProvider {
   async sendSecurityAlert(email: string, message: string) {
     // eslint-disable-next-line no-console
     console.warn(`\n[EMAIL - SMTP YAPILANDIRILMAMIŞ] Güvenlik uyarısı\n  Alıcı: ${email}\n  Mesaj: ${message}\n`);
-  }
-
-  async sendContactLead(to: string, lead: ContactLead) {
-    // Başvuru KAYBOLMAMALI: SMTP yokken bile tam kayıt loga düşer ki
-    // yapılandırma eksikliği fark edilene kadar gelen talep izlenebilsin.
-    // eslint-disable-next-line no-console
-    console.warn(
-      `\n[EMAIL - SMTP YAPILANDIRILMAMIŞ] Yeni başvuru (gönderilmedi)\n` +
-        `  Alıcı:    ${to}\n` +
-        `  Veli:     ${lead.parentName}\n` +
-        `  Telefon:  ${lead.phone}\n` +
-        `  E-posta:  ${lead.email ?? "—"}\n` +
-        `  Yaş:      ${lead.studentAge}\n` +
-        `  İlgi:     ${lead.interest}\n` +
-        `  Mesaj:    ${lead.message ?? "—"}\n` +
-        `  (SMTP_HOST env değişkenini ayarlayın.)\n`,
-    );
   }
 }

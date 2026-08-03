@@ -5,23 +5,11 @@
  * getEmailProvider() içinde seçilmesi yeterlidir. Uygulamanın
  * geri kalanı hiçbir zaman nodemailer/Resend'i doğrudan bilmez.
  */
-/** Tanıtım sitesindeki "Aday Mühendis Uçuş İzin Formu" başvurusu. */
-export interface ContactLead {
-  parentName: string;
-  phone: string;
-  email?: string;
-  studentAge: string;
-  interest: string;
-  message?: string;
-}
-
 export interface EmailProvider {
   sendEmailVerificationCode(email: string, code: string, fullName?: string): Promise<void>;
   sendLoginVerificationCode(email: string, code: string, fullName?: string): Promise<void>;
   sendPasswordResetCode(email: string, code: string, fullName?: string): Promise<void>;
   sendSecurityAlert(email: string, message: string, fullName?: string): Promise<void>;
-  /** Başvuruyu kuruma iletir. `to` kurumsal alıcı adresidir. */
-  sendContactLead(to: string, lead: ContactLead): Promise<void>;
 }
 
 export { SmtpEmailProvider } from "./smtp";

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { BaseMap } from "@/components/marketing/BaseMap";
-import { ContactForm } from "@/components/marketing/ContactForm";
+import { ContactChannels } from "@/components/marketing/ContactChannels";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
 import { HangarGrid } from "@/components/marketing/HangarGrid";
 import { HeroLaunchpad } from "@/components/marketing/HeroLaunchpad";
@@ -222,12 +222,12 @@ export default function HomePage() {
             <SectionHeading
               code="BÖLÜM 07"
               eyebrow="Üs Operasyonları"
-              title={<span id="iletisim-baslik">Aday Mühendis Uçuş İzin Formu</span>}
-              lead={`Formu doldurun, ekibimiz sizi arasın. Doğrudan ulaşmak isterseniz: ${contact.phoneDisplay}`}
+              title={<span id="iletisim-baslik">Üsse Bağlan</span>}
+              lead={`WhatsApp'tan yazın, Instagram'dan takip edin veya doğrudan atölyeye gelin. Telefon: ${contact.phoneDisplay}`}
             />
 
             <div className="mt-14 grid gap-10 lg:grid-cols-5 lg:gap-14">
-              {/* Konum ve iletişim */}
+              {/* Konum ve künye */}
               <div className="lg:col-span-2">
                 <Reveal>
                   <BaseMap />
@@ -276,13 +276,9 @@ export default function HomePage() {
                 </Reveal>
               </div>
 
-              {/* Başvuru formu */}
-              <div className="lg:col-span-3">
-                <Reveal delay={80}>
-                  <div className="czr-glass-panel rounded-3xl p-7 sm:p-9">
-                    <ContactForm />
-                  </div>
-                </Reveal>
+              {/* İletişim kanalları */}
+              <div className="min-w-0 lg:col-span-3">
+                <ContactChannels />
               </div>
             </div>
           </div>

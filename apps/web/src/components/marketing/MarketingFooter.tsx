@@ -1,4 +1,4 @@
-import { contact, disciplines, org, sections } from "@/lib/seo/site";
+import { channels, contact, disciplines, org, sections } from "@/lib/seo/site";
 
 /**
  * 08 — ALT BİLGİ
@@ -37,6 +37,32 @@ export function MarketingFooter() {
               {contact.email}
             </a>
           </div>
+
+          {/* Sosyal ve konum kanalları */}
+          <ul className="mt-6 flex flex-wrap items-center gap-3">
+            {[
+              { ...channels.whatsapp, accent: "#25D366" },
+              { ...channels.instagram, accent: "#E1306C" },
+              { ...channels.maps, accent: "#EA4335" },
+            ].map((c) => (
+              <li key={c.label}>
+                <a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/12 px-4 py-2 text-[13px] font-semibold text-czr-ice/70 transition duration-300 hover:border-[var(--czr-accent)] hover:text-white"
+                  style={{ ["--czr-accent" as string]: c.accent }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-2 w-2 rounded-full"
+                    style={{ background: c.accent }}
+                  />
+                  {c.label}
+                </a>
+              </li>
+            ))}
+          </ul>
 
           <p className="mt-6 max-w-md text-[13px] leading-relaxed text-czr-ice/40">
             {org.legalName} · {org.ageRange.label} · Hizmet bölgesi:{" "}
