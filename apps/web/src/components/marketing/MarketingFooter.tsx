@@ -13,7 +13,7 @@ export function MarketingFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/8 bg-czr-base-alt">
+    <footer className="czr-chapter border-t border-white/8 bg-czr-base/80 backdrop-blur-xl">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-4 lg:px-10">
         {/* Kurum bloğu — NAP */}
         <div className="lg:col-span-2">

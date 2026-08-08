@@ -107,7 +107,7 @@ export function MetricsDeck() {
   return (
     <section
       aria-label="Kurum telemetrisi"
-      className="relative border-y border-white/8 bg-czr-base"
+      className="czr-chapter border-y border-white/8"
     >
       <div
         ref={ref}

@@ -78,6 +78,50 @@ body:has(> .czr-site) {
 .czr-site ::-webkit-scrollbar-thumb:hover { background: #1B6E7E; }
 .czr-site ::selection { background: #FF8C00; color: #0A191D; }
 
+/* ── DÜNYA KATMANI ─────────────────────────────────────────────────
+   Sayfa bir yığın bölüm değil, içinde yürünen tek bir mekândır. Sahne
+   `position: fixed` ile arkada sabit durur; bölümler onun üzerinden akar.
+
+   Taban katman (`floor`) sahne hiç yüklenmese de dünyanın rengini ve
+   derinliğini taşır — WebGL'siz cihazda sayfa boş bir siyahlığa düşmez.
+   Perde (`scrim`) hareketli sahnenin üstünde metin kontrastını
+   tesadüfe bırakmaz; kenarlarda koyulaşır, ortada açılır. */
+.czr-world { contain: layout paint; }
+
+.czr-world-floor {
+  background:
+    radial-gradient(120% 80% at 50% 0%, #123039 0%, rgba(10, 25, 29, 0) 62%),
+    radial-gradient(90% 60% at 50% 100%, #0D2A31 0%, rgba(10, 25, 29, 0) 58%),
+    #0A191D;
+}
+
+/* Sahne çalışırken taban katman yalnızca zemin rengi olarak kalır;
+   gradyan sahnenin derinliğiyle çakışmasın diye söner. */
+.czr-world[data-active] .czr-world-floor { opacity: 0.35; }
+
+.czr-world-scrim {
+  background:
+    linear-gradient(180deg, rgba(10, 25, 29, 0.82) 0%, rgba(10, 25, 29, 0.12) 22%,
+                            rgba(10, 25, 29, 0.12) 78%, rgba(10, 25, 29, 0.88) 100%),
+    radial-gradient(70% 55% at 50% 50%, rgba(10, 25, 29, 0) 0%, rgba(10, 25, 29, 0.55) 100%);
+}
+
+/* Bölümler dünyanın üzerinde yüzer: kendi opak zeminleri yoktur.
+   Yerel okunabilirlik gerektiğinde metin bloğunun arkasına bu perde konur. */
+.czr-chapter { position: relative; z-index: 10; }
+
+.czr-veil {
+  position: relative;
+}
+.czr-veil::before {
+  content: "";
+  position: absolute;
+  inset: -8% -6%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(60% 60% at 30% 50%, rgba(10, 25, 29, 0.86) 0%, rgba(10, 25, 29, 0) 100%);
+}
+
 /* Koyu zeminde turuncu odak halkası — panelin mavi odağını ezmez */
 .czr-site :is(a, button, [tabindex]):focus-visible {
   outline: 2px solid #FF8C00;

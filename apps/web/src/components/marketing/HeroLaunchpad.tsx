@@ -1,6 +1,5 @@
 import { contact, org } from "@/lib/seo/site";
 import { CezeriGears } from "./CezeriGears";
-import { HeroScene } from "./HeroScene";
 
 /**
  * 01 — FIRLATMA ÜSSÜ (Launchpad)
@@ -14,7 +13,7 @@ export function HeroLaunchpad() {
     <section
       id="us"
       aria-labelledby="hero-baslik"
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-czr-hero"
+      className="czr-chapter isolate flex min-h-[100svh] items-center overflow-hidden"
     >
       {/* Teknik ızgara dokusu — kontrol merkezi zemini */}
       <div aria-hidden="true" className="czr-grid-texture absolute inset-0 opacity-60" />
@@ -24,15 +23,14 @@ export function HeroLaunchpad() {
         aria-hidden="true"
         className="absolute right-[-24%] top-1/2 h-[96vmin] w-[96vmin] -translate-y-1/2 sm:right-[-10%] lg:right-[2%]"
       >
-        <CezeriGears className="h-full w-full opacity-[0.55]" />
-        <HeroScene />
+        <CezeriGears className="h-full w-full opacity-[0.35]" />
       </div>
 
       {/* Okunabilirlik maskesi: metin ile görsel katman arasındaki kontrastı
           garanti eder, aksi hâlde dişliler manşetin üstünde okunurluğu bozar. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-czr-base via-czr-base/85 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-czr-base via-czr-base/70 to-transparent"
       />
 
       {/* Dikey boşluk kasıtlı olarak ölçülü: içerik 100svh'yi aşarsa alttaki

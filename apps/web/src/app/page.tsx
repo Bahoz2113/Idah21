@@ -12,6 +12,7 @@ import { MetricsDeck } from "@/components/marketing/MetricsDeck";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
+import { WorldStage } from "@/components/marketing/world/WorldStage";
 import { schemaJson } from "@/lib/seo/schema";
 import { contact, org, SITE_URL } from "@/lib/seo/site";
 
@@ -115,9 +116,14 @@ export default function HomePage() {
         İçeriğe geç
       </a>
 
+      {/* Sayfanın içinde geçtiği tek sürekli dünya — bölümlerin arkasında
+          sabit durur, scroll boyunca hiç sökülmez. Dekoratiftir: yüklenmese
+          de sayfa eksiksiz okunur. */}
+      <WorldStage />
+
       <MarketingNav />
 
-      <main>
+      <main className="relative z-10">
         {/* 01 — Fırlatma üssü */}
         <HeroLaunchpad />
 
@@ -128,7 +134,7 @@ export default function HomePage() {
         <section
           id="hangarlar"
           aria-labelledby="hangarlar-baslik"
-          className="relative border-b border-white/8 bg-czr-base py-24 lg:py-32"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
@@ -153,7 +159,7 @@ export default function HomePage() {
         <section
           id="atolye"
           aria-labelledby="atolye-baslik"
-          className="relative border-b border-white/8 bg-czr-base-alt py-24 lg:py-32"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
@@ -173,7 +179,7 @@ export default function HomePage() {
         <section
           id="miras"
           aria-labelledby="miras-baslik"
-          className="relative border-b border-white/8 bg-czr-base py-24 lg:py-32"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
@@ -205,7 +211,7 @@ export default function HomePage() {
         <section
           id="sss"
           aria-labelledby="sss-baslik"
-          className="relative border-b border-white/8 bg-czr-base-alt py-24 lg:py-32"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
           <div className="mx-auto max-w-4xl px-6 lg:px-10">
             <SectionHeading
@@ -225,7 +231,7 @@ export default function HomePage() {
         <section
           id="iletisim"
           aria-labelledby="iletisim-baslik"
-          className="relative bg-czr-base py-24 lg:py-32"
+          className="czr-chapter py-24 lg:py-32"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
