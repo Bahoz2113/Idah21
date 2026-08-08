@@ -19,7 +19,10 @@ export function SectionHeading({ code, eyebrow, title, lead, align = "left" }: P
   const centered = align === "center";
 
   return (
-    <header className={`max-w-3xl ${centered ? "mx-auto text-center" : ""}`}>
+    // `czr-veil`: başlık bloğu hareketli sahnenin üzerinde durur; kontrast
+    // tesadüfe bırakılamaz. Yerel perde, genel karartma yerine yalnızca
+    // metnin arkasını koyulaştırır — dünya görünür kalır.
+    <header className={`czr-veil max-w-3xl ${centered ? "mx-auto text-center" : ""}`}>
       <Reveal>
         <div
           className={`flex items-center gap-3 ${centered ? "justify-center" : ""}`}

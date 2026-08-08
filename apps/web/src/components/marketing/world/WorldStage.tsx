@@ -40,11 +40,8 @@ function deviceCanRenderWorld(): boolean {
   };
 
   if (nav.connection?.saveData) return false;
-  if (typeof nav.deviceMemory === "number" && nav.deviceMemory < 4) return false;
+  if (typeof nav.deviceMemory === "number" && nav.deviceMemory < 3) return false;
   if (typeof nav.hardwareConcurrency === "number" && nav.hardwareConcurrency < 4) return false;
-
-  // Dar ekranda koridor kadraja sığmıyor ve mobil pili boşuna yanıyor.
-  if (window.innerWidth < 768) return false;
 
   // WebGL gerçekten var mı — yetenek beyanına değil, bağlama bak.
   try {
@@ -58,8 +55,22 @@ function deviceCanRenderWorld(): boolean {
   return true;
 }
 
+/**
+ * Telefonda dünya kapatılmaz, hafifletilir: partikül yok, düşük DPR,
+ * daha yakın kadraj. Ziyaretçilerin çoğu mobilden geliyor; deneyimin
+ * tamamını onlardan esirgemek yanlış olurdu.
+ */
+function isLiteDevice(): boolean {
+  if (typeof window === "undefined") return true;
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  if (window.innerWidth < 768) return true;
+  if (typeof nav.deviceMemory === "number" && nav.deviceMemory < 6) return true;
+  return false;
+}
+
 export function WorldStage() {
   const [enabled, setEnabled] = useState(false);
+  const [lite, setLite] = useState(true);
 
   useEffect(() => {
     // Scroll saati sahneden bağımsız çalışır: ilerleme rayı ve chapter
@@ -67,6 +78,7 @@ export function WorldStage() {
     observeWorld();
 
     if (!deviceCanRenderWorld()) return;
+    setLite(isLiteDevice());
 
     const idle =
       window.requestIdleCallback?.bind(window) ??
@@ -88,7 +100,7 @@ export function WorldStage() {
       {/* Taban katman: sahne yüklenmese de dünyanın rengi ve derinliği kalır. */}
       <div className="czr-world-floor absolute inset-0" />
 
-      {enabled ? <HangarWorld /> : null}
+      {enabled ? <HangarWorld lite={lite} /> : null}
 
       {/* Okunabilirlik perdesi — hareketli sahnenin üstünde metin kontrastı
           tesadüfe bırakılamaz. */}

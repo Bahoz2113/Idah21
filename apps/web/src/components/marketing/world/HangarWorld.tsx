@@ -501,19 +501,24 @@ function CameraRig() {
  * Sahne
  * ------------------------------------------------------------------ */
 
-function Scene() {
+function Scene({ lite }: { lite: boolean }) {
   const key = useRef(new Color(ORANGE));
 
   return (
     <>
-      <fogExp2 attach="fog" args={[TEAL_DEEP, 0.036]} />
+      {/* Sis koridora derinlik verir; fazlası mesafeyi tamamen yutuyordu. */}
+      <fogExp2 attach="fog" args={[TEAL_DEEP, lite ? 0.032 : 0.024]} />
       <color attach="background" args={[TEAL_DEEP]} />
 
-      {/* Hangar aydınlatması: soğuk tepe + turuncu çalışma feneri */}
-      <ambientLight intensity={0.32} color={TEAL} />
-      <directionalLight position={[6, 12, 8]} intensity={0.75} color={ICE} />
-      <pointLight position={[0, 5.2, 4]} intensity={26} distance={22} color={key.current} />
-      <pointLight position={[0, 4, -24]} intensity={30} distance={34} color={EMERALD} />
+      {/* Hangar aydınlatması: soğuk tepe ışığı + turuncu çalışma fenerleri.
+          Koridor boyunca ritmik fenerler olmadan orta bölüm kapkaranlıktı. */}
+      <ambientLight intensity={0.5} color={TEAL} />
+      <directionalLight position={[6, 12, 8]} intensity={0.95} color={ICE} />
+      <pointLight position={[0, 5.4, 8]} intensity={34} distance={26} color={key.current} />
+      <pointLight position={[0, 5.4, -2]} intensity={30} distance={24} color={key.current} />
+      <pointLight position={[0, 5.0, -11]} intensity={26} distance={22} color={ICE} />
+      <pointLight position={[0, 4.2, -24]} intensity={34} distance={38} color={EMERALD} />
+      <pointLight position={[2.6, 3.4, -34]} intensity={22} distance={20} color={ORANGE} />
 
       <HangarShell />
       <Wordmark />
@@ -523,23 +528,23 @@ function Scene() {
       ))}
       <LaunchField />
       <LegacyGears />
-      <Motes />
+      {lite ? null : <Motes />}
 
       <CameraRig />
     </>
   );
 }
 
-export default function HangarWorld() {
+export default function HangarWorld({ lite = false }: { lite?: boolean }) {
   return (
     <Canvas
       // Sahne dekoratiftir; tıklamalar altındaki içeriğe geçmelidir.
       style={{ pointerEvents: "none" }}
-      camera={{ position: PATH[0].pos, fov: 46, near: 0.1, far: 120 }}
-      dpr={[1, 1.6]}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      camera={{ position: PATH[0].pos, fov: lite ? 54 : 46, near: 0.1, far: 120 }}
+      dpr={lite ? [1, 1.25] : [1, 1.6]}
+      gl={{ antialias: !lite, powerPreference: "high-performance" }}
     >
-      <Scene />
+      <Scene lite={lite} />
     </Canvas>
   );
 }

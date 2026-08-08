@@ -106,6 +106,7 @@ export function MetricsDeck() {
 
   return (
     <section
+      id="telemetri"
       aria-label="Kurum telemetrisi"
       className="czr-chapter border-y border-white/8"
     >

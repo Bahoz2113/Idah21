@@ -13,6 +13,7 @@ export function HeroLaunchpad() {
     <section
       id="us"
       aria-labelledby="hero-baslik"
+      id="esik"
       className="czr-chapter isolate flex min-h-[100svh] items-center overflow-hidden"
     >
       {/* Teknik ızgara dokusu — kontrol merkezi zemini */}

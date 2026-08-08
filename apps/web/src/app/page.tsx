@@ -12,6 +12,8 @@ import { MetricsDeck } from "@/components/marketing/MetricsDeck";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
+import { AmbientAudio } from "@/components/marketing/world/AmbientAudio";
+import { StationRail } from "@/components/marketing/world/StationRail";
 import { WorldStage } from "@/components/marketing/world/WorldStage";
 import { schemaJson } from "@/lib/seo/schema";
 import { contact, org, SITE_URL } from "@/lib/seo/site";
@@ -123,6 +125,12 @@ export default function HomePage() {
 
       <MarketingNav />
 
+      {/* Yürüyüşün neresindeyiz — sahneden bağımsız çalışır */}
+      <StationRail />
+
+      {/* Sessiz varsayılan; ses yalnızca kullanıcı açarsa indirilir */}
+      <AmbientAudio />
+
       <main className="relative z-10">
         {/* 01 — Fırlatma üssü */}
         <HeroLaunchpad />
@@ -138,7 +146,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="BÖLÜM 03"
+              code="DURAK 02"
               eyebrow="Eğitim ve Faaliyet Hangarları"
               title={
                 <span id="hangarlar-baslik">
@@ -163,7 +171,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="BÖLÜM 04"
+              code="DURAK 03"
               eyebrow="Atölye ve Saha"
               title={<span id="atolye-baslik">Simülasyon Değil. Gerçek Atölye.</span>}
               lead="Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Öğrencilerin yüzleri gizliliğe saygı gereği bulanıklaştırılmıştır."
@@ -183,7 +191,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="BÖLÜM 05"
+              code="DURAK 04"
               eyebrow="Cezerî Mirası"
               title={
                 <span id="miras-baslik">
@@ -215,7 +223,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-4xl px-6 lg:px-10">
             <SectionHeading
-              code="BÖLÜM 06"
+              code="DURAK 05"
               eyebrow="Sıkça Sorulan Sorular"
               title={<span id="sss-baslik">Merak Edilenler</span>}
               lead="Velilerin ve öğrencilerin en sık sorduğu sorular ve net yanıtları."
@@ -235,7 +243,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="BÖLÜM 07"
+              code="DURAK 06"
               eyebrow="Üs Operasyonları"
               title={<span id="iletisim-baslik">Üsse Bağlan</span>}
               lead={`WhatsApp'tan yazın, Instagram'dan takip edin veya doğrudan atölyeye gelin. Telefon: ${contact.phoneDisplay}`}

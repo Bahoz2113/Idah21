@@ -102,7 +102,7 @@ export function HangarGrid() {
         {disciplines.map((d, i) => (
           <article
             key={d.id}
-            className="czr-glass-panel group relative overflow-hidden rounded-3xl p-7 transition-colors duration-500 ease-czr-cine hover:border-czr-orange/35 lg:w-[380px] lg:shrink-0 lg:p-8"
+            className="czr-glass-panel czr-rim group relative overflow-hidden rounded-3xl p-7 transition-colors duration-500 ease-czr-cine hover:border-czr-orange/35 lg:w-[380px] lg:shrink-0 lg:p-8"
           >
             {/* Hangar kapısı — GSAP olmadan da CSS hover ile açılır */}
             <span
