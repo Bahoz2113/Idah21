@@ -363,9 +363,78 @@ export type PressItem = {
   outlet: string;
   title: string;
   url: string;
-  /** ISO 8601 (YYYY-MM-DD). Bilinmiyorsa boş bırakılır. */
+  /** ISO 8601 (YYYY-MM-DD). Bilinmiyorsa boş bırakılır — uydurulmaz. */
   date?: string;
   summary?: string;
+  /** Haberin video kaydı (Instagram reel vb.). */
+  video?: string;
+  /** Haber sitesi mi, sosyal medya paylaşımı mı — listede ayrışsın diye. */
+  kind: "haber" | "sosyal";
 };
 
-export const press: readonly PressItem[] = [] as const;
+/**
+ * Başlıklar haberlerin URL kısa adından (slug) çözülmüştür; kaynak
+ * sayfalar bu ortamdan okunamadığı için sitedeki tam başlıkla birebir
+ * aynı olmayabilir. Tarihler bilinmediğinden BOŞ bırakıldı — bilinmeyen
+ * bir tarihi yazmak, hiç yazmamaktan kötüdür.
+ */
+export const press: readonly PressItem[] = [
+  {
+    outlet: "Batman Tarafsız",
+    title: "YEDİİKİ Robot ve Teknoloji Yarışması başladı",
+    url: "https://www.batmantarafsiz.com/yediiki-robot-ve-teknoloji-yarismasi-basladi/",
+    summary:
+      "Batman Valisi Ekrem Canalp'in katıldığı YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı.",
+    video: "https://www.instagram.com/reel/DXuKouMCHNG/",
+    kind: "haber",
+  },
+  {
+    outlet: "Batman Demokrat Haber",
+    title:
+      "Serkan Ramanlı'dan Cezeri Robotech'e ziyaret: \"Geleceği inşa eden gençlerimizin yanındayız\"",
+    url: "https://batmandemokrathaber.com/serkan-ramanlidan-cezeri-roboteche-ziyaret-gelecegi-insa-eden-genclerimizin-yanindayiz/",
+    kind: "haber",
+  },
+  {
+    outlet: "Batman Tarafsız",
+    title: "Nasıroğlu robotik kodlama atölyesini ziyaret etti",
+    url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
+    kind: "haber",
+  },
+  {
+    outlet: "Batman Son Söz",
+    title: "Esnaf Odası Robotech'le anlaştı",
+    url: "https://www.batmansonsoz.net/mobil/haber/esnaf-odasi-robotech-le-anlasti-90483.html",
+    kind: "haber",
+  },
+  {
+    outlet: "Batman Rehber Gazetesi",
+    title: "Dijital dolandırıcılık her geçen gün artıyor",
+    url: "https://batmanrehbergazetesi.com/dijital-dolandiricilik-her-gecen-gun-artiyor",
+    kind: "haber",
+  },
+  {
+    outlet: "X · @fnasiroglu",
+    title: "Atölye ziyareti paylaşımı",
+    url: "https://x.com/fnasiroglu/status/1961125439042191731",
+    kind: "sosyal",
+  },
+  {
+    outlet: "Instagram",
+    title: "YEDİİKİ Robot ve Teknoloji Yarışması — video",
+    url: "https://www.instagram.com/reel/DXuKouMCHNG/",
+    kind: "sosyal",
+  },
+  {
+    outlet: "Instagram",
+    title: "Atölye paylaşımı",
+    url: "https://www.instagram.com/p/DN6GDDziCRZ/",
+    kind: "sosyal",
+  },
+  {
+    outlet: "Instagram",
+    title: "Atölye paylaşımı",
+    url: "https://www.instagram.com/p/DJ_4QJNILUr/",
+    kind: "sosyal",
+  },
+] as const;
