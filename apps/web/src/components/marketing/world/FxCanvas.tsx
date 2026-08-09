@@ -1,19 +1,26 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
+import { Atmosphere } from "./Atmosphere";
+import { CameraDrift } from "./CameraDrift";
 import { CategoryFx } from "./CategoryFx";
 
 /**
- * KATEGORİ EFEKT KATMANI.
+ * CANLI KATMAN.
  *
- * Dünyanın kendisi artık boyalı katmanlarla kuruluyor (`SceneParallax`);
- * WebGL'e kalan tek iş, katalogda açılan eğitimin animasyonu. Hangar
- * kabuğu, kapılar ve wordmark geometrisi sahneden çıkarıldı — resim
- * onları çok daha iyi anlatıyor ve prosedürel geometri yanında ucuz
- * kalıyordu.
+ * Dünyanın mekânı boyalı katmanlarla kuruluyor (`SceneParallax`);
+ * WebGL'e kalan iş, resmin yapamayacağı iki şey:
  *
- * Böylece sayfada tek WebGL bağlamı kalır ve o bağlam yalnızca resmin
- * anlatamayacağı şeyi yapar: harekete kategoriye göre biçim vermek.
+ *   · ATMOSFER — sayfanın her yerinde akan toz ve köz. Sahne bunsuz
+ *     yalnızca kategori efekti oynarken canlıydı, arada donuyordu.
+ *   · KATEGORİ EFEKTİ — katalogda açılan eğitimin animasyonu.
+ *
+ * Kamera da artık scroll saatinden besleniyor (`CameraDrift`): resimler
+ * kayarken WebGL katmanı yerinde saymaz, ikisi aynı dünyada kalır.
+ *
+ * Hangar kabuğu, kapılar ve wordmark geometrisi sahneden çıkarıldı —
+ * resim onları çok daha iyi anlatıyor ve prosedürel geometri yanında
+ * ucuz kalıyordu. Böylece sayfada tek WebGL bağlamı kalır.
  *
  * Sahne şeffaftır (`alpha: true`) — arkasındaki boyalı dünya görünür.
  */
@@ -29,7 +36,10 @@ export default function FxCanvas({ lite = false }: { lite?: boolean }) {
       <directionalLight position={[5, 9, 6]} intensity={1.1} color="#CFE3E6" />
       <pointLight position={[3, 4, 3]} intensity={26} distance={26} color="#FF8C00" />
 
+      <Atmosphere lite={lite} />
       <CategoryFx />
+
+      <CameraDrift lite={lite} />
     </Canvas>
   );
 }

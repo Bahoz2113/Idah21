@@ -62,12 +62,33 @@ const LAYERS: Layer[] = [
   },
 ];
 
-/** Ön plan ayrı: içeriğin üstünde çizilir, bu yüzden farklı katmanda. */
+/**
+ * Ön plan ayrı: içeriğin üstünde çizilir, bu yüzden farklı katmanda.
+ *
+ * Kaynak plaka (`sahne-onplan.webp`) turuncu ışıkla çizilmiş siluetlerin
+ * saf siyah üzerindeki hâliydi. İki sorunu vardı:
+ *
+ *   1. OPAKTI. Maskeyle yumuşatılıyordu ama maske dikey bir gradyandır,
+ *      şekli değil bandı yumuşatır. Ekranın altında bir şerit duruyordu.
+ *   2. DİKTİ (640×362). Siluetin tamamının görünmesi için ekranın yarısı
+ *      gerekiyordu; alçak bir banda sıkıştırıldığında tepeleri kesiliyordu.
+ *
+ * `-serit` sürümü ikisini de çözer. Plakanın siluet bölgesi kesilip alfa
+ * kanalı türetildi (her sütunda ışığın ilk göründüğü satırdan yukarısı
+ * saydam; konturun üstüne taşan hâle kendi parlaklığıyla korundu), sonra
+ * üç kopya dönüşümlü aynalanıp bindirilerek 7:1 oranında sürekli bir
+ * makine sırtına dönüştürüldü. Böylece tüm siluet 18vh'lik bir banda
+ * sığar ve tam genişlikteki piksel bütçesi üçe katlanır.
+ *
+ * Kayma payı bilerek küçük (0.42 → 0.12): saydam katman yukarı
+ * kaydığında altında boşluk kalır. Kapsayıcı zaten aşağı taşırılmıştır,
+ * bu pay onun içinde kalır.
+ */
 const FOREGROUND: Layer = {
-  src: "/assets/sahne/sahne-onplan.webp",
+  src: "/assets/sahne/sahne-onplan-serit.webp",
   alt: "",
-  drift: 0.42,
-  zoom: 0.3,
+  drift: 0.12,
+  zoom: 0.14,
   className: "",
 };
 
@@ -133,7 +154,18 @@ export function SceneParallax() {
  * kardeş olarak yerleştirilir.
  *
  * Pervane ve dişli siluetleri başlığın önünden geçer; derinlik buradan
- * doğar — KAGE'deki çimen-harf ilişkisinin aynısı.
+ * doğar.
+ *
+ * Katman artık maskeyle kırpılmaz — görüntünün kendisi saydamdır. Bu
+ * ikisi aynı şey değil: maske dikey bir gradyandır, silueti değil bandı
+ * yumuşatır; alfa ise ŞEKLİ keser. Fark ekranda doğrudan görünür,
+ * ön plan alttan gelen bir gölge olmaktan çıkıp mekânın parçası olur.
+ *
+ * Yükseklik ölçülü: 18vh. Hero'nun içeriği ilk ekranın altına taşacak
+ * kadar uzun olduğu için ön plan orada eylem butonlarının üstüne
+ * biniyordu — derinlik uğruna içeriğin okunurluğundan taviz verilmez.
+ * Bu yüzden katman EŞİKTE neredeyse görünmez, dünyaya girildikçe
+ * yoğunlaşır (`--czr-depth-fg`, bkz. `WorldFocus`).
  */
 export function SceneForeground() {
   const frontRefs = useParallax([FOREGROUND]);
@@ -141,25 +173,24 @@ export function SceneForeground() {
   return (
       <div
         aria-hidden="true"
-        // Yükseklik bilerek kısa. İlk denemede 46vh'lik bant hero'nun
-        // eylem butonlarını ve gövde metnini yutuyordu — derinlik uğruna
-        // içeriğin okunurluğundan taviz verilmez. Şerit yalnızca alt
-        // kenarı sarar; üstü maskeyle tamamen saydamdır.
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-20 h-[22vh] overflow-hidden opacity-[0.62]"
+        // Telefonda daha alçak: dar ekranda satırlar kısa, ekranın altındaki
+        // her santimetre okunan metindir.
+        className="czr-foreground pointer-events-none fixed inset-x-0 bottom-0 z-20 h-[12vh] overflow-hidden sm:h-[18vh]"
       >
         <div
           ref={(el) => {
             frontRefs.current[0] = el;
           }}
-          className="absolute inset-0 will-change-transform"
+          // Kapsayıcının altına taşar: katman yukarı kaydığında alt
+          // kenarında boşluk açılmasın diye.
+          className="absolute inset-x-0 -bottom-[20%] h-[140%] will-change-transform"
           style={{
             backgroundImage: `url(${FOREGROUND.src})`,
             backgroundSize: "cover",
             backgroundPosition: "center bottom",
-            maskImage:
-              "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 52%, rgba(0,0,0,1) 100%)",
-            WebkitMaskImage:
-              "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 52%, rgba(0,0,0,1) 100%)",
+            // Büyürken taban sabit kalsın; merkezden ölçeklenseydi
+            // siluetin alt kenarı ekranın dışına çıkardı.
+            transformOrigin: "50% 100%",
           }}
         />
       </div>

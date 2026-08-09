@@ -75,7 +75,7 @@ export function MarketingNav() {
       />
 
       <nav aria-label="Ana navigasyon" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
-        <a href="#us" className="group flex items-center gap-3">
+        <a href="#esik" className="group flex items-center gap-3">
           {/* Kurumun robotik baykuş amblemi. `priority`: sabit başlıkta,
               ilk ekranda görünür — tembel yüklenirse logo geç belirir. */}
           <Image

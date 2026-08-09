@@ -12,9 +12,8 @@ import { QuickContact } from "./QuickContact";
 export function HeroLaunchpad() {
   return (
     <section
-      id="us"
-      aria-labelledby="hero-baslik"
       id="esik"
+      aria-labelledby="hero-baslik"
       className="czr-chapter isolate flex min-h-[100svh] items-center overflow-hidden"
     >
       {/* Teknik ızgara dokusu — kontrol merkezi zemini */}

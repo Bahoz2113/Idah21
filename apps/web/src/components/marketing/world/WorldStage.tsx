@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { observeWorld } from "./progress";
 import { SceneForeground, SceneParallax } from "./SceneParallax";
+import { WorldFocus } from "./WorldFocus";
 
 /**
  * Dünyanın performans ve erişilebilirlik kapısı.
@@ -121,6 +122,11 @@ export function WorldStage() {
 
     {/* Ön plan kapsayıcının DIŞINDA: içeriğin üstünden geçmesi gerekiyor. */}
     <SceneForeground />
+
+    {/* Bölüm değiştikçe dünyanın derinliğini ayarlar. WebGL'e bağlı
+        değildir: sahne hiç yüklenmese de boyalı katmanlar aynı ritimle
+        çekilir. */}
+    <WorldFocus />
     </>
   );
 }

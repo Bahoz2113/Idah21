@@ -88,6 +88,55 @@ body:has(> .czr-site) {
    tesadüfe bırakmaz; kenarlarda koyulaşır, ortada açılır. */
 .czr-world { contain: layout paint; }
 
+/* ── DERİNLİK ODAĞI ────────────────────────────────────────────────
+   Dünya her bölümde aynı yoğunlukta durmaz: eşikte açılır, yoğun okuma
+   bölümlerinde geri çekilir. Değerleri `WorldFocus` yazar, geçişi
+   tarayıcı yapar — JS her karede bir şey hesaplamaz.
+
+   Değişkenler köke yazılır; hem dünya hem de içeriğin üstünden geçen
+   ön plan aynı değeri okur, ikisi birlikte çekilir. */
+:root {
+  --czr-depth-blur: 0px;
+  --czr-depth-dim: 0;
+  /* Eşikteki başlangıç değeri: hero'nun eylem butonları makine sırtının
+     altında kalmasın diye ön plan orada zayıf durur. */
+  --czr-depth-fg: 0.26;
+}
+
+.czr-world,
+.czr-foreground {
+  transition: filter 900ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Ön plan zaten metnin ÜSTÜNDE duruyor; karartması dünyanınkinden
+   daha yumuşak olmalı, yoksa alt şerit tamamen kaybolur. */
+.czr-foreground {
+  opacity: calc(var(--czr-depth-fg) * (0.92 - var(--czr-depth-dim) * 0.5));
+}
+
+/* Telefonda siluet daha da geri çekilir. Dar ekranda metin bloğu ekranın
+   altına kadar iner; makine sırtı orada masaüstündeki yoğunlukta dursaydı
+   son paragrafı yutardı. */
+@media (max-width: 639px) {
+  .czr-foreground {
+    opacity: calc(var(--czr-depth-fg) * (0.62 - var(--czr-depth-dim) * 0.3));
+  }
+}
+
+/* Bulanıklık yalnızca geniş ekranda. Telefonda tam ekran bir katmanı
+   bulanıklaştırmak her geçişte pahalı bir yeniden boyama demektir;
+   orada derinlik yalnızca karartmayla anlatılır. Azaltılmış hareket
+   isteyen kullanıcıda ikisi de kapalıdır — sahne sabit durur. */
+@media (prefers-reduced-motion: no-preference) {
+  .czr-world { opacity: calc(1 - var(--czr-depth-dim) * 0.62); }
+
+  @media (min-width: 768px) {
+    .czr-world { filter: blur(var(--czr-depth-blur)); }
+    .czr-foreground { filter: blur(calc(var(--czr-depth-blur) * 0.6)); }
+  }
+}
+
 .czr-world-floor {
   background:
     radial-gradient(120% 80% at 50% 0%, #123039 0%, rgba(10, 25, 29, 0) 62%),
