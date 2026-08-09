@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
+import { observeWorld } from "./world/progress";
 
 type RevealProps = {
   children: ReactNode;
@@ -15,12 +16,23 @@ type RevealProps = {
  * Scroll ile ortaya çıkış sarmalayıcısı.
  *
  * Neden GSAP değil: bu davranış sayfada onlarca kez tekrar eder ve tek
- * ihtiyacı "görünür oldu mu" bilgisidir. IntersectionObserver bunu tarayıcı
- * yerlisi olarak, ana iş parçacığını meşgul etmeden yapar; GSAP ScrollTrigger
- * yalnızca gerçek scroll-scrubbing gereken hangar bölümünde kullanılır.
+ * ihtiyacı "görünür oldu mu" bilgisidir; koca bir animasyon kütüphanesi
+ * bunun için ilk yük bütçesine giremez.
  *
- * Gözlemci ilk tetiklemeden sonra kendini söker — sayfa boyunca aktif kalan
- * onlarca gözlemci birikmez.
+ * Neden IntersectionObserver DEĞİL — ölçülmüş bir hata:
+ *
+ * IO yalnızca kesişim eşiği AŞILDIĞINDA haber verir. Kaydırma çubuğu
+ * sürüklendiğinde ya da menüden bir bölüme atlandığında aradaki bloklar
+ * ekrana hiç girmeden geçilir; "görünmüyordu, hâlâ görünmüyor" bir olay
+ * üretmez. O bloklar KALICI OLARAK GİZLİ kalıyordu.
+ *
+ * Ölçüm: 1440×900'de kaydırma çubuğu bir hamlede sona sürüklendiğinde
+ * 77 bloktan 45'i gizli kalıyordu — eğitim kataloğunun kartları dâhil.
+ * Kullanıcı sayfanın yarısını boş görüyordu.
+ *
+ * Bunun yerine konum rAF ile kısıtlanmış tek bir ölçümden okunur. Blok
+ * görünür olunca kendi aboneliğini söker: sayfa okundukça ölçüm sayısı
+ * 77'den sıfıra iner, hiçbir dinleyici birikmez.
  */
 export function Reveal({ children, delay = 0, as: Tag = "div", className = "" }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
@@ -30,24 +42,20 @@ export function Reveal({ children, delay = 0, as: Tag = "div", className = "" }:
     const node = ref.current;
     if (!node) return;
 
-    // IntersectionObserver desteklenmiyorsa içerik gizli kalmamalı.
-    if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
-    }
+    const stop = observeWorld(() => {
+      const rect = node.getBoundingClientRect();
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -10% 0px" },
-    );
+      // Üst kenar ekranın alt onda birine girdiğinde açılır. Tek koşul
+      // iki durumu birden kapsar: aşağıdan gelen blokta değer küçülerek
+      // eşiğe iner, ATLANMIŞ blokta ise zaten negatiftir — hızlı
+      // kaydırmada hiçbir blok geride kalmaz.
+      if (rect.top < window.innerHeight * 0.9) {
+        setVisible(true);
+        stop();
+      }
+    });
 
-    observer.observe(node);
-    return () => observer.disconnect();
+    return stop;
   }, []);
 
   return (
