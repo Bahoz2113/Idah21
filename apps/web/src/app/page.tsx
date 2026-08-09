@@ -3,8 +3,8 @@ import { BaseMap } from "@/components/marketing/BaseMap";
 import { BrandSequence } from "@/components/marketing/BrandSequence";
 import { ContactChannels } from "@/components/marketing/ContactChannels";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
-import { HangarGrid } from "@/components/marketing/HangarGrid";
 import { HeroLaunchpad } from "@/components/marketing/HeroLaunchpad";
+import { PressSection } from "@/components/marketing/PressSection";
 import { LegacyTimeline } from "@/components/marketing/LegacyTimeline";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { MarketingNav } from "@/components/marketing/MarketingNav";
@@ -12,6 +12,7 @@ import { MetricsDeck } from "@/components/marketing/MetricsDeck";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
+import { TrainingCatalog } from "@/components/marketing/TrainingCatalog";
 import { AmbientAudio } from "@/components/marketing/world/AmbientAudio";
 import { StationRail } from "@/components/marketing/world/StationRail";
 import { WorldStage } from "@/components/marketing/world/WorldStage";
@@ -112,7 +113,7 @@ export default function HomePage() {
       />
 
       <a
-        href="#hangarlar"
+        href="#egitimler"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-czr-orange focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-czr-base"
       >
         İçeriğe geç
@@ -140,26 +141,24 @@ export default function HomePage() {
 
         {/* 03 — Eğitim ve faaliyet hangarları */}
         <section
-          id="hangarlar"
-          aria-labelledby="hangarlar-baslik"
+          id="egitimler"
+          aria-labelledby="egitimler-baslik"
           className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
               code="DURAK 02"
-              eyebrow="Eğitim ve Faaliyet Hangarları"
+              eyebrow="Eğitimlerimiz"
               title={
-                <span id="hangarlar-baslik">
-                  10 Hangar, Tek Disiplin: <br className="hidden sm:block" />
+                <span id="egitimler-baslik">
+                  On Eğitim, Tek Disiplin: <br className="hidden sm:block" />
                   <span className="text-czr-orange">Çalışan Bir Şey Üret.</span>
                 </span>
               }
-              lead="CEZERİ ROBOTECH'te eğitim on temel disipline ayrılmıştır: İHA/VTOL sistemleri, roketçilik, yapay zeka, robotik, 3D tasarım ve eklemeli üretim, yazılım, elektronik, siber güvenlik, uzay bilimleri ve teknoloji girişimciliği. Her hangar, öğrencinin dönem sonunda kendi eliyle ürettiği çalışan bir çıktıyla kapanır."
+              lead="CEZERİ ROBOTECH'te eğitim on temel disipline ayrılmıştır: İHA/VTOL sistemleri, roketçilik, yapay zeka ve makine öğrenmesi, robotik kodlama, 3D tasarım ve eklemeli üretim, yazılım ve algoritma, elektronik ve mekatronik, siber güvenlik farkındalığı, uzay ve havacılık bilimleri, teknoloji girişimciliği. Her eğitim, öğrencinin dönem sonunda kendi eliyle ürettiği çalışan bir çıktıyla kapanır. Bir başlığa dokunduğunuzda arkadaki sahne o disiplinin animasyonuna geçer."
             />
 
-            <div className="mt-16">
-              <HangarGrid />
-            </div>
+            <TrainingCatalog />
           </div>
         </section>
 
@@ -215,7 +214,25 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 06 — SSS / AI sorgulama */}
+        {/* 06 — Basında biz */}
+        <section
+          id="basin"
+          aria-labelledby="basin-baslik"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
+        >
+          <div className="mx-auto max-w-5xl px-6 lg:px-10">
+            <SectionHeading
+              code="DURAK 05"
+              eyebrow="Basında Biz"
+              title={<span id="basin-baslik">Bizi Başkaları Anlatınca</span>}
+              lead="Yerel ve ulusal basında çıkan haberler, röportajlar ve etkinlik kayıtları. Kurumun kendi anlattığı değil, üçüncü tarafın doğruladığı kayıt."
+            />
+
+            <PressSection />
+          </div>
+        </section>
+
+        {/* 07 — SSS / AI sorgulama */}
         <section
           id="sss"
           aria-labelledby="sss-baslik"
@@ -223,7 +240,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-4xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 05"
+              code="DURAK 06"
               eyebrow="Sıkça Sorulan Sorular"
               title={<span id="sss-baslik">Merak Edilenler</span>}
               lead="Velilerin ve öğrencilerin en sık sorduğu sorular ve net yanıtları."
@@ -243,7 +260,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 06"
+              code="DURAK 07"
               eyebrow="Üs Operasyonları"
               title={<span id="iletisim-baslik">Üsse Bağlan</span>}
               lead={`WhatsApp'tan yazın, Instagram'dan takip edin veya doğrudan atölyeye gelin. Telefon: ${contact.phoneDisplay}`}

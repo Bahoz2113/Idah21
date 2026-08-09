@@ -83,10 +83,10 @@ export function AmbientAudio() {
   if (!ready) return null;
 
   return (
-    // Telefonda sabit düğme hero'nun tam genişlikteki eylem butonlarının
-    // üstüne biniyordu. Küçük ekranda gizlenir: ambiyans bir bonus, orada
-    // ekranın alt şeridi içeriğin kendisine ait.
-    <div className="fixed bottom-6 left-6 z-40 hidden sm:block">
+    // Sol alt köşe hero'nun hızlı iletişim şeridine ait; ambiyans sağ alta
+    // çekildi. Yürüyüş rayı sağda ama dikeyde ortada, çakışma yok.
+    // Telefonda tamamen gizli: orada ekranın alt şeridi içeriğin kendisi.
+    <div className="fixed bottom-6 right-6 z-40 hidden sm:block">
       <audio ref={audio} loop preload="none">
         <source src="/assets/audio/hangar-ambiyans.opus" type="audio/ogg; codecs=opus" />
         <source src="/assets/audio/hangar-ambiyans.m4a" type="audio/mp4" />

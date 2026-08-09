@@ -14,13 +14,33 @@ export type WorldClock = {
   velocity: number;
   /** Viewport genişliği — sahne mobilde kadrajı daraltır. */
   viewportWidth: number;
+  /** Katalogda açık olan eğitimin efekt kimliği (`FxKind`) veya null. */
+  fx: string | null;
+  /** Efektin başladığı an — animasyonlar buradan zaman alır. */
+  fxSince: number;
 };
 
 export const worldClock: WorldClock = {
   progress: 0,
   velocity: 0,
   viewportWidth: 1440,
+  fx: null,
+  fxSince: 0,
 };
+
+/**
+ * Aktif kategori efektini bildirir.
+ *
+ * Katalogdaki bir eğitim açıldığında sahne o disipline ait animasyonu
+ * oynatır (roketçilikte fırlatma, İHA'da sürü uçuşu...). Değer yine
+ * React state'ine yazılmaz: sahne `useFrame` içinde okur, katalog
+ * yalnızca bu kutuyu günceller — kategori değişimi sayfayı render etmez.
+ */
+export function setWorldFx(fx: string | null) {
+  if (worldClock.fx === fx) return;
+  worldClock.fx = fx;
+  worldClock.fxSince = typeof performance !== "undefined" ? performance.now() : Date.now();
+}
 
 /**
  * Yürüyüşün durakları. Kamera anahtar kareleri ve bölüm kimlikleri buradan
@@ -29,11 +49,12 @@ export const worldClock: WorldClock = {
 export const STATIONS = [
   { id: "esik", label: "Eşik", chapter: "00" },
   { id: "telemetri", label: "Telemetri", chapter: "01" },
-  { id: "hangarlar", label: "Hangarlar", chapter: "02" },
+  { id: "egitimler", label: "Eğitimler", chapter: "02" },
   { id: "atolye", label: "Saha", chapter: "03" },
   { id: "miras", label: "Miras", chapter: "04" },
-  { id: "sss", label: "Sorular", chapter: "05" },
-  { id: "iletisim", label: "Konsol", chapter: "06" },
+  { id: "basin", label: "Basın", chapter: "05" },
+  { id: "sss", label: "Sorular", chapter: "06" },
+  { id: "iletisim", label: "Konsol", chapter: "07" },
 ] as const;
 
 export type StationId = (typeof STATIONS)[number]["id"];

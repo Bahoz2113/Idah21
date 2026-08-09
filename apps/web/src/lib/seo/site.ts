@@ -341,10 +341,31 @@ export const legacy = [
 // ──────────────────────────────────────────────────────────────────
 
 export const sections = [
-  { id: "us", label: "Üs" },
-  { id: "hangarlar", label: "Hangarlar" },
+  { id: "esik", label: "Üs" },
+  { id: "egitimler", label: "Eğitimlerimiz" },
   { id: "atolye", label: "Atölye" },
   { id: "miras", label: "Miras" },
+  { id: "basin", label: "Basında Biz" },
   { id: "sss", label: "SSS" },
   { id: "iletisim", label: "İletişim" },
 ] as const;
+
+/**
+ * BASINDA BİZ.
+ *
+ * Yayınlanan haber, röportaj ve etkinlik bağlantıları. Üçüncü taraf
+ * doğrulaması olduğu için hem ziyaretçi güveni hem arama motorları
+ * açısından kurumun kendi anlattığından farklı bir ağırlık taşır.
+ *
+ * Bağlantılar geldikçe buraya eklenir; uydurma kayıt girilmez.
+ */
+export type PressItem = {
+  outlet: string;
+  title: string;
+  url: string;
+  /** ISO 8601 (YYYY-MM-DD). Bilinmiyorsa boş bırakılır. */
+  date?: string;
+  summary?: string;
+};
+
+export const press: readonly PressItem[] = [] as const;

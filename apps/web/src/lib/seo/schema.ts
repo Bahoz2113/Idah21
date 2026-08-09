@@ -12,6 +12,7 @@
 
 import { realMedia } from "../media/real-media";
 import { SITE_URL, contact, disciplines, faqs, org, sameAs } from "./site";
+import { serviceArea, trainingSeoById } from "./trainings";
 
 const ID = {
   org: `${SITE_URL}/#organization`,
@@ -78,7 +79,15 @@ function organizationNode() {
     geo: geoCoordinates,
     hasMap: contact.mapsPlaceUrl,
     openingHoursSpecification,
-    areaServed: contact.areaServed.map((name) => ({ "@type": "Place", name })),
+    // Hizmet coğrafyası tek kaynaktan (trainings.serviceArea) gelir ve
+    // sayfada görünen cümleyle birebir aynıdır. İlçeler `containedInPlace`
+    // ile bağlı iline asılır — yerel aramada ilçe adı da eşleşir.
+    areaServed: serviceArea.map((a) => ({
+      "@type": a.type,
+      name: a.name,
+      ...(a.alt?.length ? { alternateName: [...a.alt] } : {}),
+      ...(a.parent ? { containedInPlace: { "@type": "City", name: a.parent } } : {}),
+    })),
     foundingLocation: { "@type": "Place", name: org.foundingLocation },
     knowsLanguage: [...org.languages],
     audience,
@@ -105,12 +114,33 @@ function organizationNode() {
 }
 
 function courseNodes() {
-  return disciplines.map((d) => ({
+  return disciplines.map((d) => {
+    const seo = trainingSeoById.get(d.id);
+    return {
     "@type": "Course",
     "@id": ID.course(d.id),
     name: d.title,
-    description: d.detail,
-    url: `${SITE_URL}/#hangarlar`,
+    // Yanıt motorlarının alıntıladığı "answer-first" tanım; sayfada da
+    // birebir bu metin görünür.
+    description: seo?.answer ?? d.detail,
+    ...(seo?.keywords?.length ? { keywords: seo.keywords.join(", ") } : {}),
+    ...(seo?.faq?.length
+      ? {
+          // Kategoriye özel soru-cevap. Sohbet tabanlı motorlar (ChatGPT,
+          // Gemini, Perplexity, Copilot) bu biçimi doğrudan alıntılıyor.
+          subjectOf: {
+            "@type": "FAQPage",
+            "@id": `${ID.course(d.id)}-sss`,
+            inLanguage: "tr-TR",
+            mainEntity: seo.faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          },
+        }
+      : {}),
+    url: `${SITE_URL}/#egitim-${d.id}`,
     inLanguage: "tr-TR",
     provider: { "@id": ID.org },
     educationalLevel: d.ageRange,
@@ -133,10 +163,11 @@ function courseNodes() {
       "@type": "Offer",
       category: "Eğitim",
       availability: "https://schema.org/InStock",
-      areaServed: { "@type": "Place", name: contact.address.city },
+      areaServed: serviceArea.map((a) => ({ "@type": a.type, name: a.name })),
       url: `${SITE_URL}/#iletisim`,
     },
-  }));
+    };
+  });
 }
 
 function placeNode() {

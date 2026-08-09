@@ -1,5 +1,6 @@
 import { contact, org } from "@/lib/seo/site";
 import { CezeriGears } from "./CezeriGears";
+import { QuickContact } from "./QuickContact";
 
 /**
  * 01 — FIRLATMA ÜSSÜ (Launchpad)
@@ -82,12 +83,15 @@ export function HeroLaunchpad() {
             </a>
 
             <a
-              href="#hangarlar"
+              href="#egitimler"
               className="inline-flex items-center justify-center gap-2.5 rounded-full border border-white/15 px-8 py-4 text-sm font-semibold uppercase tracking-wide text-czr-ice transition duration-300 ease-czr-cine hover:border-czr-orange/50 hover:bg-white/5"
             >
-              Hangarları Gör
+              Eğitimleri Gör
             </a>
           </div>
+
+          {/* Tek tuşla iletişim — ziyaretçi sayfanın sonunu beklemesin */}
+          <QuickContact />
 
           {/* Disiplin özeti — anahtar kelimeleri hero'ya doğal biçimde taşır */}
           <p className="mt-8 czr-mono text-[11px] uppercase leading-relaxed text-czr-ice/40">

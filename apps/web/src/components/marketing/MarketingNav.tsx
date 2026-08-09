@@ -118,13 +118,6 @@ export function MarketingNav() {
             {contact.phoneDisplay}
           </a>
 
-          <a
-            href="/login"
-            className="hidden rounded-full px-4 py-2.5 text-[13px] font-semibold text-czr-ice/55 transition hover:text-white lg:inline-flex"
-          >
-            Panel Girişi
-          </a>
-
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
@@ -160,11 +153,6 @@ export function MarketingNav() {
                 </a>
               </li>
             ))}
-            <li>
-              <a href="/login" className="block py-3.5 text-[15px] font-semibold text-czr-ice/50">
-                Panel Girişi
-              </a>
-            </li>
           </ul>
         </div>
       ) : null}

@@ -13,6 +13,7 @@ import {
   type Points,
   Vector3,
 } from "three";
+import { CategoryFx } from "./CategoryFx";
 import { worldClock } from "./progress";
 
 /**
@@ -528,6 +529,7 @@ function Scene({ lite }: { lite: boolean }) {
       ))}
       <LaunchField />
       <LegacyGears />
+      <CategoryFx />
       {lite ? null : <Motes />}
 
       <CameraRig />

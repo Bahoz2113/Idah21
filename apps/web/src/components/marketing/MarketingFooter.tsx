@@ -95,11 +95,6 @@ export function MarketingFooter() {
                 </a>
               </li>
             ))}
-            <li>
-              <a href="/login" className="text-[14px] text-czr-ice/45 transition hover:text-czr-orange">
-                Panel Girişi
-              </a>
-            </li>
           </ul>
         </nav>
 
