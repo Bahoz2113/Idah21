@@ -22,6 +22,9 @@ const PUBLIC_PREFIXES = [
   // Bunlar kimlik doğrulaması ARDINA DÜŞERSE arama motorları ve AI
   // tarayıcıları /login'e yönlendirilir; site indekslenemez.
   "/sitemap", "/llms.txt", "/opengraph-image", "/twitter-image", "/assets/",
+  // Tanıtım sayfasının alternatif düzeni. Tanıtım tarafındadır, panel
+  // değildir; kimlik doğrulamasının arkasına düşerse /login'e yönlenir.
+  "/alternatif",
 ];
 
 export async function middleware(req: NextRequest) {

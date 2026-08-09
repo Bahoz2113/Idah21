@@ -19,7 +19,7 @@ import { Wordmark } from "./Wordmark";
  *     yalnızca kategori efekti oynarken canlıydı, arada donuyordu.
  *   · KATEGORİ EFEKTİ — katalogda açılan eğitimin animasyonu.
  *
- * Kamera da artık scroll saatinden besleniyor (`CameraDrift`): resimler
+ * Kamera da scroll saatinden besleniyor (`CameraDrift`): resimler
  * kayarken WebGL katmanı yerinde saymaz, ikisi aynı dünyada kalır.
  *
  * Hangar kabuğu, kapılar ve wordmark geometrisi sahneden çıkarıldı —
@@ -28,7 +28,21 @@ import { Wordmark } from "./Wordmark";
  *
  * Sahne şeffaftır (`alpha: true`) — arkasındaki boyalı dünya görünür.
  */
-export default function FxCanvas({ lite = false }: { lite?: boolean }) {
+export default function FxCanvas({
+  lite = false,
+  /**
+   * Efektler sayfanın her yerinde oynasın mı. Alternatif sayfada arka
+   * plan bir gösteridir (perdeler sırayla geçer), ana sayfada ise
+   * kullanıcının dokunuşuna verilen cevaptır.
+   */
+  anywhere = false,
+  /** Wordmark düzlemi sahnede olsun mu. */
+  wordmark = true,
+}: {
+  lite?: boolean;
+  anywhere?: boolean;
+  wordmark?: boolean;
+}) {
   return (
     <Canvas
       style={{ pointerEvents: "none" }}
@@ -40,9 +54,9 @@ export default function FxCanvas({ lite = false }: { lite?: boolean }) {
       <directionalLight position={[5, 9, 6]} intensity={1.1} color="#CFE3E6" />
       <pointLight position={[3, 4, 3]} intensity={26} distance={26} color="#FF8C00" />
 
-      <Wordmark />
+      {wordmark ? <Wordmark /> : null}
       <Atmosphere lite={lite} />
-      <CategoryFx />
+      <CategoryFx anywhere={anywhere} />
 
       <CameraDrift lite={lite} />
     </Canvas>

@@ -708,7 +708,14 @@ const FX = {
   growth: GrowthFx,
 } as const;
 
-export function CategoryFx() {
+/**
+ * @param anywhere Efekt sayfanın her yerinde görünsün mü.
+ *   Ana sayfada efekt yalnızca eğitimler durağı civarında oynar: orada
+ *   kullanıcı bir başlığa dokunmuştur, animasyon o dokunuşun cevabıdır.
+ *   Alternatif sayfada ise arka plan bir GÖSTERİ — perdeler sayfanın
+ *   tamamı boyunca sırayla oynar, o yüzden kapı açılır.
+ */
+export function CategoryFx({ anywhere = false }: { anywhere?: boolean }) {
   const holder = useRef<Group>(null);
   const [kind, setKind] = useState<string | null>(null);
   const shown = useRef<string | null>(null);
@@ -730,7 +737,8 @@ export function CategoryFx() {
 
     // Yalnızca eğitimler durağı civarında görünür; sayfanın geri
     // kalanında sahne kendi anlatısına döner.
-    const near = worldClock.progress > 0.12 && worldClock.progress < 0.58;
+    const near =
+      anywhere || (worldClock.progress > 0.12 && worldClock.progress < 0.58);
     holder.current.visible = Boolean(shown.current) && near;
   });
 

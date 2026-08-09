@@ -345,6 +345,84 @@ body:has(> .czr-site) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   SEKANS DÜZENİ (/alternatif)
+   Aynı içerik, farklı çerçeve: sayfa tek bir mekân değil, sırayla
+   açılan perdelerdir. Arka planda bir gösteri akar (roket → İHA →
+   3D baskı → ...), bölümler yaklaşıldıkça açılır.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Perde plakası: yeni görsel saydamdan açılır. `key` değiştiğinde
+   eleman yeniden monte edilir ve animasyon baştan çalışır. */
+.czr-seq-plate {
+  opacity: 0;
+  animation: czr-plate-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes czr-plate-in {
+  from { opacity: 0; }
+  to   { opacity: 0.42; }
+}
+
+/* Gerçek kayıt plakanın üstünde, ondan daha soluk: sahnenin dokusunu
+   verir ama içeriğin arkasında kalır. */
+.czr-seq-clip {
+  opacity: 0;
+  animation: czr-clip-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes czr-clip-in {
+  from { opacity: 0; }
+  to   { opacity: 0.3; }
+}
+
+/* Sekans perdesi ana sayfanınkinden koyu: arkada video oynayabiliyor,
+   metin kontrastı tesadüfe bırakılamaz. */
+.czr-seq-scrim {
+  background:
+    linear-gradient(180deg, rgba(10, 25, 29, 0.86) 0%, rgba(10, 25, 29, 0.42) 26%,
+                            rgba(10, 25, 29, 0.42) 74%, rgba(10, 25, 29, 0.9) 100%),
+    radial-gradient(80% 70% at 50% 50%, rgba(10, 25, 29, 0.24) 0%, rgba(10, 25, 29, 0.72) 100%);
+}
+
+/* Perde bildirimi: yalnızca perde değişince belirir, sonra çekilir.
+   Sabit konumlu kalıcı bir panel akan metinle çakışıyordu. */
+.czr-act-notice {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.czr-act-notice[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Bölümün açılışı: künye önce, gövde hemen ardından.
+   Yükseklik DEĞİŞMEZ — yalnızca görünürlük açılır. Bkz. SequenceChapter. */
+.czr-seq-masthead,
+.czr-seq-body {
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.czr-seq-chapter:not([data-open]) .czr-seq-masthead {
+  opacity: 0;
+  transform: translateY(26px);
+}
+.czr-seq-chapter:not([data-open]) .czr-seq-body {
+  opacity: 0;
+  transform: translateY(42px);
+  filter: blur(7px);
+  /* Kapalıyken gövde tıklanmaz: görünmeyen bir bağlantıya klavyeyle
+     ya da fareyle ulaşılmamalı. */
+  pointer-events: none;
+}
+.czr-seq-chapter[data-open] .czr-seq-body {
+  transition-delay: 160ms;
+}
+
+/* ══════════════════════════════════════════════════════════════════
    ERİŞİLEBİLİRLİK: hareket azaltma
    Sistem "azaltılmış hareket" istiyorsa sinematik katman tamamen
    durur ve içerik doğrudan görünür hâle gelir. Reveal'lerin görünür
@@ -361,4 +439,16 @@ body:has(> .czr-site) {
     scroll-behavior: auto !important;
   }
   .czr-reveal { opacity: 1 !important; transform: none !important; }
+
+  /* Sekans bölümleri de doğrudan açık gelir; hiçbir içerik gizli
+     kalmaz. Perde plakası ve kaydı da son hâllerinde durur. */
+  .czr-seq-masthead,
+  .czr-seq-body {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    pointer-events: auto !important;
+  }
+  .czr-seq-plate { opacity: 0.42 !important; }
+  .czr-seq-clip { opacity: 0.3 !important; }
 }
