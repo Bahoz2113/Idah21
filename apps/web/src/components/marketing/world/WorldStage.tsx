@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { observeWorld } from "./progress";
+import { SceneForeground, SceneParallax } from "./SceneParallax";
 
 /**
  * Dünyanın performans ve erişilebilirlik kapısı.
@@ -21,7 +22,7 @@ import { observeWorld } from "./progress";
  * bu durumda da sayfa eksiksiz okunur — sahne yalnızca dekordur.
  */
 
-const HangarWorld = dynamic(() => import("./HangarWorld"), {
+const FxCanvas = dynamic(() => import("./FxCanvas"), {
   // ssr:false zorunlu — three sunucuda WebGL bağlamı bulamaz.
   ssr: false,
   loading: () => null,
@@ -92,19 +93,34 @@ export function WorldStage() {
   }, []);
 
   return (
+    <>
     <div
       aria-hidden="true"
       className="czr-world pointer-events-none fixed inset-0 z-0"
       data-active={enabled ? "" : undefined}
     >
-      {/* Taban katman: sahne yüklenmese de dünyanın rengi ve derinliği kalır. */}
+      {/* Taban katman: resimler yüklenene kadar dünyanın rengi ve
+          derinliği burada durur; hiçbir an boş siyahlık görünmez. */}
       <div className="czr-world-floor absolute inset-0" />
 
-      {enabled ? <HangarWorld lite={lite} /> : null}
+      {/* Boyalı dünya — WebGL gerektirmez, her cihazda çalışır. */}
+      <SceneParallax />
+
+      {/* Kategori animasyonları: tek WebGL bağlamı, yalnızca resmin
+          anlatamayacağı işi yapar. */}
+      {enabled ? (
+        <div className="absolute inset-0 z-[3]">
+          <FxCanvas lite={lite} />
+        </div>
+      ) : null}
 
       {/* Okunabilirlik perdesi — hareketli sahnenin üstünde metin kontrastı
           tesadüfe bırakılamaz. */}
       <div className="czr-world-scrim absolute inset-0" />
     </div>
+
+    {/* Ön plan kapsayıcının DIŞINDA: içeriğin üstünden geçmesi gerekiyor. */}
+    <SceneForeground />
+    </>
   );
 }

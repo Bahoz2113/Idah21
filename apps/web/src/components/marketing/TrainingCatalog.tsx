@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { disciplines } from "@/lib/seo/site";
 import { serviceAreaSentence, trainingSeoById } from "@/lib/seo/trainings";
@@ -103,6 +104,27 @@ export function TrainingCatalog() {
                   </summary>
 
                   <div className="grid gap-8 pb-10 pl-0 pr-0 sm:pl-[68px] lg:grid-cols-3 lg:gap-10">
+                    {/* Kategori kapağı — bölüm açıldığında yüklenir.
+                        `loading="lazy"` ile on kapak birden inmez. */}
+                    {seo?.cover ? (
+                      <div className="czr-rim relative overflow-hidden rounded-2xl border border-white/10 lg:col-span-3">
+                        <div className="relative aspect-[21/9]">
+                          <Image
+                            src={seo.cover}
+                            alt=""
+                            fill
+                            sizes="(min-width: 1024px) 1100px, 92vw"
+                            loading="lazy"
+                            className="object-cover"
+                          />
+                          <span
+                            aria-hidden="true"
+                            className="absolute inset-0 bg-gradient-to-t from-czr-base/80 via-transparent to-czr-base/25"
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+
                     {/* Yanıt motorlarının alıntılayacağı tanım */}
                     <div className="lg:col-span-2">
                       <p className="text-pretty text-[15px] leading-relaxed text-czr-ice/80 sm:text-base">

@@ -111,7 +111,12 @@ body:has(> .czr-site) {
 
 /* Bölümler dünyanın üzerinde yüzer: kendi opak zeminleri yoktur.
    Yerel okunabilirlik gerektiğinde metin bloğunun arkasına bu perde konur. */
-.czr-chapter { position: relative; z-index: 10; }
+/* `overflow-x: clip` bölümün kendi düzenini bozmadan yalnızca yatay
+   taşmayı keser. Perde (`.czr-veil::before`) bilerek kenarlardan taşar;
+   dar ekranda bu taşma belgeye yatay kaydırma ekliyordu. `hidden` yerine
+   `clip`: `hidden` yeni bir kaydırma bağlamı açar ve içerideki `sticky`
+   davranışını bozardı. */
+.czr-chapter { position: relative; z-index: 10; overflow-x: clip; }
 
 .czr-veil {
   position: relative;

@@ -70,6 +70,8 @@ export type TrainingSeo = {
   id: string;
   /** Sahnede oynayacak animasyonun kimliği (world/CategoryFx). */
   fx: FxKind;
+  /** Kategori kapak görseli — katalogda açıldığında görünür. */
+  cover: string;
   /** Yanıt motorlarının alıntılayacağı, kendi kendine yeterli tanım. */
   answer: string;
   /** Gerçek arama ifadeleri — coğrafya çaprazları dahil. */
@@ -95,6 +97,7 @@ export type FxKind =
 export const trainingSeo: readonly TrainingSeo[] = [
   {
     id: "iha-vtol",
+    cover: "/assets/egitim/iha-vtol.webp",
     fx: "drone",
     answer:
       "İHA/VTOL eğitimi, dikey kalkış yapabilen insansız hava araçlarının gövde " +
@@ -134,6 +137,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "roketcilik",
+    cover: "/assets/egitim/roketcilik.webp",
     fx: "rocket",
     answer:
       "Roketçilik eğitimi, model roket gövde aerodinamiğini, kanatçık geometrisini, " +
@@ -173,6 +177,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "yapay-zeka",
+    cover: "/assets/egitim/yapay-zeka.webp",
     fx: "neural",
     answer:
       "Yapay zeka eğitimi, öğrencinin kendi veri setini toplayıp bir görüntü " +
@@ -213,6 +218,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "robotik",
+    cover: "/assets/egitim/robotik.webp",
     fx: "robot",
     answer:
       "Robotik ve otonom sistemler eğitimi, sensör okuma, motor sürme ve karar " +
@@ -251,6 +257,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "3d-tasarim",
+    cover: "/assets/egitim/3d-tasarim.webp",
     fx: "print",
     answer:
       "3D tasarım ve eklemeli üretim eğitimi, bilgisayarda modellenen bir parçanın " +
@@ -285,6 +292,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "kodlama",
+    cover: "/assets/egitim/kodlama.webp",
     fx: "code",
     answer:
       "Yazılım ve algoritma eğitimi, blok tabanlı görsel programlamadan metin " +
@@ -319,6 +327,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "elektronik",
+    cover: "/assets/egitim/elektronik.webp",
     fx: "circuit",
     answer:
       "Elektronik ve mekatronik eğitimi, devre şeması okumayı, breadboard üzerinde " +
@@ -352,6 +361,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "siber-guvenlik",
+    cover: "/assets/egitim/siber-guvenlik.webp",
     fx: "shield",
     answer:
       "Siber güvenlik farkındalığı eğitimi, dijital hijyen, güçlü parola ve " +
@@ -386,6 +396,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "uzay-havacilik",
+    cover: "/assets/egitim/uzay-havacilik.webp",
     fx: "orbit",
     answer:
       "Uzay ve havacılık bilimleri eğitimi, yörünge mantığını, uydu görevlerini, " +
@@ -420,6 +431,7 @@ export const trainingSeo: readonly TrainingSeo[] = [
   },
   {
     id: "girisimcilik",
+    cover: "/assets/egitim/girisimcilik.webp",
     fx: "growth",
     answer:
       "Teknoloji girişimciliği eğitimi, öğrencinin ürettiği teknik çıktıyı bir " +

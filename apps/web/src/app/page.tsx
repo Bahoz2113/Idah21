@@ -63,11 +63,20 @@ export const metadata: Metadata = {
     siteName: org.name,
     title: `${org.name} — ${org.slogan}`,
     description: org.description,
+    images: [
+      {
+        url: "/assets/sahne/og-paylasim.webp",
+        width: 1200,
+        height: 675,
+        alt: "CEZERİ ROBOTECH — Batman'da gece hangarı, fırlatma rampasındaki roket ve havalanan İHA",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${org.name} — ${org.slogan}`,
     description: org.tagline,
+    images: ["/assets/sahne/og-paylasim.webp"],
   },
   robots: {
     index: true,
