@@ -116,13 +116,22 @@ body:has(> .czr-site) {
 .czr-veil {
   position: relative;
 }
+/* Perde başlık bloğunun TAMAMINI kapsar. Önceki dar elips yalnızca sol
+   kolonu koruyordu; editoryal düzende gövde metni sağa geçince sahnenin
+   üzerinde korumasız kalıyordu. Elips geniş ve yumuşak: metnin arkasını
+   toplarken kenarlarda dünyayı serbest bırakır. */
 .czr-veil::before {
   content: "";
   position: absolute;
-  inset: -8% -6%;
+  inset: -14% -10%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(60% 60% at 30% 50%, rgba(10, 25, 29, 0.86) 0%, rgba(10, 25, 29, 0) 100%);
+  background: radial-gradient(
+    72% 66% at 42% 50%,
+    rgba(10, 25, 29, 0.9) 0%,
+    rgba(10, 25, 29, 0.66) 46%,
+    rgba(10, 25, 29, 0) 100%
+  );
 }
 
 /* Koyu zeminde turuncu odak halkası — panelin mavi odağını ezmez */
@@ -204,6 +213,33 @@ body:has(> .czr-site) {
   background: linear-gradient(90deg, rgba(255,140,0,0) 0%, rgba(255,140,0,0.55) 50%, rgba(255,140,0,0) 100%);
   opacity: 0.5;
   transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Görüntü tipografisi ─────────────────────────────────────────────
+   Bölüm başlıkları viewport ile birlikte büyür ama üst sınırı vardır;
+   sınırsız büyüme çok geniş ekranda satırı okunmaz uzunluğa taşır.
+
+   Büyük punto negatif harf aralığı ister: aynı `tracking` değeri 16 px'te
+   normal, 64 px'te dağınık görünür. `clamp` ile boy büyüdükçe aralık
+   sıkılaşır, optik yoğunluk sabit kalır.
+
+   `text-wrap: balance` satırları eşitler — iki satırlık bir başlığın
+   ikinci satırında tek kelime kalması (dul satır) engellenir. */
+.czr-display {
+  font-size: clamp(2.1rem, 1.15rem + 3.6vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: clamp(-0.035em, -0.012em - 0.35vw, -0.015em);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+/* Hero başlığı bölüm başlıklarından bir kademe önde durur. */
+.czr-hero-display {
+  font-size: clamp(2.6rem, 1.2rem + 5.4vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: clamp(-0.045em, -0.02em - 0.4vw, -0.02em);
+  font-weight: 700;
+  text-wrap: balance;
 }
 
 /* Ambiyans düğmesinin seviye göstergesi */

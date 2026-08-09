@@ -55,7 +55,7 @@ export function HeroLaunchpad() {
           {/* LCP elemanı — sunucudan gelen düz metin */}
           <h1
             id="hero-baslik"
-            className="mt-8 text-balance text-[clamp(2.6rem,7.2vw,5.2rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-white"
+            className="czr-hero-display mt-8 font-extrabold text-white"
           >
             HAYAL ET,{" "}
             <span className="bg-czr-launch bg-clip-text text-transparent">KODLA,</span>{" "}
