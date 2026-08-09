@@ -29,6 +29,11 @@ export type Act = {
   plate: string;
   /** Gerçek kayıt (sessiz, döngüde). Yoksa yalnızca görsel oynar. */
   clip?: string;
+  /**
+   * Kaydın ilk karesi. Video çözülene kadar panel boş kalmasın diye;
+   * kodeği desteklemeyen ortamda da kadraj görünür.
+   */
+  poster?: string;
 };
 
 export const SHOW: Act[] = [
@@ -37,18 +42,21 @@ export const SHOW: Act[] = [
     title: "Roket Fırlatma",
     plate: "/assets/egitim/roketcilik.webp",
     clip: "/assets/real-media/saha-roket-firlatma-01.mp4",
+    poster: "/assets/real-media/saha-roket-firlatma-01-poster.webp",
   },
   {
     fx: "drone",
     title: "İHA / VTOL Uçuşu",
     plate: "/assets/egitim/iha-vtol.webp",
     clip: "/assets/real-media/saha-iha-simurgh-01.mp4",
+    poster: "/assets/real-media/saha-iha-simurgh-01-poster.webp",
   },
   {
     fx: "print",
     title: "3D Yazıcı Baskısı",
     plate: "/assets/egitim/3d-tasarim.webp",
     clip: "/assets/real-media/3d-baski-uretim-01.mp4",
+    poster: "/assets/real-media/3d-baski-uretim-01-poster.webp",
   },
   { fx: "neural", title: "Sinir Ağı", plate: "/assets/egitim/yapay-zeka.webp" },
   {
@@ -56,6 +64,7 @@ export const SHOW: Act[] = [
     title: "Robotik Montaj",
     plate: "/assets/egitim/robotik.webp",
     clip: "/assets/real-media/robotik-montaj-01.mp4",
+    poster: "/assets/real-media/robotik-montaj-01-poster.webp",
   },
   { fx: "code", title: "Algoritma", plate: "/assets/egitim/kodlama.webp" },
   { fx: "circuit", title: "Devre ve Lehim", plate: "/assets/egitim/elektronik.webp" },

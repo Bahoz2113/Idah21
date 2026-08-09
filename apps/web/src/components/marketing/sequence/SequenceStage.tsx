@@ -134,18 +134,28 @@ export function SequenceStage() {
 
         {/* 2 — Gerçek kayıt. Yalnızca kaydı olan perdelerde ve yalnızca
             yeterli cihazda. Sessiz, döngüde, kullanıcı denetimi yok:
-            dekoratif bir katman, içerik değil. */}
+            dekoratif bir katman, içerik değil.
+
+            Neden tam ekran DEĞİL: bu kayıtlar sahada telefonla çekildi,
+            hepsi 640×1138 — yani dikey. Tam ekran `object-cover` ile
+            1440×900'e yayıldığında kadrajın yaklaşık üçte ikisi kırpılır
+            ve roket çoğu karede görüntünün dışında kalır. Kayıt kendi
+            oranında, sağ kenarda bir saha paneli olarak duruyor: hiçbir
+            şey kırpılmıyor, hiçbir şey esnetilmiyor. */}
         {clips && current.clip ? (
-          <video
-            key={current.clip}
-            className="czr-seq-clip absolute inset-0 h-full w-full object-cover"
-            src={current.clip}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
+          <div className="czr-seq-clip absolute right-0 top-1/2 hidden aspect-[9/16] h-[72vh] -translate-y-1/2 overflow-hidden lg:block">
+            <video
+              key={current.clip}
+              className="h-full w-full object-cover"
+              src={current.clip}
+              poster={current.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </div>
         ) : null}
 
         {/* 3 — Prosedürel efekt: asıl animasyon */}
