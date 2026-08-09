@@ -343,6 +343,7 @@ export const legacy = [
 export const sections = [
   { id: "esik", label: "Üs" },
   { id: "egitimler", label: "Eğitimlerimiz" },
+  { id: "mufredat", label: "Müfredatımız" },
   { id: "atolye", label: "Atölye" },
   { id: "miras", label: "Miras" },
   { id: "basin", label: "Basında Biz" },

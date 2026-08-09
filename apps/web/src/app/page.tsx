@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { BaseMap } from "@/components/marketing/BaseMap";
 import { BrandSequence } from "@/components/marketing/BrandSequence";
 import { ContactChannels } from "@/components/marketing/ContactChannels";
+import { CurriculumSection } from "@/components/marketing/CurriculumSection";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
 import { HeroLaunchpad } from "@/components/marketing/HeroLaunchpad";
 import { PressSection } from "@/components/marketing/PressSection";
@@ -171,6 +172,28 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* 03 — Müfredatımız */}
+        <section
+          id="mufredat"
+          aria-labelledby="mufredat-baslik"
+          className="czr-chapter border-b border-white/8 py-24 lg:py-32"
+        >
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            <SectionHeading
+              code="DURAK 03"
+              eyebrow="Müfredatımız"
+              title={
+                <span id="mufredat-baslik">
+                  Hafta Hafta <span className="text-czr-orange">Ne Öğretiyoruz?</span>
+                </span>
+              }
+              lead="CEZERİ ROBOTECH'te dört ayrı program yürütülür: blok tabanlı kodlama (ScratchJr'dan mBlock'a), temel elektrik ve enerji atölyesi, elektronik deney ve lehim atölyesi, Arduino ile robotik ve kodlama. Aşağıda her programın haftalık ders planı, kullanılan araçlar ve modül yapısı yer alıyor — ne öğrettiğimizi hafta hafta okuyabilirsiniz."
+            />
+
+            <CurriculumSection />
+          </div>
+        </section>
+
         {/* 04 — Gerçek atölye ve saha deneyimi */}
         <section
           id="atolye"
@@ -179,7 +202,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 03"
+              code="DURAK 04"
               eyebrow="Atölye ve Saha"
               title={<span id="atolye-baslik">Simülasyon Değil. Gerçek Atölye.</span>}
               lead="Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Öğrencilerin yüzleri gizliliğe saygı gereği bulanıklaştırılmıştır."
@@ -199,7 +222,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 04"
+              code="DURAK 05"
               eyebrow="Cezerî Mirası"
               title={
                 <span id="miras-baslik">
@@ -231,7 +254,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 05"
+              code="DURAK 06"
               eyebrow="Basında Biz"
               title={<span id="basin-baslik">Bizi Başkaları Anlatınca</span>}
               lead="Yerel ve ulusal basında çıkan haberler, röportajlar ve etkinlik kayıtları. Kurumun kendi anlattığı değil, üçüncü tarafın doğruladığı kayıt."
@@ -249,7 +272,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-4xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 06"
+              code="DURAK 07"
               eyebrow="Sıkça Sorulan Sorular"
               title={<span id="sss-baslik">Merak Edilenler</span>}
               lead="Velilerin ve öğrencilerin en sık sorduğu sorular ve net yanıtları."
@@ -269,7 +292,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
-              code="DURAK 07"
+              code="DURAK 08"
               eyebrow="Üs Operasyonları"
               title={<span id="iletisim-baslik">Üsse Bağlan</span>}
               lead={`WhatsApp'tan yazın, Instagram'dan takip edin veya doğrudan atölyeye gelin. Telefon: ${contact.phoneDisplay}`}

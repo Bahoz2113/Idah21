@@ -12,6 +12,7 @@
 
 import { realMedia } from "../media/real-media";
 import { SITE_URL, contact, disciplines, faqs, org, press, sameAs } from "./site";
+import { curriculum } from "./curriculum";
 import { serviceArea, trainingSeoById } from "./trainings";
 
 const ID = {
@@ -167,6 +168,27 @@ function courseNodes() {
       suggestedMinAge: Number(d.ageRange.split("-")[0]) || org.ageRange.min,
       suggestedMaxAge: org.ageRange.max,
     },
+    // MÜFREDAT — `syllabusSections`, Google'ın Course zengin sonucunda
+    // okuduğu ve yanıt motorlarının "ne öğretiyor" sorusuna cevap ararken
+    // taradığı alandır. Modül adları ve hafta sayıları sayfada birebir
+    // görünür; görünmeyen hiçbir şey buraya yazılmaz.
+    ...(() => {
+      const programs = curriculum.filter((c) => c.relatedDisciplines.includes(d.id));
+      if (programs.length === 0) return {};
+      return {
+        syllabusSections: programs.flatMap((prog) =>
+          prog.modules.map((m, i) => ({
+            "@type": "Syllabus",
+            name: `${prog.title} — ${m.title}`,
+            description: m.summary,
+            position: i + 1,
+            timeRequired: `P${m.weeks.length}W`,
+            inLanguage: "tr-TR",
+          })),
+        ),
+      };
+    })(),
+
     // hasCourseInstance olmadan Google Course zengin sonucu üretmez.
     hasCourseInstance: {
       "@type": "CourseInstance",

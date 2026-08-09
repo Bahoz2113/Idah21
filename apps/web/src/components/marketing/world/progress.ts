@@ -50,11 +50,12 @@ export const STATIONS = [
   { id: "esik", label: "Eşik", chapter: "00" },
   { id: "telemetri", label: "Telemetri", chapter: "01" },
   { id: "egitimler", label: "Eğitimler", chapter: "02" },
-  { id: "atolye", label: "Saha", chapter: "03" },
-  { id: "miras", label: "Miras", chapter: "04" },
-  { id: "basin", label: "Basın", chapter: "05" },
-  { id: "sss", label: "Sorular", chapter: "06" },
-  { id: "iletisim", label: "Konsol", chapter: "07" },
+  { id: "mufredat", label: "Müfredat", chapter: "03" },
+  { id: "atolye", label: "Saha", chapter: "04" },
+  { id: "miras", label: "Miras", chapter: "05" },
+  { id: "basin", label: "Basın", chapter: "06" },
+  { id: "sss", label: "Sorular", chapter: "07" },
+  { id: "iletisim", label: "Konsol", chapter: "08" },
 ] as const;
 
 export type StationId = (typeof STATIONS)[number]["id"];

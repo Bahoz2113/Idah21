@@ -116,7 +116,15 @@ body:has(> .czr-site) {
    dar ekranda bu taşma belgeye yatay kaydırma ekliyordu. `hidden` yerine
    `clip`: `hidden` yeni bir kaydırma bağlamı açar ve içerideki `sticky`
    davranışını bozardı. */
-.czr-chapter { position: relative; z-index: 10; overflow-x: clip; }
+/* `scroll-margin-top`: menüden bir bölüme atlandığında sabit üst çubuk
+   başlığın künye satırını örtüyordu. Tarayıcı hedefi bu kadar aşağıya
+   hizalar; hiçbir JS gerekmez. */
+.czr-chapter {
+  position: relative;
+  z-index: 10;
+  overflow-x: clip;
+  scroll-margin-top: 5.5rem;
+}
 
 .czr-veil {
   position: relative;
