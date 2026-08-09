@@ -11,7 +11,7 @@
 // ══════════════════════════════════════════════════════════════════
 
 import { realMedia } from "../media/real-media";
-import { SITE_URL, contact, disciplines, faqs, org, sameAs } from "./site";
+import { SITE_URL, contact, disciplines, faqs, org, press, sameAs } from "./site";
 import { serviceArea, trainingSeoById } from "./trainings";
 
 const ID = {
@@ -93,6 +93,22 @@ function organizationNode() {
     audience,
     // Kurs kataloğu kuruma bağlanır — AI motorları "ne öğretiyor" sorusunu
     // bu kenardan yanıtlar.
+    // BASIN KAYITLARI — üçüncü taraf doğrulaması.
+    // `datePublished` bilerek YOK: kaynak sayfalar okunamadığı için yayın
+    // tarihleri doğrulanamadı ve yanlış tarih yazmak yapılandırılmış veride
+    // hiç yazmamaktan kötüdür. Yalnızca sosyal paylaşımlar değil, haber
+    // kaynakları alınır — `sameAs` kurumun kendi hesaplarına ayrılmıştır.
+    subjectOf: press
+      .filter((p) => p.kind === "haber")
+      .map((p) => ({
+        "@type": "NewsArticle",
+        headline: p.title,
+        url: p.url,
+        ...(p.summary ? { description: p.summary } : {}),
+        inLanguage: "tr-TR",
+        publisher: { "@type": "NewsMediaOrganization", name: p.outlet },
+        about: { "@id": ID.org },
+      })),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "CEZERİ ROBOTECH Eğitim Hangarları",

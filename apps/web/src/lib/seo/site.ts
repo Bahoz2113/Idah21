@@ -370,13 +370,25 @@ export type PressItem = {
   video?: string;
   /** Haber sitesi mi, sosyal medya paylaşımı mı — listede ayrışsın diye. */
   kind: "haber" | "sosyal";
+  /** Başlığın nereden geldiği: bağımsız arama sonucu mu, URL kısa adı mı. */
+  source: "arama" | "slug";
 };
 
 /**
- * Başlıklar haberlerin URL kısa adından (slug) çözülmüştür; kaynak
- * sayfalar bu ortamdan okunamadığı için sitedeki tam başlıkla birebir
- * aynı olmayabilir. Tarihler bilinmediğinden BOŞ bırakıldı — bilinmeyen
- * bir tarihi yazmak, hiç yazmamaktan kötüdür.
+ * BASIN KAYITLARI.
+ *
+ * Kaynak sayfaların hiçbiri bu ortamdan okunamıyor (tüm haber alan adları
+ * egress politikasıyla kapalı), bu yüzden her kaydın doğrulanma derecesi
+ * `source` alanında açıkça durur:
+ *
+ *   "arama"  → başlık bağımsız bir arama sonucunun başlığıyla birebir
+ *              eşleşti; yayının kendi başlığı olduğu teyitli sayılır.
+ *   "slug"   → başlık yalnızca URL kısa adından çözüldü; yayındaki tam
+ *              başlıkla küçük farklar olabilir.
+ *
+ * Tarihler BOŞ. Aramada bazı olayların yılı geçiyor ama hiçbiri bu
+ * URL'lerin kendi yayın tarihi olarak doğrulanamadı; yanlış bir
+ * `datePublished` yapılandırılmış veriye yazmak, hiç yazmamaktan kötüdür.
  */
 export const press: readonly PressItem[] = [
   {
@@ -384,57 +396,72 @@ export const press: readonly PressItem[] = [
     title: "YEDİİKİ Robot ve Teknoloji Yarışması başladı",
     url: "https://www.batmantarafsiz.com/yediiki-robot-ve-teknoloji-yarismasi-basladi/",
     summary:
-      "Batman Valisi Ekrem Canalp'in katıldığı YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı.",
+      "Batman Valiliği himayesinde düzenlenen YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı; Batman Valisi Ekrem Canalp proje standlarını gezdi.",
     video: "https://www.instagram.com/reel/DXuKouMCHNG/",
     kind: "haber",
+    source: "slug",
   },
   {
     outlet: "Batman Demokrat Haber",
     title:
       "Serkan Ramanlı'dan Cezeri Robotech'e ziyaret: \"Geleceği inşa eden gençlerimizin yanındayız\"",
     url: "https://batmandemokrathaber.com/serkan-ramanlidan-cezeri-roboteche-ziyaret-gelecegi-insa-eden-genclerimizin-yanindayiz/",
+    summary:
+      "Batman Milletvekili Serkan Ramanlı atölyeyi ziyaret etti ve gençlerin teknoloji çalışmalarına destek mesajı verdi.",
     kind: "haber",
+    source: "slug",
   },
   {
     outlet: "Batman Tarafsız",
     title: "Nasıroğlu robotik kodlama atölyesini ziyaret etti",
     url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
     kind: "haber",
+    source: "slug",
   },
   {
     outlet: "Batman Son Söz",
     title: "Esnaf Odası Robotech'le anlaştı",
     url: "https://www.batmansonsoz.net/mobil/haber/esnaf-odasi-robotech-le-anlasti-90483.html",
+    summary:
+      "Batman Esnaf ve Sanatkârlar Odası ile imzalanan protokol kapsamında oda üyeleri ve çocukları teknoloji eğitimlerinden indirimli yararlanıyor.",
     kind: "haber",
+    source: "slug",
   },
   {
     outlet: "Batman Rehber Gazetesi",
     title: "Dijital dolandırıcılık her geçen gün artıyor",
     url: "https://batmanrehbergazetesi.com/dijital-dolandiricilik-her-gecen-gun-artiyor",
+    summary:
+      "Kart bilgisi hırsızlığı, SMS tuzakları ve yapay zeka destekli dolandırıcılık yöntemlerine karşı farkındalık uyarısı.",
     kind: "haber",
+    source: "arama",
   },
   {
-    outlet: "X · @fnasiroglu",
+    outlet: "X · Ferhat Nasıroğlu",
     title: "Atölye ziyareti paylaşımı",
     url: "https://x.com/fnasiroglu/status/1961125439042191731",
     kind: "sosyal",
+    source: "slug",
   },
   {
     outlet: "Instagram",
     title: "YEDİİKİ Robot ve Teknoloji Yarışması — video",
     url: "https://www.instagram.com/reel/DXuKouMCHNG/",
     kind: "sosyal",
+    source: "slug",
   },
   {
     outlet: "Instagram",
     title: "Atölye paylaşımı",
     url: "https://www.instagram.com/p/DN6GDDziCRZ/",
     kind: "sosyal",
+    source: "slug",
   },
   {
     outlet: "Instagram",
     title: "Atölye paylaşımı",
     url: "https://www.instagram.com/p/DJ_4QJNILUr/",
     kind: "sosyal",
+    source: "slug",
   },
 ] as const;
