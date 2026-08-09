@@ -372,6 +372,19 @@ export type PressItem = {
   kind: "haber" | "sosyal";
   /** Başlığın nereden geldiği: bağımsız arama sonucu mu, URL kısa adı mı. */
   source: "arama" | "slug";
+  /**
+   * Karta eşlik eden görsel.
+   *
+   * DİKKAT: bu, haberin KENDİ fotoğrafı değil — yayınların görselleri bize
+   * ait değil ve bu ortamdan indirilemiyor. Buraya kendi arşiv fotoğrafımız
+   * konur ve kartta "CEZERİ ROBOTECH arşivi" olarak kredilendirilir;
+   * gazetecilikteki "dosya fotoğrafı" ne ise odur. Bu yüzden şemadaki
+   * NewsArticle düğümüne `image` olarak YAZILMAZ.
+   */
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 };
 
 /**
@@ -398,6 +411,11 @@ export const press: readonly PressItem[] = [
     summary:
       "Batman Valiliği himayesinde düzenlenen YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı; Batman Valisi Ekrem Canalp proje standlarını gezdi.",
     video: "https://www.instagram.com/reel/DXuKouMCHNG/",
+    image: "/assets/real-media/robotik-tezgah-01.webp",
+    imageAlt:
+      "CEZERİ ROBOTECH arşivi: ultrasonik sensörlü paletli robotun mikrodenetleyici kartının tezgahta ayarlanması",
+    imageWidth: 900,
+    imageHeight: 1206,
     kind: "haber",
     source: "slug",
   },
@@ -408,6 +426,11 @@ export const press: readonly PressItem[] = [
     url: "https://batmandemokrathaber.com/serkan-ramanlidan-cezeri-roboteche-ziyaret-gelecegi-insa-eden-genclerimizin-yanindayiz/",
     summary:
       "Batman Milletvekili Serkan Ramanlı atölyeyi ziyaret etti ve gençlerin teknoloji çalışmalarına destek mesajı verdi.",
+    image: "/assets/real-media/atolye-tur-01-poster.webp",
+    imageAlt:
+      "CEZERİ ROBOTECH arşivi: Batman atölyesinin içi — 3D baskı ürünleri, hexacopter drone ve robotik eğitim kitleri",
+    imageWidth: 800,
+    imageHeight: 1422,
     kind: "haber",
     source: "slug",
   },
@@ -415,6 +438,13 @@ export const press: readonly PressItem[] = [
     outlet: "Batman Tarafsız",
     title: "Nasıroğlu robotik kodlama atölyesini ziyaret etti",
     url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
+    summary:
+      "AK Parti Batman Milletvekili Ferhat Nasıroğlu robotik kodlama atölyesini gezerek öğrencilerin projelerini inceledi.",
+    image: "/assets/real-media/atolye-ldr-dersi-01.webp",
+    imageAlt:
+      "CEZERİ ROBOTECH arşivi: LDR ışık sensörü dersinde devre kuran ve LED'leri yakan öğrenciler",
+    imageWidth: 828,
+    imageHeight: 1192,
     kind: "haber",
     source: "slug",
   },
@@ -424,6 +454,10 @@ export const press: readonly PressItem[] = [
     url: "https://www.batmansonsoz.net/mobil/haber/esnaf-odasi-robotech-le-anlasti-90483.html",
     summary:
       "Batman Esnaf ve Sanatkârlar Odası ile imzalanan protokol kapsamında oda üyeleri ve çocukları teknoloji eğitimlerinden indirimli yararlanıyor.",
+    image: "/assets/real-media/ekip-egitmenler-01.webp",
+    imageAlt: "CEZERİ ROBOTECH arşivi: Batman eğitmen kadrosu, kurumun robotik baykuş amblemi önünde",
+    imageWidth: 1200,
+    imageHeight: 1200,
     kind: "haber",
     source: "slug",
   },
@@ -432,7 +466,12 @@ export const press: readonly PressItem[] = [
     title: "Dijital dolandırıcılık her geçen gün artıyor",
     url: "https://batmanrehbergazetesi.com/dijital-dolandiricilik-her-gecen-gun-artiyor",
     summary:
-      "Kart bilgisi hırsızlığı, SMS tuzakları ve yapay zeka destekli dolandırıcılık yöntemlerine karşı farkındalık uyarısı.",
+      "Kart bilgisi hırsızlığı, SMS tuzakları ve yapay zeka destekli dolandırıcılık yöntemlerine karşı farkındalık uyarısı. Siber güvenlik farkındalığı, atölyedeki on eğitim başlığından biri.",
+    image: "/assets/real-media/etkinlik-avm-standi-01.webp",
+    imageAlt:
+      "CEZERİ ROBOTECH arşivi: Batman Petrol City AVM'deki robotik tanıtım standı ve ziyaretçi aileler",
+    imageWidth: 828,
+    imageHeight: 1118,
     kind: "haber",
     source: "arama",
   },
@@ -440,6 +479,7 @@ export const press: readonly PressItem[] = [
     outlet: "X · Ferhat Nasıroğlu",
     title: "Atölye ziyareti paylaşımı",
     url: "https://x.com/fnasiroglu/status/1961125439042191731",
+    summary: "Milletvekilinin atölye ziyaretine dair X paylaşımı.",
     kind: "sosyal",
     source: "slug",
   },
@@ -447,6 +487,7 @@ export const press: readonly PressItem[] = [
     outlet: "Instagram",
     title: "YEDİİKİ Robot ve Teknoloji Yarışması — video",
     url: "https://www.instagram.com/reel/DXuKouMCHNG/",
+    summary: "Yarışma açılışından Instagram reel kaydı.",
     kind: "sosyal",
     source: "slug",
   },

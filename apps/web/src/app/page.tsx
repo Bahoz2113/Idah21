@@ -220,7 +220,7 @@ export default function HomePage() {
           aria-labelledby="basin-baslik"
           className="czr-chapter border-b border-white/8 py-24 lg:py-32"
         >
-          <div className="mx-auto max-w-5xl px-6 lg:px-10">
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <SectionHeading
               code="DURAK 05"
               eyebrow="Basında Biz"
