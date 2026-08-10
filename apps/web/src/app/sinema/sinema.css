@@ -1,0 +1,144 @@
+/* ══════════════════════════════════════════════════════════════════
+   SİNEMA DÜZENİ — yalnızca /sinema rotası
+
+   Bu dosya `globals.css`'i değiştirmez, üzerine biner. Diğer iki tasarım
+   varyantı ve panel tarafı bundan hiç etkilenmez.
+   ══════════════════════════════════════════════════════════════════ */
+
+.scrub-site {
+  /* ── Renk sistemi ────────────────────────────────────────────────
+     Marka paletinin birebir karşılığı; yeni renk üretilmedi.
+     Kaynak: packages/config → marketingTokens.colors                */
+  --color-brand-primary: #0f4c5c;
+  --color-brand-primary-deep: #0d5c63;
+  --color-brand-primary-soft: #1b6e7e;
+  --color-brand-accent: #ff8c00;
+  --color-brand-accent-deep: #f57c00;
+  --color-brand-signal: #10b981;
+  --color-surface-dark: #0a191d;
+  --color-surface-dark-alt: #0d1f23;
+  --color-surface-light: #f2f8f8;
+  --color-text: #0a191d;
+  --color-text-muted: rgba(10, 25, 29, 0.62);
+  --color-line: rgba(10, 25, 29, 0.1);
+
+  /* ── Tipografi ──────────────────────────────────────────────────
+     Fallback zinciri gerçek: font gelmezse de düzen bozulmaz.        */
+  --font-display: "Space Grotesk", "SF Pro Display", Manrope, system-ui,
+    -apple-system, "Segoe UI", sans-serif;
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  background: var(--color-surface-light);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  /* Koyu hero ile açık gövde arasında tarayıcı varsayılanları (form,
+     kaydırma çubuğu) şaşırmasın. */
+  color-scheme: light;
+}
+
+/* Aşırı kaydırmada (iOS lastik bandı) sayfanın altında beyaz şerit
+   görünmesin: gövde zemini de düzenin zeminine çekilir. */
+body:has(.scrub-site) {
+  background: var(--color-surface-light);
+}
+
+.scrub-site ::selection {
+  background: var(--color-brand-accent);
+  color: var(--color-surface-dark);
+}
+
+/* ── Başlık ölçeği ────────────────────────────────────────────────
+   Harf aralığı boy büyüdükçe sıkışır: büyük puntoda varsayılan aralık
+   dağınık durur. `text-wrap: balance` satır kırılımlarını dengeler,
+   tek kelimelik yetim satır bırakmaz. */
+.scrub-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: clamp(-0.04em, -0.015em - 0.32vw, -0.018em);
+  text-wrap: balance;
+}
+
+h1.scrub-display {
+  font-size: clamp(2.5rem, 1.1rem + 5.2vw, 5.5rem);
+  line-height: 0.98;
+}
+
+h2.scrub-display {
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+}
+
+h3.scrub-display {
+  font-size: clamp(1.3rem, 1rem + 1.1vw, 1.85rem);
+  line-height: 1.14;
+}
+
+.scrub-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+/* ── Bölüm numarası ───────────────────────────────────────────────
+   Editoryal indeks: kart yerine numara ve ince çizgi. */
+.scrub-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-brand-accent);
+}
+
+/* ── Reveal başlangıç durumu ──────────────────────────────────────
+   Gizlilik CSS'te tanımlı: JavaScript yüklenmeden önce içerik bir kare
+   görünüp kaybolmaz (görünürlük flaşı). GSAP daha sonra devralır. */
+.scrub-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  will-change: opacity, transform;
+}
+
+/* ── Koyu bölümler ────────────────────────────────────────────────
+   Sayfa açık zeminde akar; anlatının belirli durakları koyuya döner.
+   Bu bölümlerin içindeki metin ve çizgiler otomatik olarak ters çevrilir. */
+.scrub-dark {
+  background: var(--color-surface-dark);
+  color: var(--color-surface-light);
+  --color-text: #f2f8f8;
+  --color-text-muted: rgba(242, 248, 248, 0.62);
+  --color-line: rgba(242, 248, 248, 0.14);
+}
+
+.scrub-rule {
+  border-color: var(--color-line);
+}
+
+/* ── Bölüm taşma kesici ───────────────────────────────────────────
+   `SectionHeading`'in perdesi (`.czr-veil::before`) bilerek kenarlardan
+   taşar; dar ekranda bu, belgeye 10 px yatay kaydırma ekliyordu
+   (390 px'lik ekranda ölçüldü: scrollWidth 400).
+
+   `hidden` değil `clip`: `hidden` yeni bir kaydırma bağlamı açar ve
+   içerideki `sticky` davranışını bozar. Hero'ya UYGULANMAZ — orada
+   yapışkan sarmalayıcı var ve riske girilmez. */
+.scrub-chapter {
+  overflow-x: clip;
+}
+
+/* ── Azaltılmış hareket ───────────────────────────────────────────
+   Hiçbir içerik gizli kalmaz. Reveal'ler doğrudan görünür; hero'nun
+   tarama çizgisi durur. */
+@media (prefers-reduced-motion: reduce) {
+  .scrub-site *,
+  .scrub-site *::before,
+  .scrub-site *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .scrub-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
