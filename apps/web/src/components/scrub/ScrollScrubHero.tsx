@@ -99,6 +99,15 @@ export function ScrollScrubHero() {
     if (vid.readyState >= 1) onMeta();
     if (vid.readyState >= 2) onData();
 
+    // Yükleme perdesi hiçbir koşulda takılı kalmamalı. Video hiç
+    // gelmezse (ağ kopuk, kodek desteklenmiyor, dosya bozuk) manşet ve
+    // eylem metni perdenin altında kalırdı — sayfanın en önemli metni
+    // görünmez olurdu. Bu güvenlik ağı 2,5 saniye sonra perdeyi kaldırır;
+    // arkada video yerine markanın koyu zemini durur, metin okunur.
+    const onFail = () => setReady(true);
+    vid.addEventListener("error", onFail);
+    const bail = window.setTimeout(onFail, 2500);
+
     const trigger = ScrollTrigger.create({
       trigger: el,
       start: "top top",
@@ -147,9 +156,11 @@ export function ScrollScrubHero() {
     return () => {
       gsap.ticker.remove(seek);
       trigger.kill();
+      window.clearTimeout(bail);
       window.removeEventListener("resize", onResize);
       vid.removeEventListener("loadedmetadata", onMeta);
       vid.removeEventListener("loadeddata", onData);
+      vid.removeEventListener("error", onFail);
     };
   }, [tall]);
 
