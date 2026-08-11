@@ -13,10 +13,22 @@ import { org } from "@/lib/seo/site";
  * ASLA oynamaz ve bir oynatıcı gibi görünmez — kontrol çubuğu, ilerleme
  * çubuğu, oynat düğmesi yoktur.
  *
+ * KAYNAK. `cezeri-baykus-2k-kaynak.mp4` (2560×1440, 24 fps, 8,00 sn) bu
+ * hero için üretildi. Türev `cezeri-scrub.mp4` ondan çıkar:
+ * 1600×900 · 15 fps · CRF 20 · 5,3 saniye · 5,4 MB.
+ *
+ * NEDEN 5,3 SANİYE. Kaynağın son 2,7 saniyesinde sahnede holografik bir
+ * "CEZERİ ROBOTECH" tabelası beliriyor. Gezinme çubuğu markanın adını
+ * zaten taşıyor; ikisi aynı ekranda, üstelik farklı harf karakteriyle yan
+ * yana gelince tasarım kaza gibi duruyordu (ölçüldü, ekran görüntüsüyle
+ * karşılaştırıldı). Kesim baykuşun kanatlarını açtığı karede yapılır —
+ * final beat korunur, ikinci logo düşer. Kesimin ikinci faydası teknik:
+ * 80 kare 120 kare yerine, aynı bütçeyle 1280 px değil 1600 px genişlik.
+ *
  * ÜÇ KURAL — üçü de takılmayı önlemek için, hiçbiri süs değil:
  *
- * 1. KAYNAK TÜMÜYLE ANAHTAR KARE. `cezeri-scrub.mp4` her karesi I-frame
- *    olacak şekilde yeniden kodlandı (197/197 ölçüldü). Normal bir MP4'te
+ * 1. KAYNAK TÜMÜYLE ANAHTAR KARE. Türev her karesi I-frame olacak şekilde
+ *    kodlandı (80/80 ölçüldü). Normal bir MP4'te
  *    araya konan kareler yalnızca farkı taşır; geri sararken kod çözücü en
  *    yakın anahtar kareye dönüp aradaki her kareyi yeniden çözmek zorunda
  *    kalır ve görüntü kilitlenir.
@@ -175,16 +187,21 @@ export function ScrollScrubHero() {
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* İki kaynak, MP4 ÖNCE: tarayıcı oynatabildiği İLK kaynağı seçer.
             Chrome, Safari, Edge ve sistem kodeklerine sahip Firefox H.264
-            oynatır ve daha küçük olan MP4'ü indirir (4,5 MB). WebM yalnızca
+            oynatır ve daha küçük olan MP4'ü indirir (6,0 MB). WebM yalnızca
             tescilli kodek derlenmemiş sürümler için yedektir — o kullanıcı
             da boş bir hero görmez. */}
         <video
           ref={video}
           className="absolute inset-0 h-full w-full object-cover"
-          // Kaynak dikey (608×1080), masaüstü yatay. Kırpma yalnızca CSS ile
-          // yapılır — dosyaya dokunulmaz. Odak noktası merkezin biraz
-          // üstünde: düzeneğin gövdesi orada.
-          style={{ objectPosition: "center 42%" }}
+          // Kaynak 2560×1440 (16:9) — hero'nun en boy oranıyla aynı, yani
+          // masaüstünde neredeyse hiç kırpma olmuyor. Önceki kaynak 608 px
+          // genişliğinde dikey bir dosyaydı ve masaüstünde ~3× büyütülüyordu;
+          // "kaydırdıkça bozuluyor" şikâyetinin kök nedeni buydu.
+          //
+          // Özne kadrajın ortasında duruyor, bu yüzden odak da merkez: yatayda
+          // kaydırmak baykuşu kenara iter. Telefonda kırpılan eksen yataydır
+          // (0,46'ya karşı 1,78) ve merkez korunduğu için baykuş kadrajda kalır.
+          style={{ objectPosition: "center center" }}
           muted
           playsInline
           preload="auto"
