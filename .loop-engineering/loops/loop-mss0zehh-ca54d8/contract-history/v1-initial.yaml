@@ -1,0 +1,49 @@
+loop_id: loop-mss0zehh-ca54d8
+loop_name: software-development: CEZERI Web Intelligence: Claude Code icin global, idempotent
+version: 1
+created_at: 2026-08-13T21:23:40.183Z
+created_by: user
+objective: CEZERI Web Intelligence: Claude Code icin global, idempotent, tasinabilir web arastirma ve gercek tarayici yetenegi kurulum paketi
+business_goal: CEZERI Web Intelligence: Claude Code icin global, idempotent, tasinabilir web arastirma ve gercek tarayici yetenegi kurulum paketi
+template: software-development
+in_scope:
+  - kaynak kod
+  - testler
+  - dokümantasyon
+out_of_scope:
+  - production deployment
+  - migration
+  - secret değişikliği
+acceptance_criteria:
+  - Tüm testler geçiyor
+  - Yeni özellik kabul kriterlerini karşılıyor
+  - Regresyon yok
+verification_methods:
+  - test_run
+  - file_check
+  - regression_check
+quality_threshold: 70
+baseline_score: 0
+target_score: 80
+minimum_improvement: 5
+max_iterations: 6
+max_retries_per_step: 2
+risk_level: medium
+required_approvals:
+rollback_policy: checkpoint-before-risky-change
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - same_failure_repeated
+  - budget_exhausted
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - git
+  - build
+forbidden_actions:
+  - production_deploy
+  - force_push_main
+  - data_deletion
+data_classification: internal

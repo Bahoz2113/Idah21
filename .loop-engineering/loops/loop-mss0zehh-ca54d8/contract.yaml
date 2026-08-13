@@ -1,0 +1,61 @@
+loop_id: loop-mss0zehh-ca54d8
+loop_name: CEZERI Web Intelligence — global kurulum paketi
+version: 2
+created_at: 2026-08-13T21:23:40.183Z
+created_by: user
+objective: CEZERI Web Intelligence: Claude Code icin global, idempotent, tasinabilir web arastirma ve gercek tarayici yetenegi kurulum paketi
+business_goal: Kullanici her seferinde "internette arastir" / "browser ac" demeden, Claude Code'un guncel bilgi gerektiginde web arastirmasini ve gercek tarayiciyi kendiliginden devreye sokmasi
+template: software-development
+in_scope:
+  - CEZERI skill dosyalari (8 adet)
+  - idempotent kurulum/kaldirma/saglik-kontrol scriptleri
+  - global policy blogu
+  - dokumantasyon (README, VERSION, SMOKE-TESTS)
+  - offline dogrulanabilir testler
+out_of_scope:
+  - production deployment
+  - migration
+  - secret degisikligi
+  - agri gerektiren canli web smoke testleri (TEST 1-6) — bu container'da network policy 403 veriyor
+  - repo CLAUDE.md degisikligi (policy global scope'a kurulur)
+acceptance_criteria:
+  - 8 CEZERI skill dosyasi uretildi ve guncel Claude Code SKILL.md formatina uygun
+  - Skill icerikleri master prompt gereksinimlerini (routing, browser yetenekleri, article/doc/verify/deep/extract, guvenlik) kapsiyor
+  - install.mjs idempotent — ikinci calistirmada hicbir dosya degismiyor
+  - Global policy blogu marker'li eklenir ve mevcut CLAUDE.md icerigini korur
+  - Playwright MCP user scope'a eklenir ve duplicate olusturmaz
+  - Gercek Chromium baslatilip yerel sayfa okunabiliyor
+  - Prompt injection fixture'i talimat olarak uygulanmiyor (TEST 7)
+  - healthcheck.mjs tum bilesenleri dogru raporluyor
+  - uninstall.mjs kurulumu tam geri aliyor (dosya + policy + MCP)
+  - README, VERSION, SMOKE-TESTS mevcut ve repo mevcut yapisi korunmus
+verification_methods:
+  - test_run
+  - file_check
+  - regression_check
+  - hash_compare
+quality_threshold: 70
+baseline_score: 0
+target_score: 80
+minimum_improvement: 5
+max_iterations: 6
+max_retries_per_step: 2
+risk_level: medium
+required_approvals:
+rollback_policy: checkpoint-before-risky-change
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - same_failure_repeated
+  - budget_exhausted
+  - user_cancelled
+allowed_tools:
+  - fs
+  - tests
+  - git
+  - build
+forbidden_actions:
+  - production_deploy
+  - force_push_main
+  - data_deletion
+data_classification: internal
