@@ -11,44 +11,105 @@ import { schemaJson } from "@/lib/seo/schema";
 import { contact, org, SITE_URL } from "@/lib/seo/site";
 
 /**
- * SİNEMA DÜZENİ — kaydırmayla kazınan video hero'lu üçüncü varyant.
+ * CEZERİ ROBOTECH TANITIM SAYFASI.
  *
- * `/` içinde gezilen bir dünyadır, `/alternatif` sırayla açılan bir
- * gösteridir. Bu sayfa üçüncü bir teknikle kurulur: sayfanın açılışı
- * kullanıcının kaydırmasıyla kare kare ilerleyen bir filmdir.
+ * Sayfanın açılışı, kullanıcının kaydırmasıyla kare kare ilerleyen bir
+ * filmdir: kaydırma konumu videonun zamanına eşlenir, durunca kare donar,
+ * yukarı çıkınca geri sarar (bkz. `ScrollScrubHero`).
  *
- * İçerik yine tek kaynaktan gelir (`lib/marketing/chapters`); üç sayfa
- * arasında tek bir cümle bile ayrışamaz.
+ * DÜZEN RİTMİ. Anlatının nefes alan durakları (giriş, davet) açık yüzeyde,
+ * medya ve veri yoğun blokları koyu yüzeyde durur. Sabit gezinme çubuğu
+ * hero'dan sonra açık yüzeye döner ve öyle kalır — koyu bantların üzerinde
+ * de ayrı bir katman olduğu belli olur.
  *
- * DÜZEN RİTMİ. Prompt açık yüzeyli editoryal bir gövde tarif ediyor;
- * bizim içerik bileşenlerimiz ise koyu yüzey için yazıldı ve onları
- * yeniden yazmak diğer iki sayfayı da bozardı. Çözüm ikisini de
- * korumak: anlatının nefes alan durakları (giriş, davet) açık, medya ve
- * veri yoğun blokları koyu. Sabit gezinme çubuğu hero'dan sonra açık
- * yüzeye döner ve öyle kalır — koyu bantların üzerinde de ayrı bir
- * katman olduğu belli olur.
+ * İÇERİK TEK KAYNAKTAN. Bölüm metinleri `lib/marketing/chapters` içinde,
+ * kurumsal veri `lib/seo/site` içinde durur. Sayfada görünen metin ile
+ * Google'a giden structured data aynı satırdan beslenir; ikisi ayrışamaz.
  *
- * SEO. Şema grafiği bu sayfada da tam olarak basılır, ama sayfa
- * `noindex` + canonical `/` taşır: aynı içerik üç adreste dizine
- * girerse asıl sayfanın sıralaması düşer. Kurucu üç tasarımdan birini
- * seçtiğinde bu koruma tek satırda kalkar.
+ * Statik üretim: sayfa tamamen sunucuda derlenir ve CDN'den servis edilir.
+ * LCP hedefi (< 2,5 sn) için kritik — ilk bayt beklemesi ortadan kalkar.
  */
-
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${org.name} — Sinema Düzeni (alternatif tasarım)`,
-  description:
-    "CEZERİ ROBOTECH tanıtım sayfasının sinematik düzeni: açılış filmi kaydırmayla kare kare ilerler, bölümler editoryal bir ritimde akar.",
-  alternates: { canonical: "/" },
+  title: {
+    default: `${org.name} — Batman Robotik Kodlama, Yapay Zeka ve İHA Eğitim Merkezi`,
+    template: `%s | ${org.name}`,
+  },
+  description: org.description,
+  applicationName: org.name,
+  // Anahtar kelimeler Google sıralamasında doğrudan kullanılmaz; burada
+  // bulunmalarının nedeni bazı yerel dizinlerin ve AI tarayıcılarının hâlâ
+  // bu alanı konu sinyali olarak okumasıdır.
+  keywords: [
+    "Batman robotik kodlama kursu",
+    "Batman yapay zeka eğitimi",
+    "Batman drone eğitimi",
+    "Batman İHA eğitimi",
+    "Batman 3D tasarım kursu",
+    "Batman çocuk kodlama kursu",
+    "Batman roketçilik eğitimi",
+    "6-16 yaş teknoloji kursu",
+    "Güneydoğu robotik eğitim merkezi",
+    "Cezeri Robotech",
+  ],
+  authors: [{ name: org.name, url: SITE_URL }],
+  creator: org.name,
+  publisher: org.legalName,
+  alternates: {
+    canonical: "/",
+    languages: { "tr-TR": "/" },
+  },
+  category: "education",
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: SITE_URL,
+    siteName: org.name,
+    title: `${org.name} — ${org.slogan}`,
+    description: org.description,
+    images: [
+      {
+        url: "/assets/sahne/og-paylasim.webp",
+        width: 1200,
+        height: 675,
+        alt: "CEZERİ ROBOTECH — Batman'da gece hangarı, fırlatma rampasındaki roket ve havalanan İHA",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${org.name} — ${org.slogan}`,
+    description: org.tagline,
+    images: ["/assets/sahne/og-paylasim.webp"],
+  },
   robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  formatDetection: { telephone: true, address: true, email: true },
+  other: {
+    // Yerel arama için coğrafi meta işaretleri
+    "geo.region": "TR-72",
+    "geo.placename": contact.address.city,
+    "geo.position": `${contact.geo.lat};${contact.geo.lng}`,
+    ICBM: `${contact.geo.lat}, ${contact.geo.lng}`,
   },
 };
 
+/**
+ * Tanıtım sayfası koyu petrol siyahıdır; mobil tarayıcı çubuğunun panelin
+ * lacivertinde kalması sayfayla uyumsuz bir şerit oluştururdu. Bu override
+ * yalnızca bu rotayı etkiler, panel kendi rengini korur.
+ */
 export const viewport: Viewport = {
   themeColor: "#0A191D",
   width: "device-width",
@@ -59,7 +120,7 @@ export const viewport: Viewport = {
 /** Koyu bantta duran bölümler: içerik bileşenleri koyu yüzey için yazıldı. */
 const DARK = new Set(["egitimler", "mufredat", "atolye", "miras", "basin", "sss"]);
 
-export default function SinemaPage() {
+export default function HomePage() {
   return (
     <SmoothScroll>
       {/* Tek @graph JSON-LD: kurum → kampüs → 10 kurs → SSS → site zinciri */}
@@ -83,7 +144,7 @@ export default function SinemaPage() {
 
         {/* 01 — Giriş: açık yüzeyde editoryal nefes */}
         <section
-          aria-labelledby="sinema-giris-baslik"
+          aria-labelledby="czr-giris-baslik"
           className="scrub-chapter border-b border-[var(--color-line)] bg-[var(--color-surface-light)] py-24 lg:py-36"
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -94,7 +155,7 @@ export default function SinemaPage() {
             <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-16">
               <ScrubReveal delay={80} className="lg:col-span-7">
                 <h2
-                  id="sinema-giris-baslik"
+                  id="czr-giris-baslik"
                   className="scrub-display text-[var(--color-surface-dark)]"
                 >
                   Geleceği Tüketen Değil,{" "}
@@ -162,7 +223,7 @@ export default function SinemaPage() {
 
         {/* 09 — Davet */}
         <section
-          aria-labelledby="sinema-cta-baslik"
+          aria-labelledby="czr-cta-baslik"
           className="scrub-chapter bg-[var(--color-surface-light)] py-24 lg:py-36"
         >
           <div className="mx-auto max-w-4xl px-6 text-center lg:px-10">
@@ -172,7 +233,7 @@ export default function SinemaPage() {
 
             <ScrubReveal delay={80}>
               <h2
-                id="sinema-cta-baslik"
+                id="czr-cta-baslik"
                 className="scrub-display mt-7 text-[var(--color-surface-dark)]"
               >
                 Geleceği <span className="text-[var(--color-brand-accent)]">Birlikte</span>{" "}

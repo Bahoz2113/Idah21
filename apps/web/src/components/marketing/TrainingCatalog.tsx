@@ -1,50 +1,28 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { disciplines } from "@/lib/seo/site";
 import { serviceAreaSentence, trainingSeoById } from "@/lib/seo/trainings";
-import { setWorldFx } from "./world/progress";
 import { Reveal } from "./Reveal";
 
 /**
  * EĞİTİMLERİMİZ — kategori kataloğu.
  *
- * İki işi aynı anda yapar:
+ * ARAMA İÇİN AÇIK. Her kategorinin tam metni — tanım, arama ifadeleri,
+ * soru-cevap, kazanımlar — HER ZAMAN DOM'dadır. Yalnızca açık olanın
+ * gösterildiği bir sekme yapısı, tarayıcı botunun ve yanıt motorlarının
+ * diğer dokuz kategoriyi hiç görmemesi demekti. Görsel olarak katlanır,
+ * yapısal olarak katlanmaz: `<details>` içeriği kapalıyken de belgede durur.
  *
- *   1. ARAMA. Her kategorinin tam metni — tanım, arama ifadeleri, soru-cevap,
- *      kazanımlar — HER ZAMAN DOM'dadır. Yalnızca açık olanın gösterildiği
- *      bir sekme yapısı, tarayıcı botunun ve yanıt motorlarının diğer dokuz
- *      kategoriyi hiç görmemesi demekti. Görsel olarak katlanır, yapısal
- *      olarak katlanmaz: `<details>` içeriği kapalıyken de belgede durur.
- *
- *   2. SAHNE. Açılan kategori arkadaki dünyaya kendi animasyonunu bildirir
- *      (roketçilikte fırlatma, İHA'da sürü uçuşu). Bildirim `setWorldFx`
- *      ile mutable kutuya yazılır; sahne onu `useFrame` içinde okur, sayfa
- *      yeniden render olmaz.
- *
- * Fareyle üzerine gelmek de efekti tetikler — kullanıcı tıklamadan önce
- * kategorinin dünyada neye karşılık geldiğini görür. Fare ayrılınca son
- * AÇIK kategoriye dönülür, boşluğa değil; yoksa sahne titrerdi.
+ * Kategori açılınca arkadaki 3B sahneye efekt bildiren bir kanal vardı
+ * (`setWorldFx`); o sahne tanıtım sayfasından kaldırıldığında kanal da
+ * kaldırıldı. `trainingSeoById` kayıtlarındaki `fx` alanı duruyor ama artık
+ * hiçbir şeyi sürmüyor.
  */
 
 export function TrainingCatalog() {
   const [open, setOpen] = useState<string | null>(null);
-  const openRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    openRef.current = open;
-    const fx = open ? trainingSeoById.get(open)?.fx ?? null : null;
-    setWorldFx(fx);
-  }, [open]);
-
-  // Sayfadan ayrılırken sahneyi temiz bırak.
-  useEffect(() => () => setWorldFx(null), []);
-
-  const preview = useCallback((id: string | null) => {
-    const target = id ?? openRef.current;
-    setWorldFx(target ? trainingSeoById.get(target)?.fx ?? null : null);
-  }, []);
 
   return (
     <div className="mt-14">
@@ -56,14 +34,7 @@ export function TrainingCatalog() {
           return (
             <li key={d.id}>
               <Reveal delay={Math.min(i, 6) * 50}>
-                <details
-                  open={isOpen}
-                  onMouseEnter={() => preview(d.id)}
-                  onMouseLeave={() => preview(null)}
-                  onFocus={() => preview(d.id)}
-                  onBlur={() => preview(null)}
-                  className="group py-1"
-                >
+                <details open={isOpen} className="group py-1">
                   <summary
                     id={`egitim-${d.id}`}
                     // Denetimli akordeon: aynı anda tek kategori açık kalsın

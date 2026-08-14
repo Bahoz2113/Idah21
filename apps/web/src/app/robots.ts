@@ -14,12 +14,6 @@ import { SITE_URL } from "@/lib/seo/site";
  * doğrulaması gerektirir; indekslenmeleri hem gereksiz hem sızıntı riskidir.
  */
 const PRIVATE_PATHS = [
-  // Alternatif tasarım denemeleri: içerikleri `/` ile birebir aynıdır.
-  // Taranmalarına izin vermek yinelenen içerik sinyali üretir ve asıl
-  // sayfanın sıralamasını zayıflatır. Sayfalar `noindex` de taşır; burada
-  // ayrıca engellenmeleri taramanın hiç başlamaması içindir.
-  "/alternatif",
-  "/sinema",
   "/api/",
   "/admin/",
   "/teacher/",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
-import { observeWorld } from "./world/progress";
+import { observeScroll } from "./scroll-clock";
 
 type RevealProps = {
   children: ReactNode;
@@ -42,7 +42,7 @@ export function Reveal({ children, delay = 0, as: Tag = "div", className = "" }:
     const node = ref.current;
     if (!node) return;
 
-    const stop = observeWorld(() => {
+    const stop = observeScroll(() => {
       const rect = node.getBoundingClientRect();
 
       // Üst kenar ekranın alt onda birine girdiğinde açılır. Tek koşul

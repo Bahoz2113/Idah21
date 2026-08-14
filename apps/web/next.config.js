@@ -42,6 +42,18 @@ module.exports = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  async redirects() {
+    // Tanıtım sayfasının iki alternatif düzeni (`/alternatif`, `/sinema`)
+    // değerlendirme için yayındaydı; kurucu sinema düzenini seçince ikisi de
+    // kaldırıldı ve o düzen kök rotaya taşındı. Kalıcı yönlendirme veriyoruz
+    // çünkü adresler paylaşılmış olabilir. Yönlendirme OLMASAYDI bu yollar
+    // middleware'in kimlik kontrolüne düşer ve ziyaretçi tanıtım sayfası
+    // yerine giriş ekranına atılırdı (ölçüldü: 307 → /login).
+    return [
+      { source: "/alternatif", destination: "/", permanent: true },
+      { source: "/sinema", destination: "/", permanent: true },
+    ];
+  },
   async rewrites() {
     return [];
   },

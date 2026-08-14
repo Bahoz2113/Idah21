@@ -180,7 +180,7 @@ export function ScrollScrubHero() {
     <section
       ref={section}
       id="esik"
-      aria-labelledby="sinema-hero-baslik"
+      aria-labelledby="czr-hero-baslik"
       className="relative"
       style={{ height: tall ? "500vh" : "320vh" }}
     >
@@ -256,7 +256,7 @@ export function ScrollScrubHero() {
               </p>
 
               <h1
-                id="sinema-hero-baslik"
+                id="czr-hero-baslik"
                 className="scrub-display mt-7 text-balance text-white"
               >
                 HAYAL ET, KODLA,

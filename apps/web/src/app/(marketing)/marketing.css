@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════════════════════════════
-   SİNEMA DÜZENİ — yalnızca /sinema rotası
+   TANITIM SİTESİ — yalnızca kök rota (/)
 
-   Bu dosya `globals.css`'i değiştirmez, üzerine biner. Diğer iki tasarım
-   varyantı ve panel tarafı bundan hiç etkilenmez.
+   Bu dosya `globals.css`'i değiştirmez, üzerine biner. Panel tarafı
+   bundan hiç etkilenmez.
    ══════════════════════════════════════════════════════════════════ */
 
 .scrub-site {
