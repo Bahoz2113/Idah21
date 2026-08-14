@@ -93,7 +93,7 @@ export const en: Content = {
       titleLead: "Not a Simulation. A Real Workshop.",
       titleAccent: "",
       titleTail: "",
-      lead: "In the Batman workshop students run 3D printers, assemble drone airframes, solder circuits and carry out real flight tests in the field. The frames below are taken from that work; disciplines not yet documented are marked 'Concept'. Consent has been obtained from the parents of the students appearing in these frames.",
+      lead: "In the Batman workshop students run 3D printers, assemble drone airframes, solder circuits and carry out real flight tests in the field. The frames below are taken from that work; disciplines not yet documented are marked 'Concept'.",
     },
     basin: {
       eyebrow: "In the Press",
