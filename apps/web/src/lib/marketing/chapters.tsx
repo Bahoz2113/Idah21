@@ -14,8 +14,7 @@ import { contact } from "@/lib/seo/site";
 /**
  * BÖLÜMLERİN TEK KAYNAĞI.
  *
- * Aynı içerik iki farklı düzende sunuluyor: `/` sürekli dünya,
- * `/alternatif` sekans sahnesi. Metinler iki dosyada ayrı ayrı dursaydı
+ * Metinler bileşenlerin içinde ayrı ayrı dursaydı
  * er ya da geç ayrışırlardı — birinde düzeltilen bir cümle öbüründe
  * eski hâliyle kalırdı ve iki sayfa aynı kurumu farklı anlatmaya
  * başlardı. Bu yüzden başlık, künye ve gövde metinleri burada, tek
@@ -55,7 +54,7 @@ export const chapters: Chapter[] = [
         <span className="text-czr-orange">Çalışan Bir Şey Üret.</span>
       </span>
     ),
-    lead: "CEZERİ ROBOTECH'te eğitim on temel disipline ayrılmıştır: İHA/VTOL sistemleri, roketçilik, yapay zeka ve makine öğrenmesi, robotik kodlama, 3D tasarım ve eklemeli üretim, yazılım ve algoritma, elektronik ve mekatronik, siber güvenlik farkındalığı, uzay ve havacılık bilimleri, teknoloji girişimciliği. Her eğitim, öğrencinin dönem sonunda kendi eliyle ürettiği çalışan bir çıktıyla kapanır. Bir başlığa dokunduğunuzda arkadaki sahne o disiplinin animasyonuna geçer.",
+    lead: "CEZERİ ROBOTECH'te eğitim on temel disipline ayrılmıştır: İHA/VTOL sistemleri, roketçilik, yapay zeka ve makine öğrenmesi, robotik kodlama, 3D tasarım ve eklemeli üretim, yazılım ve algoritma, elektronik ve mekatronik, siber güvenlik farkındalığı, uzay ve havacılık bilimleri, teknoloji girişimciliği. Her eğitim, öğrencinin dönem sonunda kendi eliyle ürettiği çalışan bir çıktıyla kapanır.",
     body: <TrainingCatalog />,
   },
   {

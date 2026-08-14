@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { contact, org, sections } from "@/lib/seo/site";
 import { scrollToSection } from "./SmoothScroll";
 
@@ -45,9 +45,36 @@ export function ScrubNav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const go = (id: string) => {
+  /**
+   * Gezinme öğeleri `<a href="#id">` — `<button>` DEĞİL.
+   *
+   * Belgedeki bir konuma götüren denetim, tanımı gereği bağlantıdır.
+   * Düğme olarak yazıldığında dört şey birden kayboluyordu: arama
+   * motorları sayfanın kendi içindekiler listesini hiç görmüyor, kullanıcı
+   * bir bölümün adresini kopyalayıp paylaşamıyor, yeni sekmede açamıyor ve
+   * tarayıcı geçmişi ilerlemiyordu.
+   *
+   * `preventDefault` yalnızca JavaScript çalışırken devreye girer; Lenis
+   * yumuşak kaydırmayı üstlenir. Script yüklenmediyse tarayıcının kendi
+   * çapa davranışı çalışır ve bağlantı yine hedefe gider.
+   */
+  const go = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
+    // Yeni sekmede açma niyetini bozma: Ctrl/Cmd/Shift veya orta tık.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
     setOpen(false);
     scrollToSection(id);
+
+    // Adres çubuğu bölümü göstersin. `preventDefault` tarayıcının çapayı
+    // yazmasını da engelliyor; onsuz bağlantı kopyalanamaz ve geri tuşu
+    // bir önceki bölüme dönmez — yani düğmeden bağlantıya geçmenin
+    // kazandırdığı şey yarım kalırdı. `blob:` belgede history yazımı
+    // SecurityError atar (gezilebilir kopya), o yüzden sessizce yutulur.
+    try {
+      history.pushState(null, "", `#${id}`);
+    } catch {
+      /* yoksay */
+    }
   };
 
   return (
@@ -68,9 +95,10 @@ export function ScrubNav() {
         aria-label="Ana gezinme"
         className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6 lg:px-10"
       >
-        <button
-          type="button"
-          onClick={() => go("esik")}
+        <a
+          href="#esik"
+          onClick={(e) => go(e, "esik")}
+          aria-label={`${org.name} — sayfanın başına dön`}
           className="flex items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-accent)]"
         >
           <Image
@@ -88,14 +116,14 @@ export function ScrubNav() {
           >
             {org.name}
           </span>
-        </button>
+        </a>
 
         <ul className="hidden items-center gap-7 lg:flex">
           {sections.map((s) => (
             <li key={s.id}>
-              <button
-                type="button"
-                onClick={() => go(s.id)}
+              <a
+                href={`#${s.id}`}
+                onClick={(e) => go(e, s.id)}
                 className={`text-[13px] font-medium transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-accent)] ${
                   past
                     ? "text-[var(--color-surface-dark)]/70 hover:text-[var(--color-brand-primary)]"
@@ -103,7 +131,7 @@ export function ScrubNav() {
                 }`}
               >
                 {s.label}
-              </button>
+              </a>
             </li>
           ))}
         </ul>
@@ -119,7 +147,7 @@ export function ScrubNav() {
           <button
             type="button"
             aria-expanded={open}
-            aria-controls="sinema-mobil-menu"
+            aria-controls="czr-mobil-menu"
             aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
             onClick={() => setOpen((v) => !v)}
             className={`grid h-10 w-10 place-items-center rounded-full border transition-colors duration-500 lg:hidden ${
@@ -141,20 +169,20 @@ export function ScrubNav() {
 
       {open ? (
         <div
-          id="sinema-mobil-menu"
+          id="czr-mobil-menu"
           ref={panel}
           className="border-t border-black/8 bg-[var(--color-surface-light)] lg:hidden"
         >
           <ul className="mx-auto max-w-7xl px-6 py-3">
             {sections.map((s) => (
               <li key={s.id} className="border-b border-black/6 last:border-b-0">
-                <button
-                  type="button"
-                  onClick={() => go(s.id)}
-                  className="w-full py-3.5 text-left text-[15px] font-medium text-[var(--color-surface-dark)]"
+                <a
+                  href={`#${s.id}`}
+                  onClick={(e) => go(e, s.id)}
+                  className="block w-full py-3.5 text-left text-[15px] font-medium text-[var(--color-surface-dark)]"
                 >
                   {s.label}
-                </button>
+                </a>
               </li>
             ))}
           </ul>

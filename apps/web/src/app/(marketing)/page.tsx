@@ -200,13 +200,14 @@ export default function HomePage() {
                   c.width === "narrow" ? "max-w-4xl" : "max-w-7xl"
                 }`}
               >
-                <ScrubReveal>
-                  <p className="scrub-index">
-                    {String(i + 2).padStart(2, "0")} — {c.eyebrow}
-                  </p>
-                </ScrubReveal>
-
-                <div className="mt-8">
+                {/* Bölüm etiketi YALNIZCA `SectionHeading` içinde basılır.
+                    Burada ikinci bir indeks satırı da vardı ("02 —
+                    Eğitimlerimiz") ve hemen altındaki "DURAK 02 —— Eğitimlerimiz"
+                    ile aynı bilgiyi iki farklı biçimde tekrarlıyordu; yedi
+                    bölümün yedisinde de. Numaralandırma da çakışıyordu.
+                    Açılış (01) ve davet (09) kendi indeks satırlarını korur:
+                    onlarda `SectionHeading` yok ve turun iki ucunu işaretler. */}
+                <div>
                   <SectionHeading
                     code={c.code}
                     eyebrow={c.eyebrow}

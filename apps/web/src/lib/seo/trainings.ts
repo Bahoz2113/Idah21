@@ -68,7 +68,7 @@ export const serviceAreaNames: readonly string[] = serviceArea.flatMap((a) => [
 export type TrainingSeo = {
   /** Kategoriye karşılık gelen `disciplines[].id`. */
   id: string;
-  /** Sahnede oynayacak animasyonun kimliği (world/CategoryFx). */
+  /** Eskiden 3B sahnedeki animasyonu seçerdi; o sahne kaldırıldı, alan artık kullanılmıyor. */
   fx: FxKind;
   /** Kategori kapak görseli — katalogda açıldığında görünür. */
   cover: string;
