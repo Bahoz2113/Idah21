@@ -83,7 +83,12 @@ function ChannelCard({ href, mark, label, value, hint, accent, delay }: ChannelC
         <span className="min-w-0 flex-1">
           <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span className="text-[15px] font-bold text-white">{label}</span>
-            <span className="min-w-0 truncate czr-mono text-[11px] text-czr-ice/45">{value}</span>
+            {/* Telefon numarası, @kullanıcı adı ve adres gibi latin/rakam
+                değerler sağdan sola akışta ters sıralanır; kendi yönlerini
+                korumaları gerekir. */}
+            <span dir="ltr" className="min-w-0 truncate czr-mono text-[11px] text-czr-ice/45">
+              {value}
+            </span>
           </span>
           <span className="mt-1 block text-[13px] leading-relaxed text-czr-ice/55">{hint}</span>
         </span>

@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { localeMeta, localePath, locales } from "@/lib/i18n/config";
+import { localeStaticParams, resolveLocale } from "@/lib/i18n/route";
 import { MetricsDeck } from "@/components/marketing/MetricsDeck";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { ScrollScrubHero } from "@/components/scrub/ScrollScrubHero";
@@ -31,7 +33,14 @@ import { contact, org, SITE_URL } from "@/lib/seo/site";
  */
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
+/**
+ * Yalnizca bu dort adres uretilir; disindaki her sey 404. Onek olmayan
+ * kayit Turkceyi karsilar.
+ */
+export const dynamicParams = false;
+export const generateStaticParams = localeStaticParams;
+
+const baseMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${org.name} — Batman Robotik Kodlama, Yapay Zeka ve İHA Eğitim Merkezi`,
@@ -57,10 +66,6 @@ export const metadata: Metadata = {
   authors: [{ name: org.name, url: SITE_URL }],
   creator: org.name,
   publisher: org.legalName,
-  alternates: {
-    canonical: "/",
-    languages: { "tr-TR": "/" },
-  },
   category: "education",
   openGraph: {
     type: "website",
@@ -127,7 +132,38 @@ export const viewport: Viewport = {
 /** Koyu bantta duran bölümler: içerik bileşenleri koyu yüzey için yazıldı. */
 const DARK = new Set(["egitimler", "mufredat", "atolye", "miras", "basin", "sss"]);
 
-export default function HomePage() {
+/**
+ * DILE GORE UST VERI.
+ *
+ * `alternates.languages` her dilin adresini bildirir (`hreflang`). Bu
+ * olmadan arama motoru dort adresi ayni icerigin dort kopyasi sayar ve
+ * yalnizca birini dizine alir; hangisi oldugu da bizim elimizde olmaz.
+ * `x-default` onek almayan Turkce adrestir.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale?: string[] }>;
+}): Promise<Metadata> {
+  const locale = resolveLocale((await params).locale);
+  const meta = localeMeta[locale];
+
+  const languages: Record<string, string> = { "x-default": "/" };
+  for (const l of locales) languages[localeMeta[l].tag] = localePath(l);
+
+  return {
+    ...baseMetadata,
+    alternates: { canonical: localePath(locale), languages },
+    openGraph: { ...baseMetadata.openGraph, locale: meta.ogLocale, url: `${SITE_URL}${localePath(locale)}` },
+  };
+}
+
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale?: string[] }>;
+}) {
+  const locale = resolveLocale((await params).locale);
   return (
     <SmoothScroll>
       {/* Tek @graph JSON-LD: kurum → kampüs → 10 kurs → SSS → site zinciri */}
@@ -144,10 +180,10 @@ export default function HomePage() {
         İçeriğe geç
       </a>
 
-      <ScrubNav />
+      <ScrubNav locale={locale} />
 
       <main>
-        <ScrollScrubHero />
+        <ScrollScrubHero locale={locale} />
 
         {/* 01 — Giriş: açık yüzeyde editoryal nefes */}
         <section

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAccessToken } from "@cezeri/auth";
+import { defaultLocale, locales } from "@/lib/i18n/config";
 
 const ROLE_ROUTES: Record<string, string[]> = {
   "/admin":   ["ADMIN"],
@@ -27,12 +28,26 @@ const PUBLIC_PREFIXES = [
   "/fonts/",
 ];
 
+/** `/en`, `/ku`, `/ar` — sondaki eğik çizgili biçimleriyle birlikte. */
+const PUBLIC_LOCALE_PATHS = new Set(
+  locales
+    .filter((l) => l !== defaultLocale)
+    .flatMap((l) => [`/${l}`, `/${l}/`]),
+);
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next();
   if (pathname.startsWith("/quiz/")) return NextResponse.next();
   if (pathname === "/") return NextResponse.next();
+
+  // Tanıtım sitesinin dil adresleri (`/en`, `/ku`, `/ar`). Bunlar da kök
+  // rota kadar herkese açıktır; kimlik kontrolüne düşerlerse ziyaretçi ve
+  // arama motoru giriş ekranına yönlendirilir ve dil sayfaları hiç
+  // indekslenmez. Türkçe öneksiz olduğu için listede yok — onu bir üstteki
+  // satır zaten karşılıyor.
+  if (PUBLIC_LOCALE_PATHS.has(pathname)) return NextResponse.next();
 
   const token = req.cookies.get("ceos_at")?.value;
   const payload = token ? await verifyAccessToken(token) : null;

@@ -87,6 +87,19 @@ const tr = {
   ctaPrimary: "Kayıt ve Bilgi Talep Edin",
   ctaSecondary: "E-posta Gönderin",
 
+
+  // ── Bölüm adları (gezinme + altbilgi)
+  sectionLabels: {
+    esik: "Üs",
+    egitimler: "Eğitimlerimiz",
+    mufredat: "Müfredatımız",
+    atolye: "Atölye",
+    miras: "Miras",
+    basin: "Basında Biz",
+    sss: "SSS",
+    iletisim: "İletişim",
+  },
+
   // ── Altbilgi
   rightsReserved: "Tüm hakları saklıdır.",
 } as const;
@@ -97,7 +110,11 @@ const tr = {
  * Türkçe metnine sabitlenir ve İngilizce karşılığı "atanamaz" hatası
  * verirdi. Bu biçim eksik anahtarı yakalamayı sürdürür.
  */
-export type UiStrings = { [K in keyof typeof tr]: string };
+export type UiStrings = {
+  [K in keyof typeof tr]: (typeof tr)[K] extends object
+    ? { [S in keyof (typeof tr)[K]]: string }
+    : string;
+};
 
 const en: UiStrings = {
   navAria: "Main navigation",
@@ -157,6 +174,18 @@ const en: UiStrings = {
 
   ctaPrimary: "Request Enrolment and Information",
   ctaSecondary: "Send an Email",
+
+
+  sectionLabels: {
+    esik: "The Base",
+    egitimler: "Our Courses",
+    mufredat: "Curriculum",
+    atolye: "Workshop",
+    miras: "Heritage",
+    basin: "In the Press",
+    sss: "FAQ",
+    iletisim: "Contact",
+  },
 
   rightsReserved: "All rights reserved.",
 };
@@ -220,6 +249,18 @@ const ku: UiStrings = {
   ctaPrimary: "Tomarkirin û Agahî Bixwaze",
   ctaSecondary: "E-name bişîne",
 
+
+  sectionLabels: {
+    esik: "Bareger",
+    egitimler: "Perwerdehiyên me",
+    mufredat: "Müfredat",
+    atolye: "Atolye",
+    miras: "Mîras",
+    basin: "Di Çapemeniyê de",
+    sss: "Pirsên Pir Tên Kirin",
+    iletisim: "Têkilî",
+  },
+
   rightsReserved: "Hemû maf parastî ne.",
 };
 
@@ -281,6 +322,18 @@ const ar: UiStrings = {
 
   ctaPrimary: "اطلب التسجيل والمعلومات",
   ctaSecondary: "أرسل بريدًا إلكترونيًا",
+
+
+  sectionLabels: {
+    esik: "القاعدة",
+    egitimler: "برامجنا",
+    mufredat: "المنهج",
+    atolye: "الورشة",
+    miras: "الإرث",
+    basin: "في الصحافة",
+    sss: "الأسئلة الشائعة",
+    iletisim: "التواصل",
+  },
 
   rightsReserved: "جميع الحقوق محفوظة.",
 };

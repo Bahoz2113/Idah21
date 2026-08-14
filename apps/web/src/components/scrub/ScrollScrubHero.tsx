@@ -3,6 +3,8 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, useState } from "react";
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
 import { org } from "@/lib/seo/site";
 
 /**
@@ -51,7 +53,8 @@ const SEEK_LERP = 0.12;
 /** Bu eşiğin altındaki fark için arama yapılmaz — gereksiz kare isteği kod çözücüyü yorar. */
 const SEEK_EPSILON = 0.015;
 
-export function ScrollScrubHero() {
+export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale }) {
+  const t = ui(locale);
   const section = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const copy = useRef<HTMLDivElement>(null);
@@ -221,7 +224,10 @@ export function ScrollScrubHero() {
             koyu zemini, üstüne renk atmıyor. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0"
+          // `scrub-wash-x`: sağdan sola düzende bu gradyan aynalanır
+          // (bkz. marketing.css). Metin kolonu sağa geçtiği için yıkama
+          // da dönmezse manşet videonun aydınlık tarafında kalırdı.
+          className="scrub-wash-x absolute inset-0"
           style={{
             background:
               "linear-gradient(90deg, rgba(10,25,29,0.92) 0%, rgba(10,25,29,0.78) 34%, rgba(10,25,29,0.30) 62%, rgba(10,25,29,0.10) 100%)",
@@ -244,7 +250,7 @@ export function ScrollScrubHero() {
           }`}
         >
           <span className="scrub-mono text-[10px] uppercase tracking-[0.28em] text-[var(--color-brand-accent)]">
-            Yükleniyor
+            {t.heroLoading}
           </span>
         </div>
 
@@ -252,16 +258,16 @@ export function ScrollScrubHero() {
           <div ref={copy} className="mx-auto w-full max-w-7xl px-6 lg:px-10">
             <div className="max-w-3xl">
               <p className="scrub-mono text-[10px] uppercase tracking-[0.28em] text-[var(--color-brand-accent)] sm:text-[11px]">
-                Yapay Zekâ ve Robotik Kodlama Teknoloji Üssü
+                {t.heroEyebrow}
               </p>
 
               <h1
                 id="czr-hero-baslik"
                 className="scrub-display mt-7 text-balance text-white"
               >
-                HAYAL ET, KODLA,
+                {t.heroHeadlineTop}
                 <br />
-                GELECEĞİ TASARLA.
+                {t.heroHeadlineBottom}
               </h1>
 
               <p className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-white/80 sm:text-xl">
@@ -281,7 +287,7 @@ export function ScrollScrubHero() {
           className="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3"
         >
           <span className="scrub-mono text-[10px] uppercase tracking-[0.2em] text-white/55">
-            Geleceği keşfetmek için kaydırın
+            {t.heroScrollHint}
           </span>
           <span className="relative h-12 w-px overflow-hidden bg-white/20">
             <span className="absolute inset-x-0 top-0 h-1/2 animate-scan-line bg-[var(--color-brand-accent)]" />

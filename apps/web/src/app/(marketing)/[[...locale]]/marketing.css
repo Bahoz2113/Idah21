@@ -24,9 +24,15 @@
 
   /* ── Tipografi ──────────────────────────────────────────────────
      Fallback zinciri gerçek: font gelmezse de düzen bozulmaz.        */
-  --font-display: "Space Grotesk", "SF Pro Display", Manrope, system-ui,
-    -apple-system, "Segoe UI", sans-serif;
-  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Arapça aile zincire ÖNDEN eklenir. `unicode-range` sayesinde Latin
+     harfli sayfada hiç indirilmez; Arapça sayfada da Latin parçalar
+     (marka adı, telefon) Inter ve Space Grotesk'te kalır. Tek zincir
+     kullanmak, dile göre ayrı değişken tanımlamaktan güvenli: bir
+     yerde unutulan değişken sessizce yedek fonta düşerdi. */
+  --font-display: "Space Grotesk", "Noto Sans Arabic", "SF Pro Display", Manrope,
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: Inter, "Noto Sans Arabic", system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
 
   background: var(--color-surface-light);
@@ -160,4 +166,43 @@ h3.scrub-display {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   SAĞDAN SOLA (Arapça)
+
+   Düzenin çoğu zaten yönden bağımsız: Tailwind'in `flex`, `grid` ve
+   `gap` yardımcıları mantıksal akışı izler, `text-balance` ve
+   `text-pretty` de öyle. Buradaki kurallar yalnızca YÖNE BAĞLI
+   yazılmış birkaç yeri düzeltir.
+
+   Hero'nun okunabilirlik yıkaması bunların en önemlisi: gradyan
+   "soldan sağa" olarak sabit yazılmış ve metin kolonu sol tarafta
+   toplanıyor. Arapçada metin sağa geçtiği için yıkama da dönmeli,
+   yoksa manşet videonun aydınlık tarafında kalır.
+   ══════════════════════════════════════════════════════════════════ */
+
+[dir="rtl"] .scrub-wash-x {
+  transform: scaleX(-1);
+}
+
+/* Bölüm numarası ve künye çizgisi yön değiştirir. */
+[dir="rtl"] .scrub-index,
+[dir="rtl"] .czr-code {
+  letter-spacing: 0;
+}
+
+/* Arapçada harf aralığını sıkıştırmak harfleri birbirine yapıştırır ve
+   bağlantıları bozar; büyük puntoda uygulanan negatif aralık kaldırılır. */
+[dir="rtl"] .scrub-display {
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+/* Sayı ve latin kısaltmalar (HGR-01, 6-16, 0540...) Arapça akış içinde
+   ters sırayla görünmesin. */
+[dir="rtl"] .scrub-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
 }

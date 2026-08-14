@@ -35,6 +35,7 @@ export function ScrubFooter() {
               <p>
                 <a
                   href={`tel:${contact.phoneE164}`}
+                  dir="ltr"
                   className="font-semibold text-white transition hover:text-[var(--color-brand-accent)]"
                 >
                   {contact.phoneDisplay}

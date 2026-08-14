@@ -52,6 +52,11 @@ module.exports = {
     return [
       { source: "/alternatif", destination: "/", permanent: true },
       { source: "/sinema", destination: "/", permanent: true },
+      // Turkce kanonik dildir ve oneksiz yayinlanir. `/tr` yazan ziyaretci
+      // ve tarayici koke gitmeli; yonlendirme olmasa middleware'in kimlik
+      // kontrolune duser ve giris ekraniyla karsilasirdi.
+      { source: "/tr", destination: "/", permanent: true },
+      { source: "/tr/:path*", destination: "/", permanent: true },
     ];
   },
   async rewrites() {

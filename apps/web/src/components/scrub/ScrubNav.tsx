@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
 import { contact, org, sections } from "@/lib/seo/site";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { scrollToSection } from "./SmoothScroll";
 
 /**
@@ -17,7 +20,8 @@ import { scrollToSection } from "./SmoothScroll";
  * Gözlemci hero'nun ALTINI izler (`rootMargin` üstten -100%): hero'nun alt
  * kenarı ekranın üstünü geçtiği an çubuk açık yüzeye döner.
  */
-export function ScrubNav() {
+export function ScrubNav({ locale = defaultLocale }: { locale?: Locale }) {
+  const t = ui(locale);
   const [past, setPast] = useState(false);
   const [open, setOpen] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
@@ -92,20 +96,20 @@ export function ScrubNav() {
       }`}
     >
       <nav
-        aria-label="Ana gezinme"
+        aria-label={t.navAria}
         className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-6 sm:h-[88px] lg:px-10"
       >
         <a
           href="#esik"
           onClick={(e) => go(e, "esik")}
-          aria-label={`${org.name} — sayfanın başına dön`}
+          aria-label={`${org.name} — ${t.toTop}`}
           className="flex items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-accent)]"
         >
           {/* Kaynak dosya 2x istenen boyutta veriliyor: yuksek yogunluklu
               ekranda amblem bulanik cikmasin. */}
           <Image
             src="/logo.png"
-            alt={`${org.name} logosu`}
+            alt={`${org.name} ${t.logoAlt}`}
             width={104}
             height={104}
             priority
@@ -132,15 +136,23 @@ export function ScrubNav() {
                     : "text-white/75 hover:text-white"
                 }`}
               >
-                {s.label}
+                {t.sectionLabels[s.id]}
               </a>
             </li>
           ))}
         </ul>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LanguageSwitcher locale={locale} past={past} />
+
           <a
             href={`tel:${contact.phoneE164}`}
+            // Sağdan sola düzende telefon numarası GÖRSEL OLARAK ters
+            // sıralanıyordu: "0540 662 72 72" ekranda "72 72 662 0540"
+            // olarak çiziliyordu (ölçüldü). DOM'daki metin doğru; bozulan
+            // yalnızca çizim sırası. Numaralar ve latin kısaltmalar Arapça
+            // akışın içinde kendi yönünü korumalı.
+            dir="ltr"
             className="hidden rounded-full bg-[var(--color-brand-accent)] px-5 py-2.5 text-[13px] font-bold text-[var(--color-surface-dark)] transition hover:brightness-110 sm:inline-block"
           >
             {contact.phoneDisplay}
@@ -150,7 +162,7 @@ export function ScrubNav() {
             type="button"
             aria-expanded={open}
             aria-controls="czr-mobil-menu"
-            aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+            aria-label={open ? t.menuClose : t.menuOpen}
             onClick={() => setOpen((v) => !v)}
             className={`grid h-10 w-10 place-items-center rounded-full border transition-colors duration-500 lg:hidden ${
               past
@@ -183,7 +195,7 @@ export function ScrubNav() {
                   onClick={(e) => go(e, s.id)}
                   className="block w-full py-3.5 text-left text-[15px] font-medium text-[var(--color-surface-dark)]"
                 >
-                  {s.label}
+                  {t.sectionLabels[s.id]}
                 </a>
               </li>
             ))}
