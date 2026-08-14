@@ -134,6 +134,9 @@ const tr = {
   schemaAudience: "Çocuklar ve gençler",
   schemaHome: "Ana Sayfa",
 
+  showAll: "Tümünü gör",
+  showLess: "Daha az göster",
+
   rightsReserved: "Tüm hakları saklıdır.",
 } as const;
 
@@ -249,6 +252,9 @@ const en: UiStrings = {
   schemaAudience: "Children and teenagers",
   schemaHome: "Home",
 
+  showAll: "See all",
+  showLess: "Show less",
+
   rightsReserved: "All rights reserved.",
 };
 
@@ -352,6 +358,9 @@ const ku: UiStrings = {
   schemaAudience: "Zarok û ciwan",
   schemaHome: "Rûpela Sereke",
 
+  showAll: "Hemûyan bibîne",
+  showLess: "Kêmtir nîşan bide",
+
   rightsReserved: "Hemû maf parastî ne.",
 };
 
@@ -454,6 +463,9 @@ const ar: UiStrings = {
 
   schemaAudience: "الأطفال واليافعون",
   schemaHome: "الصفحة الرئيسية",
+
+  showAll: "عرض الكل",
+  showLess: "عرض أقل",
 
   rightsReserved: "جميع الحقوق محفوظة.",
 };

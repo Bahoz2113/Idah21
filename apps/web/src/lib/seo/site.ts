@@ -405,19 +405,27 @@ export type PressItem = {
  * URL'lerin kendi yayın tarihi olarak doğrulanamadı; yanlış bir
  * `datePublished` yapılandırılmış veriye yazmak, hiç yazmamaktan kötüdür.
  */
+/**
+ * SIRA GÖRÜNÜRLÜK SIRASIDIR. Ana ekranda ilk ÜÇ haber kartı görünür,
+ * gerisi "tümünü gör" ile açılır (bkz. `PressSection`). İlk üç kasıtlı
+ * seçildi: iki milletvekili ziyareti ve valinin katıldığı yarışma —
+ * kurumu bir okurun gözünde en hızlı doğrulayan üç kayıt.
+ */
 export const press: readonly PressItem[] = [
   {
     outlet: "Batman Tarafsız",
-    title: "YEDİİKİ Robot ve Teknoloji Yarışması başladı",
-    url: "https://www.batmantarafsiz.com/yediiki-robot-ve-teknoloji-yarismasi-basladi/",
+    title: "Nasıroğlu robotik kodlama atölyesini ziyaret etti",
+    url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
     summary:
-      "Batman Valiliği himayesinde düzenlenen YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı; Batman Valisi Ekrem Canalp proje standlarını gezdi.",
-    video: "https://www.instagram.com/reel/DXuKouMCHNG/",
-    image: "/assets/real-media/etkinlik-yediiki-vali-01.webp",
+      "AK Parti Batman Milletvekili Ferhat Nasıroğlu robotik kodlama atölyesini gezerek öğrencilerin projelerini inceledi.",
+    // Bu kart artık DOSYA FOTOĞRAFI taşımıyor: kare ziyaretin kendisinden.
+    // Öncesinde ilgisiz bir ders fotoğrafı duruyordu ve kredi "arşiv" diyordu;
+    // haberin konusu bu ziyaretken okura yanlış bir kare göstermek gereksizdi.
+    image: "/assets/real-media/ziyaret-vekil-vitrin-01.webp",
     imageAlt:
-      "Batman Valisi Ekrem Canalp, YEDİİKİ Robot ve Teknoloji Yarışması'nda CEZERİ ROBOTECH öğrencilerinin model uçağını inceliyor",
-    imageWidth: 1366,
-    imageHeight: 910,
+      "Batman Milletvekili Ferhat Nasıroğlu CEZERİ ROBOTECH atölyesinde öğrenci projelerinin sergilendiği vitrini inceliyor",
+    imageWidth: 1400,
+    imageHeight: 933,
     kind: "haber",
     source: "slug",
   },
@@ -438,18 +446,16 @@ export const press: readonly PressItem[] = [
   },
   {
     outlet: "Batman Tarafsız",
-    title: "Nasıroğlu robotik kodlama atölyesini ziyaret etti",
-    url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
+    title: "YEDİİKİ Robot ve Teknoloji Yarışması başladı",
+    url: "https://www.batmantarafsiz.com/yediiki-robot-ve-teknoloji-yarismasi-basladi/",
     summary:
-      "AK Parti Batman Milletvekili Ferhat Nasıroğlu robotik kodlama atölyesini gezerek öğrencilerin projelerini inceledi.",
-    // Bu kart artık DOSYA FOTOĞRAFI taşımıyor: kare ziyaretin kendisinden.
-    // Öncesinde ilgisiz bir ders fotoğrafı duruyordu ve kredi "arşiv" diyordu;
-    // haberin konusu bu ziyaretken okura yanlış bir kare göstermek gereksizdi.
-    image: "/assets/real-media/ziyaret-vekil-vitrin-01.webp",
+      "Batman Valiliği himayesinde düzenlenen YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı; Batman Valisi Ekrem Canalp proje standlarını gezdi.",
+    video: "https://www.instagram.com/reel/DXuKouMCHNG/",
+    image: "/assets/real-media/etkinlik-yediiki-vali-01.webp",
     imageAlt:
-      "Batman Milletvekili Ferhat Nasıroğlu CEZERİ ROBOTECH atölyesinde öğrenci projelerinin sergilendiği vitrini inceliyor",
-    imageWidth: 1400,
-    imageHeight: 933,
+      "Batman Valisi Ekrem Canalp, YEDİİKİ Robot ve Teknoloji Yarışması'nda CEZERİ ROBOTECH öğrencilerinin model uçağını inceliyor",
+    imageWidth: 1366,
+    imageHeight: 910,
     kind: "haber",
     source: "slug",
   },

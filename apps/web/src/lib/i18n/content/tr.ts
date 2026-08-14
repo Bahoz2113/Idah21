@@ -105,7 +105,7 @@ export const tr = {
       titleLead: "Bizi Başkaları Anlatınca",
       titleAccent: "",
       titleTail: "",
-      lead: "Yerel ve ulusal basında çıkan haberler, röportajlar ve etkinlik kayıtları. Kurumun kendi anlattığı değil, üçüncü tarafın doğruladığı kayıt.",
+      lead: "Yaptığımız işi abartılı vaatlerle değil; öğrencilerimizin emeği, ortaya çıkan gerçek projeler ve sahadaki çalışmalarımızla anlatırız.",
     },
     sss: {
       eyebrow: "Sıkça Sorulan Sorular",

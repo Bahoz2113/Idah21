@@ -107,7 +107,7 @@ export const ku: Content = {
       titleLead: "Gava Yên Din Me Vedibêjin",
       titleAccent: "",
       titleTail: "",
-      lead: "Nûçe, hevpeyivîn û qeydên çalakiyan ên di çapemeniya herêmî û neteweyî de. Ne ya ku sazî li ser xwe dibêje, ya ku aliyê sêyem piştrast kiriye.",
+      lead: "Em karê xwe ne bi sozên mezinkirî; bi keda xwendekarên xwe, bi projeyên rastîn ên derdikevin holê û bi xebatên xwe yên li qadê vedibêjin.",
     },
     sss: {
       eyebrow: "Pirsên Pir Tên Pirsîn",

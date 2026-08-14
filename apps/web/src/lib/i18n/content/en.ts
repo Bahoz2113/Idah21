@@ -100,7 +100,7 @@ export const en: Content = {
       titleLead: "When Others Tell Our Story",
       titleAccent: "",
       titleTail: "",
-      lead: "News reports, interviews and event coverage in the local and national press. Not the account we give of ourselves, but the record a third party confirmed.",
+      lead: "We describe our work not with inflated promises but through our students' effort, the real projects that emerge and the work we do in the field.",
     },
     sss: {
       eyebrow: "Frequently Asked Questions",

@@ -58,6 +58,14 @@ type MediaBase = {
   span?: MediaSpan;
   /** Belirtilmezse `documentary` kabul edilir. */
   source?: MediaSource;
+  /**
+   * Bölüm kapalıyken ana ekranda görünen kayıt.
+   *
+   * Galeri büyüdükçe sayfayı şişirmesin diye açılışta yalnızca öne çıkan
+   * kayıtlar çizilir; gerisi "tümünü gör" ile açılır. Üçü de VİDEO seçildi:
+   * duran bir kare atölyenin ne yaptığını anlatmaz, hareket anlatır.
+   */
+  oneCikan?: boolean;
   /** Gerçek piksel boyutu — CLS'i sıfırlamak için zorunlu. */
   width: number;
   height: number;
@@ -94,6 +102,7 @@ export const realMedia: readonly RealMediaItem[] = [
   {
     kind: "video",
     id: "saha-roket-firlatma-01",
+    oneCikan: true,
     src: "/assets/real-media/saha-roket-firlatma-01.mp4",
     poster: "/assets/real-media/saha-roket-firlatma-01-poster.webp",
     alt: "CEZERİ ROBOTECH öğrencilerinin Batman'da gerçekleştirdiği model roket fırlatma testi ve baretli öğrencilerin uçuşu izlemesi",
@@ -124,6 +133,7 @@ export const realMedia: readonly RealMediaItem[] = [
   {
     kind: "video",
     id: "saha-iha-simurgh-01",
+    oneCikan: true,
     src: "/assets/real-media/saha-iha-simurgh-01.mp4",
     poster: "/assets/real-media/saha-iha-simurgh-01-poster.webp",
     alt: "CEZERİ ROBOTECH öğrencilerinin ürettiği Simurgh-24 sabit kanatlı İHA'nın ilk kalkış ve uçuş testi",
@@ -373,6 +383,7 @@ export const realMedia: readonly RealMediaItem[] = [
   {
     kind: "video",
     id: "atolye-tur-01",
+    oneCikan: true,
     src: "/assets/real-media/atolye-tur-01.mp4",
     poster: "/assets/real-media/atolye-tur-01-poster.webp",
     alt: "CEZERİ ROBOTECH Batman atölyesinin içi: 3D baskı ürünleri, hexacopter drone ve robotik eğitim kitleri",

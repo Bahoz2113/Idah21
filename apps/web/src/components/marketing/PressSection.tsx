@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useId, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { ui, type UiStrings } from "@/lib/i18n/ui";
 import { press } from "@/lib/seo/site";
+import { DahaFazla } from "./DahaFazla";
 import { Reveal } from "./Reveal";
 
 /**
@@ -18,13 +22,32 @@ import { Reveal } from "./Reveal";
  *
  * Haberler ve sosyal paylaşımlar ayrı listelenir; ikisi aynı ağırlıkta
  * değildir ve karıştırmak haber kaynağının değerini düşürür.
+ *
+ * İLK ÜÇ HABER GÖRÜNÜR, GERİSİ AÇILIR. Arşiv büyüdükçe bölüm sayfayı
+ * şişirmesin diye. Görünen üç kayıt `lib/seo/site.ts` içindeki sıranın
+ * ilk üçüdür ve kasıtlı seçildi: iki milletvekili ziyareti ve valinin
+ * katıldığı yarışma. Kapalı kayıtlar DOM'da kalır (`hidden`), silinmez —
+ * gerekçesi `DahaFazla` bileşeninde.
  */
+
+/** Ana ekranda görünen haber kartı sayısı. */
+const ILK_GORUNEN = 3;
 
 type Item = (typeof press)[number];
 
-function PressCard({ item, index, t }: { item: Item; index: number; t: UiStrings }) {
+function PressCard({
+  item,
+  index,
+  t,
+  gizli,
+}: {
+  item: Item;
+  index: number;
+  t: UiStrings;
+  gizli: boolean;
+}) {
   return (
-    <li>
+    <li className={gizli ? "hidden" : undefined}>
       <Reveal delay={Math.min(index, 5) * 70}>
         <article className="czr-glass-panel czr-rim group relative h-full overflow-hidden rounded-2xl">
           {item.image ? (
@@ -152,8 +175,12 @@ function SocialRow({ item, index, t }: { item: Item; index: number; t: UiStrings
 
 export function PressSection({ locale }: { locale: Locale }) {
   const t = ui(locale);
+  const [acik, setAcik] = useState(false);
+  const arsivId = useId();
   const haberler = press.filter((p) => p.kind === "haber");
   const sosyal = press.filter((p) => p.kind === "sosyal");
+  // Gizlenen: ilk üçün dışındaki haberler + sosyal paylaşımların tamamı.
+  const gizliSayi = Math.max(0, haberler.length - ILK_GORUNEN) + sosyal.length;
 
   if (press.length === 0) {
     return (
@@ -178,16 +205,25 @@ export function PressSection({ locale }: { locale: Locale }) {
             </h3>
           </Reveal>
 
-          <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul id={arsivId} className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {haberler.map((item, i) => (
-              <PressCard key={item.url} item={item} index={i} t={t} />
+              <PressCard
+                key={item.url}
+                item={item}
+                index={i}
+                t={t}
+                gizli={!acik && i >= ILK_GORUNEN}
+              />
             ))}
           </ul>
         </section>
       ) : null}
 
       {sosyal.length > 0 ? (
-        <section aria-labelledby="basin-sosyal" className="mt-14">
+        <section
+          aria-labelledby="basin-sosyal"
+          className={`mt-14 ${acik ? "" : "hidden"}`}
+        >
           <Reveal>
             <h3
               id="basin-sosyal"
@@ -204,8 +240,16 @@ export function PressSection({ locale }: { locale: Locale }) {
         </section>
       ) : null}
 
+      <DahaFazla
+        locale={locale}
+        acik={acik}
+        onToggle={() => setAcik((v) => !v)}
+        kontrolId={arsivId}
+        gizliSayi={gizliSayi}
+      />
+
       <Reveal>
-        <p className="mt-8 text-[12px] leading-relaxed text-czr-ice/40">
+        <p className={`mt-8 text-[12px] leading-relaxed text-czr-ice/40 ${acik ? "" : "hidden"}`}>
           {t.pressPhotoNote}
         </p>
       </Reveal>

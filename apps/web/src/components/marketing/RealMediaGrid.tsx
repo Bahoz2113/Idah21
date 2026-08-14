@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   mediaFilters,
   realMedia,
@@ -13,6 +13,7 @@ import {
 } from "@/lib/media/real-media";
 import type { Locale } from "@/lib/i18n/config";
 import { ui } from "@/lib/i18n/ui";
+import { DahaFazla } from "./DahaFazla";
 import { ProjectLightbox } from "./ProjectLightbox";
 import { VideoModal } from "./VideoModal";
 
@@ -30,16 +31,34 @@ import { VideoModal } from "./VideoModal";
  *
  * Manifest boşken bileşen ÇÖKMEZ: planlanan çekimleri gösteren bir hangar
  * iskeletine düşer.
+ *
+ * AÇILIŞTA ÜÇ KAYIT. Galeri her yeni çekimle büyüyecek; hepsini birden
+ * çizmek bölümü sayfanın en uzun bloğuna çevirirdi. Açılışta yalnızca
+ * `oneCikan` işaretli üç VİDEO görünür — duran bir kare atölyenin ne
+ * yaptığını anlatmaz, hareket anlatır. "Tümünü gör" hem kalan kayıtları
+ * hem kategori filtrelerini açar; kapalıyken filtre göstermek, üç karede
+ * işe yaramayan yedi düğme demekti.
+ *
+ * Kapalı kayıtlar DOM'da kalır (`hidden`), silinmez — gerekçesi
+ * `DahaFazla` bileşeninde.
  */
 export function RealMediaGrid({ locale }: { locale: Locale }) {
   const t = ui(locale);
   const [filter, setFilter] = useState<MediaCategory | "tumu">("tumu");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [acik, setAcik] = useState(false);
+  const galeriId = useId();
 
   const items = useMemo(
     () => (filter === "tumu" ? realMedia : realMedia.filter((m) => m.category === filter)),
     [filter],
   );
+
+  // Kapalıyken yalnızca öne çıkanlar çizilir. Filtre satırı da kapalıyken
+  // gizli olduğu için `filter` her zaman "tumu"dur; yine de görünürlüğü
+  // filtrelenmiş listeden hesaplıyoruz ki ikisi ayrışmasın.
+  const gizliMi = (m: (typeof realMedia)[number]) => !acik && !m.oneCikan;
+  const gizliSayi = acik ? 0 : items.filter((m) => !m.oneCikan).length;
 
   const active: RealMediaItem | null = activeIndex === null ? null : items[activeIndex] ?? null;
 
@@ -54,7 +73,11 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
   return (
     <>
       {/* Kategori filtresi */}
-      <div role="group" aria-label={t.mediaCategoryAria} className="flex flex-wrap gap-2">
+      <div
+        role="group"
+        aria-label={t.mediaCategoryAria}
+        className={`flex flex-wrap gap-2 ${acik ? "" : "hidden"}`}
+      >
         {mediaFilters.map((f) => {
           const selected = filter === f.id;
           return (
@@ -85,7 +108,10 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
         geri doldurur — ızgarada delik kalmaz. Görsel sıra bozulur ama kartlar
         bağımsız olduğu için okuma sırası anlam taşımıyor.
       */}
-      <div className="mt-8 grid auto-rows-[200px] grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4">
+      <div
+        id={galeriId}
+        className="mt-8 grid auto-rows-[200px] grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-3 lg:auto-rows-[230px] lg:grid-cols-4"
+      >
         {items.map((item, i) => {
           const isVideo = item.kind === "video";
           // Video kartında gösterilen görsel posterdir; ölçüleri de posterin.
@@ -99,7 +125,7 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
               aria-label={`${item.caption} — ${isVideo ? t.mediaPlayAction : t.mediaZoomAction}`}
               className={`czr-grade czr-grade-hover group relative overflow-hidden rounded-2xl border border-white/8 text-left transition duration-500 ease-czr-cine hover:border-czr-orange/40 ${
                 spanClass[item.span ?? "normal"]
-              }`}
+              } ${gizliMi(item) ? "hidden" : ""}`}
             >
               <Image
                 src={thumb}
@@ -157,6 +183,14 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
           );
         })}
       </div>
+
+      <DahaFazla
+        locale={locale}
+        acik={acik}
+        onToggle={() => setAcik((v) => !v)}
+        kontrolId={galeriId}
+        gizliSayi={gizliSayi}
+      />
 
       <ProjectLightbox
         item={active?.kind === "image" ? (active as RealImage) : null}
