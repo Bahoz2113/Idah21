@@ -15,7 +15,12 @@ import type { Locale } from "./config";
  * getirmek olurdu.
  *
  * MADDE METİNLERİ KURUMUN KENDİ METNİDİR. Türkçe maddeler kâğıt formdan
- * birebir alındı; içerik düzeltilmedi.
+ * alındı. Tek değişiklik kurucunun kendi düzeltmesidir: 5. maddenin üçüncü
+ * bendi kâğıtta "bedeli TARAFIMIZA fatura edilecektir" diyordu ve bu hâliyle
+ * sorumluluğu kurumun üstüne alıyordu; "tarafınıza" olarak düzeltildi.
+ * Çevirilerde de aynı bent muhatapsız edilgen yazılmıştı ("will be
+ * invoiced"), Türkçe netleşince onlar da netleştirildi — sözleşmenin dört
+ * dilde aynı şeyi söylemesi gerekir.
  */
 
 const tr = {
@@ -107,7 +112,7 @@ const tr = {
       items: [
         "Öğrenciye kurs kapsamında verilen malzemelerin itinalı kullanımı zorunludur.",
         "Malzemelerin kasıtlı olarak zarar görmesi durumunda, zarar bedeli veli tarafından karşılanacaktır.",
-        "İstemli şekilde kırılan, kaybolan veya hasar gören cihaz ya da ekipmanların bedeli tarafımıza fatura edilecektir.",
+        "İstemli şekilde kırılan, kaybolan veya hasar gören cihaz ya da ekipmanların bedeli tarafınıza fatura edilecektir.",
       ],
     },
     {
@@ -240,7 +245,7 @@ const en: KayitStrings = {
       items: [
         "Materials issued to the student as part of the course must be used with care.",
         "If materials are damaged deliberately, the cost of the damage will be met by the parent.",
-        "The cost of devices or equipment broken, lost or damaged intentionally will be invoiced.",
+        "The cost of devices or equipment broken, lost or damaged intentionally will be invoiced to you.",
       ],
     },
     {
@@ -364,7 +369,7 @@ const ku: KayitStrings = {
       items: [
         "Bikaranîna bi baldarî ya malzemeyên ku di çarçoveya kursê de didin xwendekar pêwîst e.",
         "Ger malzeme bi zanetî ziyan bibînin, bihayê ziyanê ji aliyê serperiştyar ve tê dayîn.",
-        "Bihayê cihaz an alavên ku bi zanetî tên şikandin, winda bûn an ziyan dîtin dê were fatûrekirin.",
+        "Bihayê cihaz an alavên ku bi zanetî tên şikandin, winda bûn an ziyan dîtin dê ji we re were fatûrekirin.",
       ],
     },
     {
@@ -488,7 +493,7 @@ const ar: KayitStrings = {
       items: [
         "يجب استخدام المواد المسلَّمة للطالب ضمن الدورة بعناية.",
         "في حال إتلاف المواد عمداً، يتحمّل وليّ الأمر قيمة الضرر.",
-        "تُفوتَر قيمة الأجهزة أو المعدات التي تُكسَر أو تُفقَد أو تتضرّر عن قصد.",
+        "تُفوتَر عليكم قيمة الأجهزة أو المعدات التي تُكسَر أو تُفقَد أو تتضرّر عن قصد.",
       ],
     },
     {
