@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
 import { curriculum, curriculumTotalWeeks } from "@/lib/seo/curriculum";
 import { Reveal } from "./Reveal";
 
@@ -30,7 +32,8 @@ const LEVEL_TONE: Record<string, string> = {
   İleri: "text-czr-orange border-czr-orange/45",
 };
 
-export function CurriculumSection() {
+export function CurriculumSection({ locale }: { locale: Locale }) {
+  const t = ui(locale);
   const [active, setActive] = useState(curriculum[0].id);
   const [openModule, setOpenModule] = useState<string | null>(null);
 
@@ -42,7 +45,7 @@ export function CurriculumSection() {
       <Reveal>
         <div
           role="tablist"
-          aria-label="Müfredat programları"
+          aria-label={t.curriculumPrograms}
           className="flex flex-wrap gap-2.5"
         >
           {curriculum.map((p) => {
@@ -74,7 +77,7 @@ export function CurriculumSection() {
                   {p.title}
                 </span>
                 <span className="czr-mono mt-1.5 block text-[10px] uppercase tracking-[0.12em] text-czr-ice/45">
-                  {p.ages} · {p.totalWeeks} hafta
+                  {p.ages} · {p.totalWeeks} {t.weeks}
                 </span>
               </button>
             );
@@ -101,12 +104,13 @@ export function CurriculumSection() {
                 {program.level}
               </span>
               <span className="czr-mono text-[11px] tabular-nums text-czr-ice/55">
-                {program.ages} · {program.totalWeeks} hafta · {program.modules.length} modül
+                {program.ages} · {program.totalWeeks} {t.weeks} · {program.modules.length}{" "}
+                {t.modules}
               </span>
             </div>
 
             <h4 className="czr-mono mt-6 text-[10px] uppercase tracking-[0.16em] text-czr-ice/45">
-              Kullanılan araç ve bileşenler
+              {t.curriculumTools}
             </h4>
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {program.tools.map((t) => (
@@ -154,7 +158,7 @@ export function CurriculumSection() {
 
                     <span className="mt-1 flex shrink-0 items-center gap-3">
                       <span className="czr-mono hidden rounded-full border border-white/12 px-2.5 py-0.5 text-[10px] tabular-nums text-czr-ice/55 sm:inline">
-                        {m.weeks.length} hafta
+                        {m.weeks.length} {t.weeks}
                       </span>
                       <span
                         aria-hidden="true"
@@ -174,7 +178,7 @@ export function CurriculumSection() {
                         className="flex gap-4 border-l border-white/8 py-3 pl-5 transition-colors duration-300 hover:border-czr-orange/40 sm:gap-6"
                       >
                         <span className="czr-mono w-16 shrink-0 pt-0.5 text-[10px] uppercase tabular-nums tracking-[0.1em] text-czr-ice/40">
-                          {w.no}. hafta
+                          {t.weekLabel.replace("{n}", String(w.no))}
                         </span>
                         <span className="min-w-0">
                           <span className="block text-[15px] font-semibold text-white">
@@ -196,10 +200,9 @@ export function CurriculumSection() {
 
       <Reveal>
         <p className="mt-8 text-[13px] leading-relaxed text-czr-ice/45">
-          Dört programda toplam{" "}
-          <span className="tabular-nums text-czr-ice/70">{curriculumTotalWeeks}</span> ders
-          haftası. Program içerikleri yaş grubuna ve sınıf seviyesine göre eğitmen
-          tarafından uyarlanır.
+          {t.curriculumTotalPre}{" "}
+          <span className="tabular-nums text-czr-ice/70">{curriculumTotalWeeks}</span>{" "}
+          {t.curriculumTotalPost}
         </p>
       </Reveal>
     </div>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { metrics } from "@/lib/seo/site";
+import type { Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
+import { localizedMetrics } from "@/lib/i18n/view";
 
 /**
  * 02 — TELEMETRİ ŞERİDİ
@@ -47,7 +49,7 @@ function MetricCard({
   active,
   index,
 }: {
-  metric: (typeof metrics)[number];
+  metric: ReturnType<typeof localizedMetrics>[number];
   active: boolean;
   index: number;
 }) {
@@ -79,9 +81,10 @@ function MetricCard({
   );
 }
 
-export function MetricsDeck() {
+export function MetricsDeck({ locale }: { locale: Locale }) {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
+  const metrics = localizedMetrics(locale);
 
   useEffect(() => {
     const node = ref.current;
@@ -107,7 +110,7 @@ export function MetricsDeck() {
   return (
     <section
       id="telemetri"
-      aria-label="Kurum telemetrisi"
+      aria-label={ui(locale).telemetryAria}
       className="czr-chapter border-y border-white/8"
     >
       <div

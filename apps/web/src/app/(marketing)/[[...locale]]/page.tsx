@@ -9,6 +9,8 @@ import { ScrubNav } from "@/components/scrub/ScrubNav";
 import { ScrubReveal } from "@/components/scrub/ScrubReveal";
 import { SmoothScroll } from "@/components/scrub/SmoothScroll";
 import { chapters } from "@/lib/marketing/chapters";
+import { content } from "@/lib/i18n/content";
+import { ui } from "@/lib/i18n/ui";
 import { schemaJson } from "@/lib/seo/schema";
 import { contact, org, SITE_URL } from "@/lib/seo/site";
 
@@ -129,8 +131,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-/** Koyu bantta duran bölümler: içerik bileşenleri koyu yüzey için yazıldı. */
-const DARK = new Set(["egitimler", "mufredat", "atolye", "miras", "basin", "sss"]);
+/**
+ * Koyu bantta duran bölümler: içerik bileşenleri koyu yüzey için yazıldı.
+ *
+ * `iletisim` de buraya AİT. Listede yokken bölüm açık yüzeyde çiziliyordu
+ * ama içindeki her şey — `SectionHeading` (`text-white`), iletişim kartları
+ * ve künye (`text-czr-ice/...`), harita SVG'si — koyu zemin için yazılmış.
+ * Sonuç beyaz üstüne beyazdı: "Üsse Bağlan" başlığı, kanal adları, adres,
+ * telefon ve e-posta okunmuyordu (dört dilde birden; ölçüldü).
+ */
+const DARK = new Set(["egitimler", "mufredat", "atolye", "miras", "basin", "sss", "iletisim"]);
 
 /**
  * DILE GORE UST VERI.
@@ -164,20 +174,23 @@ export default async function HomePage({
   params: Promise<{ locale?: string[] }>;
 }) {
   const locale = resolveLocale((await params).locale);
+  const c = content(locale);
+  const t = ui(locale);
+
   return (
     <SmoothScroll>
       {/* Tek @graph JSON-LD: kurum → kampüs → 10 kurs → SSS → site zinciri */}
       <script
         type="application/ld+json"
         // Değer `schemaJson()` içinde `<` kaçırılarak üretilir.
-        dangerouslySetInnerHTML={{ __html: schemaJson() }}
+        dangerouslySetInnerHTML={{ __html: schemaJson(locale) }}
       />
 
       <a
         href="#egitimler"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[var(--color-brand-accent)] focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-[var(--color-surface-dark)]"
       >
-        İçeriğe geç
+        {t.skipToContent}
       </a>
 
       <ScrubNav locale={locale} />
@@ -192,7 +205,7 @@ export default async function HomePage({
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <ScrubReveal>
-              <p className="scrub-index">01 — Yaklaşımımız</p>
+              <p className="scrub-index">{c.intro.index}</p>
             </ScrubReveal>
 
             <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-16">
@@ -201,18 +214,18 @@ export default async function HomePage({
                   id="czr-giris-baslik"
                   className="scrub-display text-[var(--color-surface-dark)]"
                 >
-                  Geleceği Tüketen Değil,{" "}
-                  <span className="text-[var(--color-brand-accent)]">Tasarlayan</span> Nesiller
+                  {c.intro.titleLead}{" "}
+                  <span className="text-[var(--color-brand-accent)]">{c.intro.titleAccent}</span>
+                  {c.intro.titleTail ? ` ${c.intro.titleTail}` : null}
                 </h2>
               </ScrubReveal>
 
               <ScrubReveal delay={160} className="lg:col-span-5 lg:pt-3">
                 <p className="max-w-prose text-pretty text-[17px] leading-relaxed text-[var(--color-text-muted)]">
-                  {org.description}
+                  {c.org.description}
                 </p>
                 <p className="mt-5 max-w-prose text-pretty text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  Öğrenciler burada yalnızca kod yazmayı veya bir robotu çalıştırmayı öğrenmez;
-                  düşünmeyi, tasarlamayı, denemeyi, hata yapmayı ve yeniden üretmeyi öğrenir.
+                  {c.intro.body}
                 </p>
               </ScrubReveal>
             </div>
@@ -221,17 +234,17 @@ export default async function HomePage({
 
         {/* Telemetri — koyu bant, mevcut bileşen */}
         <div className="scrub-chapter scrub-dark bg-[var(--color-surface-dark)]">
-          <MetricsDeck />
+          <MetricsDeck locale={locale} />
         </div>
 
         {/* 02 → 08 — Bölümler tek kaynaktan */}
-        {chapters.map((c, i) => {
-          const dark = DARK.has(c.id);
+        {chapters(locale).map((ch) => {
+          const dark = DARK.has(ch.id);
           return (
             <section
-              key={c.id}
-              id={c.id}
-              aria-labelledby={c.headingId}
+              key={ch.id}
+              id={ch.id}
+              aria-labelledby={ch.headingId}
               className={`scrub-chapter border-b py-24 lg:py-32 ${
                 dark
                   ? "scrub-dark border-white/8 bg-[var(--color-surface-dark)]"
@@ -240,7 +253,7 @@ export default async function HomePage({
             >
               <div
                 className={`mx-auto px-6 lg:px-10 ${
-                  c.width === "narrow" ? "max-w-4xl" : "max-w-7xl"
+                  ch.width === "narrow" ? "max-w-4xl" : "max-w-7xl"
                 }`}
               >
                 {/* Bölüm etiketi YALNIZCA `SectionHeading` içinde basılır.
@@ -252,14 +265,14 @@ export default async function HomePage({
                     onlarda `SectionHeading` yok ve turun iki ucunu işaretler. */}
                 <div>
                   <SectionHeading
-                    code={c.code}
-                    eyebrow={c.eyebrow}
-                    title={c.title}
-                    lead={c.lead}
+                    code={ch.code}
+                    eyebrow={ch.eyebrow}
+                    title={ch.title}
+                    lead={ch.lead}
                   />
                 </div>
 
-                {c.body}
+                {ch.body}
               </div>
             </section>
           );
@@ -272,7 +285,7 @@ export default async function HomePage({
         >
           <div className="mx-auto max-w-4xl px-6 text-center lg:px-10">
             <ScrubReveal>
-              <p className="scrub-index">09 — Davet</p>
+              <p className="scrub-index">{c.cta.index}</p>
             </ScrubReveal>
 
             <ScrubReveal delay={80}>
@@ -280,15 +293,15 @@ export default async function HomePage({
                 id="czr-cta-baslik"
                 className="scrub-display mt-7 text-[var(--color-surface-dark)]"
               >
-                Geleceği <span className="text-[var(--color-brand-accent)]">Birlikte</span>{" "}
-                Tasarlayalım
+                {c.cta.titleLead}{" "}
+                <span className="text-[var(--color-brand-accent)]">{c.cta.titleAccent}</span>
+                {c.cta.titleTail ? ` ${c.cta.titleTail}` : null}
               </h2>
             </ScrubReveal>
 
             <ScrubReveal delay={160}>
               <p className="mx-auto mt-6 max-w-2xl text-pretty text-[17px] leading-relaxed text-[var(--color-text-muted)]">
-                Çocuğunuzun teknoloji yolculuğunu doğru yaşta, doğru rehberlikle ve gerçek
-                projelerle başlatın.
+                {c.cta.lead}
               </p>
             </ScrubReveal>
 
@@ -298,13 +311,13 @@ export default async function HomePage({
                   href={`tel:${contact.phoneE164}`}
                   className="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-accent)] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[var(--color-surface-dark)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110"
                 >
-                  Kayıt ve Bilgi Talep Edin
+                  {t.ctaPrimary}
                 </a>
                 <a
                   href={`mailto:${contact.email}`}
                   className="inline-flex items-center justify-center rounded-full border border-[var(--color-line)] px-8 py-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-surface-dark)] transition duration-300 hover:border-[var(--color-brand-accent)]"
                 >
-                  E-posta Gönderin
+                  {t.ctaSecondary}
                 </a>
               </div>
             </ScrubReveal>
@@ -312,7 +325,7 @@ export default async function HomePage({
         </section>
       </main>
 
-      <ScrubFooter />
+      <ScrubFooter locale={locale} />
     </SmoothScroll>
   );
 }

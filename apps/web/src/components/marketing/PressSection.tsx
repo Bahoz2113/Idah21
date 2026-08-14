@@ -1,4 +1,6 @@
 import Image from "next/image";
+import type { Locale } from "@/lib/i18n/config";
+import { ui, type UiStrings } from "@/lib/i18n/ui";
 import { press } from "@/lib/seo/site";
 import { Reveal } from "./Reveal";
 
@@ -20,7 +22,7 @@ import { Reveal } from "./Reveal";
 
 type Item = (typeof press)[number];
 
-function PressCard({ item, index }: { item: Item; index: number }) {
+function PressCard({ item, index, t }: { item: Item; index: number; t: UiStrings }) {
   return (
     <li>
       <Reveal delay={Math.min(index, 5) * 70}>
@@ -48,7 +50,7 @@ function PressCard({ item, index }: { item: Item; index: number }) {
 
               {/* Arşiv kredisi — haberin fotoğrafı sanılmasın */}
               <span className="absolute bottom-2 right-2 z-10 rounded-full bg-czr-base/75 px-2 py-0.5 czr-mono text-[9px] uppercase tracking-[0.12em] text-czr-ice/70 backdrop-blur">
-                CEZERİ ROBOTECH arşivi
+                {t.pressArchiveCredit}
               </span>
 
               {item.video ? (
@@ -98,7 +100,7 @@ function PressCard({ item, index }: { item: Item; index: number }) {
                   <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3 w-3" fill="currentColor">
                     <path d="M7 4.5v11l9-5.5-9-5.5z" />
                   </svg>
-                  Video kaydı
+                  {t.pressVideo}
                 </a>
               ) : null}
             </div>
@@ -109,7 +111,7 @@ function PressCard({ item, index }: { item: Item; index: number }) {
   );
 }
 
-function SocialRow({ item, index }: { item: Item; index: number }) {
+function SocialRow({ item, index, t }: { item: Item; index: number; t: UiStrings }) {
   return (
     <li>
       <Reveal delay={Math.min(index, 5) * 60}>
@@ -148,7 +150,8 @@ function SocialRow({ item, index }: { item: Item; index: number }) {
   );
 }
 
-export function PressSection() {
+export function PressSection({ locale }: { locale: Locale }) {
+  const t = ui(locale);
   const haberler = press.filter((p) => p.kind === "haber");
   const sosyal = press.filter((p) => p.kind === "sosyal");
 
@@ -156,8 +159,7 @@ export function PressSection() {
     return (
       <Reveal>
         <p className="czr-glass-panel mt-12 rounded-2xl px-6 py-8 text-[15px] leading-relaxed text-czr-ice/60">
-          Basın bağlantıları hazırlanıyor. Yayınlanan haber, röportaj ve
-          etkinlik haberlerimiz burada kaynağıyla birlikte listelenecek.
+          {t.pressEmpty}
         </p>
       </Reveal>
     );
@@ -172,13 +174,13 @@ export function PressSection() {
               id="basin-haber"
               className="czr-mono text-[10px] uppercase tracking-[0.18em] text-czr-ice/45"
             >
-              Haber ve gazete
+              {t.pressNewsAndPapers}
             </h3>
           </Reveal>
 
           <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {haberler.map((item, i) => (
-              <PressCard key={item.url} item={item} index={i} />
+              <PressCard key={item.url} item={item} index={i} t={t} />
             ))}
           </ul>
         </section>
@@ -191,12 +193,12 @@ export function PressSection() {
               id="basin-sosyal"
               className="czr-mono text-[10px] uppercase tracking-[0.18em] text-czr-ice/45"
             >
-              Sosyal medya
+              {t.pressSocial}
             </h3>
           </Reveal>
           <ul className="mt-4 divide-y divide-white/8 border-y border-white/8">
             {sosyal.map((item, i) => (
-              <SocialRow key={item.url} item={item} index={i} />
+              <SocialRow key={item.url} item={item} index={i} t={t} />
             ))}
           </ul>
         </section>
@@ -204,8 +206,7 @@ export function PressSection() {
 
       <Reveal>
         <p className="mt-8 text-[12px] leading-relaxed text-czr-ice/40">
-          Kartlardaki fotoğraflar CEZERİ ROBOTECH arşivinden dosya
-          fotoğraflarıdır; haberlerin kendi görselleri ilgili yayınlara aittir.
+          {t.pressPhotoNote}
         </p>
       </Reveal>
     </div>

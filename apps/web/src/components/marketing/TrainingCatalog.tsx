@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { disciplines } from "@/lib/seo/site";
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
+import { localizedDisciplines } from "@/lib/i18n/view";
 import { serviceAreaSentence, trainingSeoById } from "@/lib/seo/trainings";
 import { Reveal } from "./Reveal";
 
@@ -19,10 +21,22 @@ import { Reveal } from "./Reveal";
  * (`setWorldFx`); o sahne tanıtım sayfasından kaldırıldığında kanal da
  * kaldırıldı. `trainingSeoById` kayıtlarındaki `fx` alanı duruyor ama artık
  * hiçbir şeyi sürmüyor.
+ *
+ * ARAMA EKLERİ YALNIZCA TÜRKÇEDE. `trainingSeoById` kayıtlarındaki uzun
+ * cevap, soru-cevap ve anahtar kelime listesi Türkçe arama talebine göre
+ * yazılmıştır — "Batman drone eğitimi" ifadesi Türkçe arayan bir veliyi
+ * karşılar. Bunları çevirmek, olmayan bir arama talebini varmış gibi
+ * göstermek olurdu; ayrıca Arapça bir sayfada Türkçe anahtar kelime
+ * rozetleri basmak okuru yanıltır. Diğer üç dilde bu bloklar GİZLENİR ve
+ * açıklama olarak disiplinin çevrilmiş `detail` metni kullanılır — kapak
+ * görselleri dilden bağımsız olduğu için her dilde durur.
  */
 
-export function TrainingCatalog() {
+export function TrainingCatalog({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState<string | null>(null);
+  const t = ui(locale);
+  const disciplines = localizedDisciplines(locale);
+  const withSeoCopy = locale === defaultLocale;
 
   return (
     <div className="mt-14">
@@ -99,10 +113,10 @@ export function TrainingCatalog() {
                     {/* Yanıt motorlarının alıntılayacağı tanım */}
                     <div className="lg:col-span-2">
                       <p className="text-pretty text-[15px] leading-relaxed text-czr-ice/80 sm:text-base">
-                        {seo?.answer ?? d.detail}
+                        {withSeoCopy ? seo?.answer ?? d.detail : d.detail}
                       </p>
 
-                      {seo?.faq?.length ? (
+                      {withSeoCopy && seo?.faq?.length ? (
                         <dl className="mt-7 space-y-5 border-l border-czr-orange/25 pl-5">
                           {seo.faq.map((f) => (
                             <div key={f.q}>
@@ -119,7 +133,7 @@ export function TrainingCatalog() {
                     <div className="space-y-7">
                       <div>
                         <h4 className="czr-mono text-[10px] uppercase tracking-[0.16em] text-czr-ice/45">
-                          Dönem sonunda öğrenci
+                          {t.endOfTerm}
                         </h4>
                         <ul className="mt-3 space-y-2">
                           {d.outcomes.map((o) => (
@@ -134,10 +148,10 @@ export function TrainingCatalog() {
                         </ul>
                       </div>
 
-                      {seo?.keywords?.length ? (
+                      {withSeoCopy && seo?.keywords?.length ? (
                         <div>
                           <h4 className="czr-mono text-[10px] uppercase tracking-[0.16em] text-czr-ice/45">
-                            Bu eğitim şu aramalarda
+                            {t.searchesFor}
                           </h4>
                           <ul className="mt-3 flex flex-wrap gap-1.5">
                             {seo.keywords.map((k) => (
@@ -160,11 +174,13 @@ export function TrainingCatalog() {
         })}
       </ol>
 
-      <Reveal>
-        <p className="mt-10 max-w-3xl text-pretty text-[14px] leading-relaxed text-czr-ice/55">
-          {serviceAreaSentence}
-        </p>
-      </Reveal>
+      {withSeoCopy ? (
+        <Reveal>
+          <p className="mt-10 max-w-3xl text-pretty text-[14px] leading-relaxed text-czr-ice/55">
+            {serviceAreaSentence}
+          </p>
+        </Reveal>
+      ) : null}
     </div>
   );
 }

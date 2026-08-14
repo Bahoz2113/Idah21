@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { content } from "@/lib/i18n/content";
+import { ui } from "@/lib/i18n/ui";
 import { channels, contact, org, sameAs } from "@/lib/seo/site";
 
 /**
@@ -10,7 +13,9 @@ import { channels, contact, org, sameAs } from "@/lib/seo/site";
  * Yıl derleme anında değil, render anında hesaplanır; statik sayfa
  * yeniden derlenene kadar eskimesin diye tarih tek yerde durur.
  */
-export function ScrubFooter() {
+export function ScrubFooter({ locale }: { locale: Locale }) {
+  const t = ui(locale);
+  const c = content(locale);
   const year = new Date().getFullYear();
 
   return (
@@ -22,16 +27,18 @@ export function ScrubFooter() {
               {org.name}
             </p>
             <p className="scrub-mono mt-3 text-[11px] uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
-              Hayal Et, Kodla, Geleceği Tasarla.
+              {c.org.slogan}
             </p>
           </div>
 
           <div className="lg:col-span-4">
             <h2 className="scrub-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-              İletişim
+              {t.contactHeading}
             </h2>
             <address className="mt-4 space-y-2 not-italic text-[15px] leading-relaxed text-white/70">
-              <p>{contact.address.full}</p>
+              {/* Latin harf ve rakam taşıyan adres, sağdan sola akışta
+                  kendi yönünü korumalı. */}
+              <p dir="ltr">{contact.address.full}</p>
               <p>
                 <a
                   href={`tel:${contact.phoneE164}`}
@@ -44,7 +51,8 @@ export function ScrubFooter() {
               <p>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="transition hover:text-[var(--color-brand-accent)]"
+                  dir="ltr"
+                  className="inline-block transition hover:text-[var(--color-brand-accent)]"
                 >
                   {contact.email}
                 </a>
@@ -54,7 +62,7 @@ export function ScrubFooter() {
 
           <div className="lg:col-span-3">
             <h2 className="scrub-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-              Bizi Takip Edin
+              {t.followUs}
             </h2>
             <ul className="mt-4 space-y-2">
               {sameAs.map((url) => (
@@ -75,10 +83,10 @@ export function ScrubFooter() {
 
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-7 text-[13px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {org.name}. Tüm hakları saklıdır.
+            © {year} {org.name}. {t.rightsReserved}
           </p>
           <p className="scrub-mono text-[10px] uppercase tracking-[0.14em]">
-            {contact.address.city} · Türkiye
+            {contact.address.city} · {c.org.foundingLocation.split(",").pop()?.trim()}
           </p>
         </div>
       </div>

@@ -38,6 +38,7 @@ const tr = {
 
   // ── Bölüm çerçevesi
   stop: "DURAK",
+  telemetryAria: "Kurum telemetrisi",
 
   // ── Eğitim kataloğu
   searchesFor: "Bu eğitim şu aramalarda",
@@ -85,6 +86,7 @@ const tr = {
 
   // ── Davet
   ctaPrimary: "Kayıt ve Bilgi Talep Edin",
+  ctaPrimaryShort: "Hemen Ara",
   ctaSecondary: "E-posta Gönderin",
 
 
@@ -101,6 +103,36 @@ const tr = {
   },
 
   // ── Altbilgi
+  // ── İletişim künyesi
+  contactAddress: "Adres",
+  contactPhone: "Telefon",
+  contactEmail: "E-posta",
+  contactHours: "Çalışma Saatleri",
+  hoursWeekdays: "Pazartesi – Cuma",
+  hoursSaturday: "Cumartesi",
+
+  // ── Harita
+  directionsCta: "Yol Tarifi Al",
+  mapAria: "{city} şehir merkezindeki CEZERİ ROBOTECH üssünün konumunu gösteren şematik harita",
+  mapBaseLabel: "{city} ÜSSÜ",
+  coordNorth: "K",
+  coordEast: "D",
+
+  // ── Müfredat (ek)
+  modules: "modül",
+  weekLabel: "{n}. hafta",
+
+  // ── Medya (ek)
+  mediaCategoryAria: "Medya kategorisi",
+  mediaAll: "Tümü",
+  mediaPlayAction: "videoyu oynat",
+  mediaZoomAction: "görseli büyüt",
+  mediaSeconds: "sn",
+  mediaPendingBody: "Atölye ve saha çekimleri yüklendiğinde bu galeri otomatik olarak dolar.",
+
+  schemaAudience: "Çocuklar ve gençler",
+  schemaHome: "Ana Sayfa",
+
   rightsReserved: "Tüm hakları saklıdır.",
 } as const;
 
@@ -133,6 +165,7 @@ const en: UiStrings = {
   heroScrollHint: "Scroll to explore the future",
 
   stop: "STOP",
+  telemetryAria: "Organisation telemetry",
 
   searchesFor: "This course answers searches for",
   endOfTerm: "By the end of term the student",
@@ -173,6 +206,7 @@ const en: UiStrings = {
   brandSequenceNote: "Brand sequence · concept image generated with artificial intelligence",
 
   ctaPrimary: "Request Enrolment and Information",
+  ctaPrimaryShort: "Call Now",
   ctaSecondary: "Send an Email",
 
 
@@ -186,6 +220,32 @@ const en: UiStrings = {
     sss: "FAQ",
     iletisim: "Contact",
   },
+
+  contactAddress: "Address",
+  contactPhone: "Phone",
+  contactEmail: "Email",
+  contactHours: "Opening Hours",
+  hoursWeekdays: "Monday – Friday",
+  hoursSaturday: "Saturday",
+
+  directionsCta: "Get Directions",
+  mapAria: "Schematic map showing the location of the CEZERİ ROBOTECH base in central {city}",
+  mapBaseLabel: "{city} BASE",
+  coordNorth: "N",
+  coordEast: "E",
+
+  modules: "modules",
+  weekLabel: "week {n}",
+
+  mediaCategoryAria: "Media category",
+  mediaAll: "All",
+  mediaPlayAction: "play the video",
+  mediaZoomAction: "enlarge the image",
+  mediaSeconds: "s",
+  mediaPendingBody: "This gallery fills automatically once the workshop and field footage is uploaded.",
+
+  schemaAudience: "Children and teenagers",
+  schemaHome: "Home",
 
   rightsReserved: "All rights reserved.",
 };
@@ -207,6 +267,7 @@ const ku: UiStrings = {
   heroScrollHint: "Ji bo keşfa paşerojê bişemitîne",
 
   stop: "RAWESTGEH",
+  telemetryAria: "Telemetriya saziyê",
 
   searchesFor: "Ev perwerde ji bo van lêgerînan e",
   endOfTerm: "Di dawiya demsalê de xwendekar",
@@ -247,6 +308,7 @@ const ku: UiStrings = {
   brandSequenceNote: "Rêzeya markayê · wêneyê konseptê yê bi zîrekiya sûnî hatiye çêkirin",
 
   ctaPrimary: "Tomarkirin û Agahî Bixwaze",
+  ctaPrimaryShort: "Niha Bigere",
   ctaSecondary: "E-name bişîne",
 
 
@@ -260,6 +322,32 @@ const ku: UiStrings = {
     sss: "Pirsên Pir Tên Kirin",
     iletisim: "Têkilî",
   },
+
+  contactAddress: "Navnîşan",
+  contactPhone: "Telefon",
+  contactEmail: "E-name",
+  contactHours: "Saetên Xebatê",
+  hoursWeekdays: "Duşem – În",
+  hoursSaturday: "Şemî",
+
+  directionsCta: "Rê Werbigire",
+  mapAria: "Nexşeya şematîk a ku cihê baregeha CEZERÎ ROBOTECH li navenda bajarê {city} nîşan dide",
+  mapBaseLabel: "BAREGEHA {city}",
+  coordNorth: "N",
+  coordEast: "E",
+
+  modules: "modul",
+  weekLabel: "hefteya {n}",
+
+  mediaCategoryAria: "Kategoriya medyayê",
+  mediaAll: "Hemû",
+  mediaPlayAction: "vîdyoyê bilîze",
+  mediaZoomAction: "wêneyê mezin bike",
+  mediaSeconds: "ç",
+  mediaPendingBody: "Dema ku tomarên atolye û qadê bên barkirin ev galerî bixweber tije dibe.",
+
+  schemaAudience: "Zarok û ciwan",
+  schemaHome: "Rûpela Sereke",
 
   rightsReserved: "Hemû maf parastî ne.",
 };
@@ -281,6 +369,7 @@ const ar: UiStrings = {
   heroScrollHint: "مرِّر لاكتشاف المستقبل",
 
   stop: "محطة",
+  telemetryAria: "بيانات المركز",
 
   searchesFor: "هذا البرنامج يجيب عن عمليات البحث التالية",
   endOfTerm: "في نهاية الفصل يكون الطالب قد",
@@ -321,6 +410,7 @@ const ar: UiStrings = {
   brandSequenceNote: "تسلسل العلامة · صورة تصوّرية أُنتجت بالذكاء الاصطناعي",
 
   ctaPrimary: "اطلب التسجيل والمعلومات",
+  ctaPrimaryShort: "اتصل الآن",
   ctaSecondary: "أرسل بريدًا إلكترونيًا",
 
 
@@ -334,6 +424,32 @@ const ar: UiStrings = {
     sss: "الأسئلة الشائعة",
     iletisim: "التواصل",
   },
+
+  contactAddress: "العنوان",
+  contactPhone: "الهاتف",
+  contactEmail: "البريد الإلكتروني",
+  contactHours: "ساعات العمل",
+  hoursWeekdays: "الاثنين – الجمعة",
+  hoursSaturday: "السبت",
+
+  directionsCta: "احصل على الاتجاهات",
+  mapAria: "خريطة تخطيطية تُظهر موقع قاعدة CEZERİ ROBOTECH في وسط مدينة {city}",
+  mapBaseLabel: "قاعدة {city}",
+  coordNorth: "N",
+  coordEast: "E",
+
+  modules: "وحدات",
+  weekLabel: "الأسبوع {n}",
+
+  mediaCategoryAria: "فئة الوسائط",
+  mediaAll: "الكل",
+  mediaPlayAction: "تشغيل الفيديو",
+  mediaZoomAction: "تكبير الصورة",
+  mediaSeconds: "ث",
+  mediaPendingBody: "سيمتلئ هذا المعرض تلقائيًا فور رفع تسجيلات الورشة والميدان.",
+
+  schemaAudience: "الأطفال واليافعون",
+  schemaHome: "الصفحة الرئيسية",
 
   rightsReserved: "جميع الحقوق محفوظة.",
 };

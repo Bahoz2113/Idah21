@@ -9,6 +9,9 @@ import { PressSection } from "@/components/marketing/PressSection";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
 import { TrainingCatalog } from "@/components/marketing/TrainingCatalog";
+import type { Locale } from "@/lib/i18n/config";
+import { content } from "@/lib/i18n/content";
+import { ui } from "@/lib/i18n/ui";
 import { contact } from "@/lib/seo/site";
 
 /**
@@ -17,11 +20,21 @@ import { contact } from "@/lib/seo/site";
  * Metinler bileşenlerin içinde ayrı ayrı dursaydı
  * er ya da geç ayrışırlardı — birinde düzeltilen bir cümle öbüründe
  * eski hâliyle kalırdı ve iki sayfa aynı kurumu farklı anlatmaya
- * başlardı. Bu yüzden başlık, künye ve gövde metinleri burada, tek
- * yerde durur; sayfalar yalnızca ÇERÇEVEYİ seçer.
+ * başlardı. Bu yüzden BAŞLIK YAPISI burada, tek yerde durur; metnin
+ * kendisi `lib/i18n/content` altındaki dört sözlükten gelir.
  *
- * SEO açısından da doğrusu bu: `/alternatif` `noindex` taşır ve
- * kanonik olarak `/`'i gösterir, ama içerik birebir aynı kalır.
+ * ARTIK BİR FONKSİYON. Önce sabit bir diziydi ve metinler doğrudan
+ * içine yazılmıştı; dil eklendiğinde aynı dizinin dört kopyası gerekirdi.
+ * Şimdi dili alıp o dilin bölümlerini üretiyor — yapı tek, metin dörde
+ * ayrılıyor.
+ *
+ * BAŞLIK ÜÇ PARÇADAN KURULUR. Tasarımda başlığın bir kelimesi turuncudur.
+ * Bu daha önce JSX'in içine gömülüydü (`<span className="text-czr-orange">`)
+ * ve çevrilemezdi. Vurgulanan kelime her dilde aynı sırada olmadığı için —
+ * Arapçada cümlenin başına, İngilizcede ortasına düşebilir — metin
+ * `titleLead` / `titleAccent` / `titleTail` olarak üçe bölündü ve renk
+ * burada, ortadaki parçaya uygulanıyor. Kullanılmayan parça boş dizedir
+ * ve hiç basılmaz.
  *
  * `body` bilerek `ReactNode` — bölümlerin gövdesi düz metin değil,
  * kendi etkileşimini taşıyan bileşenlerdir (katalog, müfredat akordeonu,
@@ -42,158 +55,195 @@ export type Chapter = {
   width?: "wide" | "narrow";
 };
 
-export const chapters: Chapter[] = [
-  {
-    id: "egitimler",
-    headingId: "egitimler-baslik",
-    code: "DURAK 02",
-    eyebrow: "Eğitimlerimiz",
-    title: (
-      <span id="egitimler-baslik">
-        On Eğitim, Tek Disiplin: <br className="hidden sm:block" />
-        <span className="text-czr-orange">Çalışan Bir Şey Üret.</span>
-      </span>
-    ),
-    lead: "CEZERİ ROBOTECH'te eğitim on temel disipline ayrılmıştır: İHA/VTOL sistemleri, roketçilik, yapay zeka ve makine öğrenmesi, robotik kodlama, 3D tasarım ve eklemeli üretim, yazılım ve algoritma, elektronik ve mekatronik, siber güvenlik farkındalığı, uzay ve havacılık bilimleri, teknoloji girişimciliği. Her eğitim, öğrencinin dönem sonunda kendi eliyle ürettiği çalışan bir çıktıyla kapanır.",
-    body: <TrainingCatalog />,
-  },
-  {
-    id: "mufredat",
-    headingId: "mufredat-baslik",
-    code: "DURAK 03",
-    eyebrow: "Müfredatımız",
-    title: (
-      <span id="mufredat-baslik">
-        Hafta Hafta <span className="text-czr-orange">Ne Öğretiyoruz?</span>
-      </span>
-    ),
-    lead: "CEZERİ ROBOTECH'te dört ayrı program yürütülür: blok tabanlı kodlama (ScratchJr'dan mBlock'a), temel elektrik ve enerji atölyesi, elektronik deney ve lehim atölyesi, Arduino ile robotik ve kodlama. Aşağıda her programın haftalık ders planı, kullanılan araçlar ve modül yapısı yer alıyor — ne öğrettiğimizi hafta hafta okuyabilirsiniz.",
-    body: <CurriculumSection />,
-  },
-  {
-    id: "atolye",
-    headingId: "atolye-baslik",
-    code: "DURAK 04",
-    eyebrow: "Atölye ve Saha",
-    title: <span id="atolye-baslik">Simülasyon Değil. Gerçek Atölye.</span>,
-    lead: "Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Öğrencilerin yüzleri gizliliğe saygı gereği bulanıklaştırılmıştır.",
-    body: (
-      <div className="mt-14">
-        <RealMediaGrid />
-      </div>
-    ),
-  },
-  {
-    id: "miras",
-    headingId: "miras-baslik",
-    code: "DURAK 05",
-    eyebrow: "Cezerî Mirası",
-    title: (
-      <span id="miras-baslik">
-        Sekiz Yüz Yıl Önce Burada <span className="text-czr-orange">Otomat</span> Vardı.
-      </span>
-    ),
-    lead: "Kurumun adı, programlanabilir otomatların ilk sistematik kaydını bırakan İsmail el-Cezerî'den gelir. Bugün aynı disiplin mikrodenetleyici, sensör ve algoritmayla sürüyor.",
-    body: (
-      <div className="mt-16 grid gap-12 lg:grid-cols-5 lg:items-center lg:gap-16">
-        {/* Marka sekansı: dişliler → mekanik baykuş. Bölümün anlatısının
-            görsel karşılığı. */}
-        <div className="mx-auto w-full max-w-sm lg:col-span-2 lg:mx-0">
-          <BrandSequence />
-        </div>
+/** Üç parçalı başlığı vurgulu kelimesiyle birlikte kurar. */
+function chapterTitle(
+  headingId: string,
+  parts: { titleLead: string; titleAccent: string; titleTail: string },
+  /** Uzun başlıklarda geniş ekranda kırılma noktası. */
+  breakBeforeAccent = false,
+) {
+  return (
+    <span id={headingId}>
+      {parts.titleLead}
+      {parts.titleAccent ? (
+        <>
+          {/* Boşluk `<br>` olsa da yazılır: satır sonu yalnızca ≥640px'te
+              görünür (`hidden sm:block`), mobilde gizlenir. Yalnızca `<br>`
+              koysaydık dar ekranda iki kelime bitişik çıkardı. */}{" "}
+          {breakBeforeAccent ? <br className="hidden sm:block" /> : null}
+          <span className="text-czr-orange">{parts.titleAccent}</span>
+        </>
+      ) : null}
+      {parts.titleTail ? ` ${parts.titleTail}` : null}
+    </span>
+  );
+}
 
-        <div className="lg:col-span-3">
-          <LegacyTimeline />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "basin",
-    headingId: "basin-baslik",
-    code: "DURAK 06",
-    eyebrow: "Basında Biz",
-    title: <span id="basin-baslik">Bizi Başkaları Anlatınca</span>,
-    lead: "Yerel ve ulusal basında çıkan haberler, röportajlar ve etkinlik kayıtları. Kurumun kendi anlattığı değil, üçüncü tarafın doğruladığı kayıt.",
-    body: <PressSection />,
-  },
-  {
-    id: "sss",
-    headingId: "sss-baslik",
-    code: "DURAK 07",
-    eyebrow: "Sıkça Sorulan Sorular",
-    title: <span id="sss-baslik">Merak Edilenler</span>,
-    lead: "Velilerin ve öğrencilerin en sık sorduğu sorular ve net yanıtları.",
-    width: "narrow",
-    body: (
-      <div className="mt-14">
-        <FaqAccordion />
-      </div>
-    ),
-  },
-  {
-    id: "iletisim",
-    headingId: "iletisim-baslik",
-    code: "DURAK 08",
-    eyebrow: "Üs Operasyonları",
-    title: <span id="iletisim-baslik">Üsse Bağlan</span>,
-    lead: `WhatsApp'tan yazın, Instagram'dan takip edin veya doğrudan atölyeye gelin. Telefon: ${contact.phoneDisplay}`,
-    body: (
-      <div className="mt-14 grid gap-10 lg:grid-cols-5 lg:gap-14">
-        {/* Konum ve künye */}
-        <div className="lg:col-span-2">
-          <Reveal>
-            <BaseMap />
-          </Reveal>
+export function chapters(locale: Locale): Chapter[] {
+  const c = content(locale).chapters;
+  const t = ui(locale);
+  const stop = (n: string) => `${t.stop} ${n}`;
 
-          <Reveal delay={120}>
-            <dl className="mt-8 space-y-6">
-              <div>
-                <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">Adres</dt>
-                <dd className="mt-2 text-[15px] leading-relaxed text-czr-ice/80">
-                  {contact.address.full}
-                </dd>
-              </div>
-              <div>
-                <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">Telefon</dt>
-                <dd className="mt-2">
-                  <a
-                    href={`tel:${contact.phoneE164}`}
-                    className="text-[15px] font-semibold text-white transition hover:text-czr-orange"
-                  >
-                    {contact.phoneDisplay}
-                  </a>
-                </dd>
-              </div>
-              <div>
-                <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">E-posta</dt>
-                <dd className="mt-2">
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="text-[15px] font-semibold text-white transition hover:text-czr-orange"
-                  >
-                    {contact.email}
-                  </a>
-                </dd>
-              </div>
-              <div>
-                <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
-                  Çalışma Saatleri
-                </dt>
-                <dd className="mt-2 space-y-1 text-[15px] text-czr-ice/80">
-                  <p>Pazartesi – Cuma · 09:00 – 19:00</p>
-                  <p>Cumartesi · 10:00 – 18:00</p>
-                </dd>
-              </div>
-            </dl>
-          </Reveal>
+  return [
+    {
+      id: "egitimler",
+      headingId: "egitimler-baslik",
+      code: stop("02"),
+      eyebrow: c.egitimler.eyebrow,
+      title: chapterTitle("egitimler-baslik", c.egitimler, true),
+      lead: c.egitimler.lead,
+      body: <TrainingCatalog locale={locale} />,
+    },
+    {
+      id: "mufredat",
+      headingId: "mufredat-baslik",
+      code: stop("03"),
+      eyebrow: c.mufredat.eyebrow,
+      title: chapterTitle("mufredat-baslik", c.mufredat),
+      lead: c.mufredat.lead,
+      body: <CurriculumSection locale={locale} />,
+    },
+    {
+      id: "atolye",
+      headingId: "atolye-baslik",
+      code: stop("04"),
+      eyebrow: c.atolye.eyebrow,
+      title: chapterTitle("atolye-baslik", c.atolye),
+      lead: c.atolye.lead,
+      body: (
+        <div className="mt-14">
+          <RealMediaGrid locale={locale} />
         </div>
+      ),
+    },
+    {
+      id: "miras",
+      headingId: "miras-baslik",
+      code: stop("05"),
+      eyebrow: c.miras.eyebrow,
+      title: chapterTitle("miras-baslik", c.miras),
+      lead: c.miras.lead,
+      body: (
+        <div className="mt-16 grid gap-12 lg:grid-cols-5 lg:items-center lg:gap-16">
+          {/* Marka sekansı: dişliler → mekanik baykuş. Bölümün anlatısının
+              görsel karşılığı. */}
+          <div className="mx-auto w-full max-w-sm lg:col-span-2 lg:mx-0">
+            <BrandSequence locale={locale} />
+          </div>
 
-        {/* İletişim kanalları */}
-        <div className="min-w-0 lg:col-span-3">
-          <ContactChannels />
+          <div className="lg:col-span-3">
+            <LegacyTimeline locale={locale} />
+          </div>
         </div>
-      </div>
-    ),
-  },
-];
+      ),
+    },
+    {
+      id: "basin",
+      headingId: "basin-baslik",
+      code: stop("06"),
+      eyebrow: c.basin.eyebrow,
+      title: chapterTitle("basin-baslik", c.basin),
+      lead: c.basin.lead,
+      body: <PressSection locale={locale} />,
+    },
+    {
+      id: "sss",
+      headingId: "sss-baslik",
+      code: stop("07"),
+      eyebrow: c.sss.eyebrow,
+      title: chapterTitle("sss-baslik", c.sss),
+      lead: c.sss.lead,
+      width: "narrow",
+      body: (
+        <div className="mt-14">
+          <FaqAccordion locale={locale} />
+        </div>
+      ),
+    },
+    {
+      id: "iletisim",
+      headingId: "iletisim-baslik",
+      code: stop("08"),
+      eyebrow: c.iletisim.eyebrow,
+      title: chapterTitle("iletisim-baslik", c.iletisim),
+      lead: c.iletisim.lead,
+      body: (
+        <div className="mt-14 grid gap-10 lg:grid-cols-5 lg:gap-14">
+          {/* Konum ve künye */}
+          <div className="lg:col-span-2">
+            <Reveal>
+              <BaseMap locale={locale} />
+            </Reveal>
+
+            <Reveal delay={120}>
+              <dl className="mt-8 space-y-6">
+                <div>
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                    {t.contactAddress}
+                  </dt>
+                  {/* Adres, telefon ve e-posta latin harf ve rakam taşır;
+                      sağdan sola akışta kendi yönlerini korumaları gerekir. */}
+                  <dd dir="ltr" className="mt-2 text-[15px] leading-relaxed text-czr-ice/80">
+                    {contact.address.full}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                    {t.contactPhone}
+                  </dt>
+                  <dd className="mt-2">
+                    <a
+                      dir="ltr"
+                      href={`tel:${contact.phoneE164}`}
+                      className="inline-block text-[15px] font-semibold text-white transition hover:text-czr-orange"
+                    >
+                      {contact.phoneDisplay}
+                    </a>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                    {t.contactEmail}
+                  </dt>
+                  <dd className="mt-2">
+                    <a
+                      dir="ltr"
+                      href={`mailto:${contact.email}`}
+                      className="inline-block text-[15px] font-semibold text-white transition hover:text-czr-orange"
+                    >
+                      {contact.email}
+                    </a>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                    {t.contactHours}
+                  </dt>
+                  <dd className="mt-2 space-y-1 text-[15px] text-czr-ice/80">
+                    <p>
+                      {t.hoursWeekdays} ·{" "}
+                      <span dir="ltr" className="inline-block">
+                        09:00 – 19:00
+                      </span>
+                    </p>
+                    <p>
+                      {t.hoursSaturday} ·{" "}
+                      <span dir="ltr" className="inline-block">
+                        10:00 – 18:00
+                      </span>
+                    </p>
+                  </dd>
+                </div>
+              </dl>
+            </Reveal>
+          </div>
+
+          {/* İletişim kanalları */}
+          <div className="min-w-0 lg:col-span-3">
+            <ContactChannels locale={locale} />
+          </div>
+        </div>
+      ),
+    },
+  ];
+}

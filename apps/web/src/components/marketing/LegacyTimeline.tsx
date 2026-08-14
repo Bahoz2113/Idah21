@@ -1,4 +1,5 @@
-import { legacy } from "@/lib/seo/site";
+import type { Locale } from "@/lib/i18n/config";
+import { localizedLegacy } from "@/lib/i18n/view";
 import { Reveal } from "./Reveal";
 
 /**
@@ -13,7 +14,9 @@ import { Reveal } from "./Reveal";
  * duruyor; yatay dört kolonluk şerit burada okunmaz hâle gelirdi. Dikey
  * akış hem dar alanda çalışır hem kronolojiyi daha net taşır.
  */
-export function LegacyTimeline() {
+export function LegacyTimeline({ locale }: { locale: Locale }) {
+  const legacy = localizedLegacy(locale);
+
   return (
     <ol className="relative space-y-8">
       {/* Kronoloji rayı */}

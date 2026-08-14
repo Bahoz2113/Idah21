@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import { channels, contact } from "@/lib/seo/site";
+import type { Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
+import { localizedChannels } from "@/lib/i18n/view";
+import { contact } from "@/lib/seo/site";
 import { Reveal } from "./Reveal";
 
 /**
@@ -61,9 +64,10 @@ type ChannelCardProps = {
   /** Hover'da kartın çerçevesini alan marka rengi. */
   accent: string;
   delay: number;
+  newTab: string;
 };
 
-function ChannelCard({ href, mark, label, value, hint, accent, delay }: ChannelCardProps) {
+function ChannelCard({ href, mark, label, value, hint, accent, delay, newTab }: ChannelCardProps) {
   return (
     <Reveal delay={delay}>
       <a
@@ -102,41 +106,47 @@ function ChannelCard({ href, mark, label, value, hint, accent, delay }: ChannelC
           </svg>
         </span>
 
-        <span className="sr-only">(yeni sekmede açılır)</span>
+        <span className="sr-only">{newTab}</span>
       </a>
     </Reveal>
   );
 }
 
-export function ContactChannels() {
+export function ContactChannels({ locale }: { locale: Locale }) {
+  const t = ui(locale);
+  const channels = localizedChannels(locale);
+
   return (
     <div className="space-y-4">
       <ChannelCard
         href={channels.whatsapp.url}
         mark={<WhatsAppMark />}
         label={channels.whatsapp.label}
-        value={contact.phoneDisplay}
+        value={channels.whatsapp.value}
         hint={channels.whatsapp.hint}
         accent="#25D366"
         delay={0}
+        newTab={t.newTab}
       />
       <ChannelCard
         href={channels.instagram.url}
         mark={<InstagramMark />}
         label={channels.instagram.label}
-        value={channels.instagram.handle}
+        value={channels.instagram.value}
         hint={channels.instagram.hint}
         accent="#E1306C"
         delay={90}
+        newTab={t.newTab}
       />
       <ChannelCard
         href={channels.maps.url}
         mark={<MapsMark />}
         label={channels.maps.label}
-        value={contact.address.city}
+        value={channels.maps.value}
         hint={channels.maps.hint}
         accent="#EA4335"
         delay={180}
+        newTab={t.newTab}
       />
 
       {/* Doğrudan arama ve e-posta — sosyal kanal kullanmayan veliler için */}
@@ -149,7 +159,7 @@ export function ContactChannels() {
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
               <path d="M5.2 2.5c.5 0 .9.3 1.1.8l1 2.4c.2.5.1 1-.3 1.3l-1 .8a10 10 0 0 0 4.2 4.2l.8-1c.3-.4.8-.5 1.3-.3l2.4 1c.5.2.8.6.8 1.1v2.4c0 .7-.6 1.3-1.3 1.3A13.5 13.5 0 0 1 1.5 3.8c0-.7.6-1.3 1.3-1.3z" />
             </svg>
-            Hemen Ara
+            {t.ctaPrimaryShort}
           </a>
 
           <a
@@ -159,7 +169,7 @@ export function ContactChannels() {
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
               <path d="M2.5 4.5h15c.6 0 1 .4 1 1v9c0 .6-.4 1-1 1h-15c-.6 0-1-.4-1-1v-9c0-.6.4-1 1-1zm7.5 6L3.6 6.2v.6L10 11l6.4-4.2v-.6z" />
             </svg>
-            E-posta Gönder
+            {t.contactEmailCta}
           </a>
         </div>
       </Reveal>

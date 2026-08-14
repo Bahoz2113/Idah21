@@ -1,4 +1,5 @@
-import { faqs } from "@/lib/seo/site";
+import type { Locale } from "@/lib/i18n/config";
+import { localizedFaqs } from "@/lib/i18n/view";
 import { Reveal } from "./Reveal";
 
 /**
@@ -15,7 +16,9 @@ import { Reveal } from "./Reveal";
  * Aynı sorular `lib/seo/schema.ts` içindeki FAQPage grafiğini de besler —
  * görünen metinle structured data birebir aynıdır.
  */
-export function FaqAccordion() {
+export function FaqAccordion({ locale }: { locale: Locale }) {
+  const faqs = localizedFaqs(locale);
+
   return (
     <div className="divide-y divide-white/8 border-y border-white/8">
       {faqs.map((faq, i) => (

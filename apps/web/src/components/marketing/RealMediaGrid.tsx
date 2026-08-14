@@ -11,6 +11,8 @@ import {
   type RealMediaItem,
   type RealVideo,
 } from "@/lib/media/real-media";
+import type { Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
 import { ProjectLightbox } from "./ProjectLightbox";
 import { VideoModal } from "./VideoModal";
 
@@ -29,7 +31,8 @@ import { VideoModal } from "./VideoModal";
  * Manifest boşken bileşen ÇÖKMEZ: planlanan çekimleri gösteren bir hangar
  * iskeletine düşer.
  */
-export function RealMediaGrid() {
+export function RealMediaGrid({ locale }: { locale: Locale }) {
+  const t = ui(locale);
   const [filter, setFilter] = useState<MediaCategory | "tumu">("tumu");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -46,12 +49,12 @@ export function RealMediaGrid() {
     setActiveIndex((activeIndex + delta + items.length) % items.length);
   };
 
-  if (realMedia.length === 0) return <PendingMediaState />;
+  if (realMedia.length === 0) return <PendingMediaState locale={locale} />;
 
   return (
     <>
       {/* Kategori filtresi */}
-      <div role="group" aria-label="Medya kategorisi" className="flex flex-wrap gap-2">
+      <div role="group" aria-label={t.mediaCategoryAria} className="flex flex-wrap gap-2">
         {mediaFilters.map((f) => {
           const selected = filter === f.id;
           return (
@@ -69,7 +72,7 @@ export function RealMediaGrid() {
                   : "border-white/12 text-czr-ice/70 hover:border-czr-orange/45 hover:text-white"
               }`}
             >
-              {f.label}
+              {f.id === "tumu" ? t.mediaAll : f.label}
             </button>
           );
         })}
@@ -93,7 +96,7 @@ export function RealMediaGrid() {
               key={item.id}
               type="button"
               onClick={() => setActiveIndex(i)}
-              aria-label={`${item.caption} — ${isVideo ? "videoyu oynat" : "görseli büyüt"}`}
+              aria-label={`${item.caption} — ${isVideo ? t.mediaPlayAction : t.mediaZoomAction}`}
               className={`czr-grade czr-grade-hover group relative overflow-hidden rounded-2xl border border-white/8 text-left transition duration-500 ease-czr-cine hover:border-czr-orange/40 ${
                 spanClass[item.span ?? "normal"]
               }`}
@@ -114,7 +117,8 @@ export function RealMediaGrid() {
                     <svg viewBox="0 0 20 20" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
                       <path d="M6 4l10 6-10 6z" />
                     </svg>
-                    {item.durationSec}sn
+                    {item.durationSec}
+                    {t.mediaSeconds}
                   </span>
                 ) : (
                   <span />
@@ -127,7 +131,7 @@ export function RealMediaGrid() {
                 */}
                 {item.source === "generated" ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-czr-orange/40 bg-czr-base/70 px-2.5 py-1 czr-mono text-[10px] uppercase text-czr-orange backdrop-blur">
-                    Konsept
+                    {t.conceptTag}
                   </span>
                 ) : null}
               </span>
@@ -182,14 +186,16 @@ const PLANNED = [
   { label: "Robotik çalışma", span: "" },
 ] as const;
 
-function PendingMediaState() {
+function PendingMediaState({ locale }: { locale: Locale }) {
+  const t = ui(locale);
+
   return (
     <div>
       <div className="flex items-center gap-3 rounded-2xl border border-czr-orange/25 bg-czr-orange/[0.06] px-5 py-4">
         <span className="h-2 w-2 shrink-0 animate-pulse-signal rounded-full bg-czr-orange" />
         <p className="text-[13px] leading-relaxed text-czr-ice/75">
-          <strong className="font-semibold text-white">Medya aktarımı bekleniyor.</strong>{" "}
-          Atölye ve saha çekimleri yüklendiğinde bu galeri otomatik olarak dolar.
+          <strong className="font-semibold text-white">{t.mediaPending}</strong>{" "}
+          {t.mediaPendingBody}
         </p>
       </div>
 
@@ -202,7 +208,7 @@ function PendingMediaState() {
             <div className="czr-grid-texture absolute inset-0 opacity-40" />
             <span className="absolute inset-x-0 top-0 h-1/3 animate-scan-line bg-gradient-to-b from-transparent via-czr-teal-soft/20 to-transparent" />
             <div className="relative flex h-full flex-col justify-end p-4">
-              <span className="czr-mono text-[10px] uppercase text-czr-ice/35">Yakında</span>
+              <span className="czr-mono text-[10px] uppercase text-czr-ice/35">{t.mediaSoon}</span>
               <span className="mt-1 text-[13px] font-medium text-czr-ice/55">{slot.label}</span>
             </div>
           </div>

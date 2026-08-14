@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { ui } from "@/lib/i18n/ui";
 
 /**
  * Marka sinematiği — dişli düzeneğinden robotik baykuşa dönüşüm.
@@ -19,7 +21,8 @@ import { useEffect, useRef, useState } from "react";
  * YÜKLEME: Poster önce gelir; video dosyası yalnızca bölüm görünür olduğunda
  * ve hareket azaltma kapalıysa indirilir.
  */
-export function BrandSequence() {
+export function BrandSequence({ locale }: { locale: Locale }) {
+  const t = ui(locale);
   const ref = useRef<HTMLDivElement>(null);
   const [loadVideo, setLoadVideo] = useState(false);
 
@@ -52,7 +55,7 @@ export function BrandSequence() {
         {/* Poster her zaman DOM'da: video yüklenmezse de bölüm boş kalmaz. */}
         <Image
           src="/assets/brand/cezeri-baykus-sekans-poster.webp"
-          alt="CEZERİ ROBOTECH robotik baykuş amblemi, dişli çarklardan oluşan mekanik bir bütüne dönüşürken"
+          alt={t.brandSequenceAlt}
           width={800}
           height={1422}
           sizes="(max-width: 1024px) 100vw, 480px"
@@ -76,7 +79,7 @@ export function BrandSequence() {
       </div>
 
       <figcaption className="mt-3 czr-mono text-[10px] uppercase leading-relaxed text-czr-ice/35">
-        Marka sekansı · yapay zeka ile üretilmiş konsept görsel
+        {t.brandSequenceNote}
       </figcaption>
     </figure>
   );
