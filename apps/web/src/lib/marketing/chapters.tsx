@@ -173,7 +173,7 @@ export function chapters(locale: Locale): Chapter[] {
             <Reveal delay={120}>
               <dl className="mt-8 space-y-6">
                 <div>
-                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/60">
                     {t.contactAddress}
                   </dt>
                   {/* Adres, telefon ve e-posta latin harf ve rakam taşır;
@@ -183,7 +183,7 @@ export function chapters(locale: Locale): Chapter[] {
                   </dd>
                 </div>
                 <div>
-                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/60">
                     {t.contactPhone}
                   </dt>
                   <dd className="mt-2">
@@ -197,7 +197,7 @@ export function chapters(locale: Locale): Chapter[] {
                   </dd>
                 </div>
                 <div>
-                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/60">
                     {t.contactEmail}
                   </dt>
                   <dd className="mt-2">
@@ -211,7 +211,7 @@ export function chapters(locale: Locale): Chapter[] {
                   </dd>
                 </div>
                 <div>
-                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/45">
+                  <dt className="czr-mono text-[11px] uppercase text-czr-ice/60">
                     {t.contactHours}
                   </dt>
                   <dd className="mt-2 space-y-1 text-[15px] text-czr-ice/80">
