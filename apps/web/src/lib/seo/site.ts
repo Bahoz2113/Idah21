@@ -345,7 +345,7 @@ export const sections = [
   { id: "egitimler", label: "Eğitimlerimiz" },
   { id: "mufredat", label: "Müfredatımız" },
   { id: "atolye", label: "Atölye" },
-  { id: "miras", label: "Miras" },
+  { id: "biz-kimiz", label: "Biz Kimiz" },
   { id: "basin", label: "Basında Biz" },
   { id: "sss", label: "SSS" },
   { id: "iletisim", label: "İletişim" },

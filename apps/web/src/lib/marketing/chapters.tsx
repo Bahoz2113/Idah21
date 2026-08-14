@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import { BaseMap } from "@/components/marketing/BaseMap";
-import { BrandSequence } from "@/components/marketing/BrandSequence";
+import { AboutSection } from "@/components/marketing/AboutSection";
 import { ContactChannels } from "@/components/marketing/ContactChannels";
 import { CurriculumSection } from "@/components/marketing/CurriculumSection";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
-import { LegacyTimeline } from "@/components/marketing/LegacyTimeline";
 import { PressSection } from "@/components/marketing/PressSection";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
@@ -80,7 +79,8 @@ function chapterTitle(
 }
 
 export function chapters(locale: Locale): Chapter[] {
-  const c = content(locale).chapters;
+  const all = content(locale);
+  const c = all.chapters;
   const t = ui(locale);
   const stop = (n: string) => `${t.stop} ${n}`;
 
@@ -117,25 +117,20 @@ export function chapters(locale: Locale): Chapter[] {
       ),
     },
     {
-      id: "miras",
-      headingId: "miras-baslik",
+      // "Miras" idi. Bölüm artık kurumun kendi anlattığı otobiyografiyi
+      // taşıyor; el-Cezerî kronolojisi ve marka klibi onun içinde, adın
+      // hikâyesini anlatan alt blokta duruyor. Çapa da yenilendi:
+      // `#miras` adresi "Biz Kimiz" başlığını açsaydı paylaşılan bağlantı
+      // gittiği yeri yanlış tarif ederdi.
+      id: "biz-kimiz",
+      headingId: "biz-kimiz-baslik",
       code: stop("05"),
-      eyebrow: c.miras.eyebrow,
-      title: chapterTitle("miras-baslik", c.miras),
-      lead: c.miras.lead,
-      body: (
-        <div className="mt-16 grid gap-12 lg:grid-cols-5 lg:items-center lg:gap-16">
-          {/* Marka sekansı: dişliler → mekanik baykuş. Bölümün anlatısının
-              görsel karşılığı. */}
-          <div className="mx-auto w-full max-w-sm lg:col-span-2 lg:mx-0">
-            <BrandSequence locale={locale} />
-          </div>
-
-          <div className="lg:col-span-3">
-            <LegacyTimeline locale={locale} />
-          </div>
-        </div>
-      ),
+      // Başlık ve giriş cümlesi `about` sözlüğünde duruyor; bölüm
+      // metniyle aynı yerden gelsin diye burada tekrarlanmıyor.
+      eyebrow: all.about.eyebrow,
+      title: chapterTitle("biz-kimiz-baslik", all.about),
+      lead: all.about.lead,
+      body: <AboutSection locale={locale} />,
     },
     {
       id: "basin",

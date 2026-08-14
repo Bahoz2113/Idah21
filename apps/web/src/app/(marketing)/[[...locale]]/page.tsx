@@ -140,7 +140,7 @@ export const viewport: Viewport = {
  * Sonuç beyaz üstüne beyazdı: "Üsse Bağlan" başlığı, kanal adları, adres,
  * telefon ve e-posta okunmuyordu (dört dilde birden; ölçüldü).
  */
-const DARK = new Set(["egitimler", "mufredat", "atolye", "miras", "basin", "sss", "iletisim"]);
+const DARK = new Set(["egitimler", "mufredat", "atolye", "biz-kimiz", "basin", "sss", "iletisim"]);
 
 /**
  * DILE GORE UST VERI.

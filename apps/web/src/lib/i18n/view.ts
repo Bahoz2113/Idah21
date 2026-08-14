@@ -21,7 +21,7 @@ import { channels, contact, disciplines, legacy, metrics } from "@/lib/seo/site"
  * sayfada eski kod görünür, kimse fark etmezdi.
  *
  * EŞLEŞTİRME SIRAYLA DEĞİL KİMLİKLE. Disiplinler `id` üzerinden eşleşir,
- * sıra değişse bile doğru metni bulur. Metrik, miras ve SSS listeleri
+ * sıra değişse bile doğru metni bulur. Metrik, kronoloji ve SSS listeleri
  * sırayla eşleşir ama `Content` tipi uzunluklarını demet olarak sabitler,
  * bu yüzden kayma derlemede yakalanır.
  */
