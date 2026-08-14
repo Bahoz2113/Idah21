@@ -62,16 +62,31 @@ export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale })
 
   const [ready, setReady] = useState(false);
   const [tall, setTall] = useState(true);
+  // Kaynak seçimi ekran ölçüsü OKUNMADAN yapılamaz; o yüzden üç durumlu.
+  const [kaynak, setKaynak] = useState<"masaustu" | "mobil" | null>(null);
 
   // Mobilde kaydırma yolu kısalır: 500vh'lik bir hero telefonda bitmek
   // bilmez ve kullanıcı içeriğe ulaşamadan vazgeçer.
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
-    const apply = () => setTall(!mq.matches);
+    const apply = () => {
+      setTall(!mq.matches);
+      // Kaynak yalnızca İLK okumada seçilir, pencere büyüyünce değişmez:
+      // `src` değiştirmek videoyu sıfırdan indirtir ve scrub konumunu
+      // düşürür. Telefonu yatay çeviren kullanıcı 960px'lik kareyi biraz
+      // yumuşak görür — yeni bir indirme başlatmaktan iyidir.
+      setKaynak((önceki) => önceki ?? (mq.matches ? "mobil" : "masaustu"));
+    };
     apply();
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
   }, []);
+
+  // `<source>` çocukları videoya SONRADAN eklendiğinde kaynak seçimini
+  // spec kendiliğinden tetikler ("insert source element" adımı); ayrıca
+  // `load()` ÇAĞRILMAZ. Çağrıldığında yarıda kesilen ilk seçim kendi
+  // yedeğine (WebM) ilerliyor, yeni seçim MP4'ü alıyor ve İKİ dosya
+  // birden iniyor (ölçüldü: masaüstünde 5,7 MB yerine 11,5 MB).
 
   useEffect(() => {
     const el = section.current;
@@ -190,9 +205,21 @@ export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale })
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* İki kaynak, MP4 ÖNCE: tarayıcı oynatabildiği İLK kaynağı seçer.
             Chrome, Safari, Edge ve sistem kodeklerine sahip Firefox H.264
-            oynatır ve daha küçük olan MP4'ü indirir (6,0 MB). WebM yalnızca
-            tescilli kodek derlenmemiş sürümler için yedektir — o kullanıcı
-            da boş bir hero görmez. */}
+            oynatır ve MP4'ü indirir. WebM yalnızca tescilli kodek
+            derlenmemiş sürümler için yedektir — o kullanıcı da boş bir
+            hero görmez.
+
+            KAYNAKLAR SUNUCUDA DEĞİL, EKRAN ÖLÇÜSÜ OKUNDUKTAN SONRA BASILIR.
+            Sunucu HTML'ine kaynak yazılsaydı telefon, hidrasyon beklemeden
+            5,7 MB'lık masaüstü dosyasını indirmeye başlardı (ölçüldü:
+            mobil ilk yükün 7,2 MB'ının 5,9'u bu videoydu). `<source media>`
+            HTML'den kaldırıldığı için ayrım ancak JS ile yapılabiliyor;
+            bedeli, indirmeye hidrasyondan sonra başlamak. Yükleme perdesi
+            ve 2,5 sn'lik güvenlik ağı bu gecikmeyi zaten karşılıyor.
+
+            Mobil kopya aynı kesimin 960×540 hâli (1,6 MB, 80/80 anahtar
+            kare) — telefonda kadraj zaten ortadan kırpılıyor, fark
+            görünmüyor. */}
         <video
           ref={video}
           className="absolute inset-0 h-full w-full object-cover"
@@ -209,8 +236,17 @@ export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale })
           playsInline
           preload="auto"
         >
-          <source src="/assets/brand/cezeri-scrub.mp4" type="video/mp4" />
-          <source src="/assets/brand/cezeri-scrub.webm" type="video/webm" />
+          {kaynak === "mobil" ? (
+            <>
+              <source src="/assets/brand/cezeri-scrub-mobil.mp4" type="video/mp4" />
+              <source src="/assets/brand/cezeri-scrub-mobil.webm" type="video/webm" />
+            </>
+          ) : kaynak === "masaustu" ? (
+            <>
+              <source src="/assets/brand/cezeri-scrub.mp4" type="video/mp4" />
+              <source src="/assets/brand/cezeri-scrub.webm" type="video/webm" />
+            </>
+          ) : null}
         </video>
 
         {/* Okunabilirlik yıkaması.

@@ -38,8 +38,18 @@ export const dynamic = "force-static";
 /**
  * Yalnizca bu dort adres uretilir; disindaki her sey 404. Onek olmayan
  * kayit Turkceyi karsilar.
+ *
+ * NEDEN `true`. `false` iken bilinmeyen adres rota agacina HIC girmeden
+ * Next'in global varsayilan 404'une dusuyordu (olculdu: markasiz
+ * "next-error-h1" sayfasi). Global 404'u markalamak kok `app/layout.tsx`
+ * ister; o da cift kok-duzen mimarisiyle (panel + tanitim ayri <html>
+ * basar) bagdasmiyor. `true` ile bilinmeyen parametre sayfaya ulasir,
+ * `resolveLocale` `notFound()` firlatir ve YANDAKI markali
+ * `not-found.tsx`, tanitim duzeninin icinde cizilir — durum kodu yine
+ * 404'tur, "yalnizca dort adres var" sozlesmesini bozan bir sey yoktur;
+ * karar derleme anindan istek anina tasinmistir, o kadar.
  */
-export const dynamicParams = false;
+export const dynamicParams = true;
 export const generateStaticParams = localeStaticParams;
 
 const baseMetadata: Metadata = {
@@ -78,10 +88,15 @@ const baseMetadata: Metadata = {
     description: org.description,
     images: [
       {
-        url: "/assets/sahne/og-paylasim.webp",
+        // JPEG, WebP değil: bağlantı önizlemelerinin çoğu Türkiye'de
+        // WhatsApp'ta açılıyor ve WhatsApp'ın önizleyicisi WebP'de
+        // güvenilir değil. Ayrıca eski dosya 640×362'ydi, meta 1200×675
+        // diyordu — kare, 2K baykuş kaynağının final beat'inden gerçek
+        // 1200×675 olarak yeniden üretildi.
+        url: "/assets/sahne/og-paylasim.jpg",
         width: 1200,
         height: 675,
-        alt: "CEZERİ ROBOTECH — Batman'da gece hangarı, fırlatma rampasındaki roket ve havalanan İHA",
+        alt: "CEZERİ ROBOTECH — atölyede kanatlarını açmış mekanik baykuş",
       },
     ],
   },
@@ -89,7 +104,7 @@ const baseMetadata: Metadata = {
     card: "summary_large_image",
     title: `${org.name} — ${org.slogan}`,
     description: org.tagline,
-    images: ["/assets/sahne/og-paylasim.webp"],
+    images: ["/assets/sahne/og-paylasim.jpg"],
   },
   robots: {
     index: true,

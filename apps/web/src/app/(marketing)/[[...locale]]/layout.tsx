@@ -3,7 +3,7 @@ import "./fonts.css";
 import "./marketing.css";
 import type { ReactNode } from "react";
 import { localeMeta } from "@/lib/i18n/config";
-import { resolveLocale } from "@/lib/i18n/route";
+import { resolveLocaleLenient } from "@/lib/i18n/route";
 
 /**
  * TANITIM SİTESİ KÖK DÜZENİ.
@@ -36,7 +36,11 @@ export default async function MarketingRootLayout({
   children: ReactNode;
   params: Promise<{ locale?: string[] }>;
 }) {
-  const locale = resolveLocale((await params).locale);
+  // Hoşgörülü çözümleyici: 404 sayfası da BU düzenin içinde çizilir.
+  // Düzen katı çözümleyiciyle `notFound()` fırlatsaydı 404'ün kendisini
+  // saracak düzen kalmaz, Next markasız varsayılanına düşerdi. 404 kararı
+  // sayfanın katı çözümleyicisinde (bkz. route.ts).
+  const locale = resolveLocaleLenient((await params).locale);
   const meta = localeMeta[locale];
 
   return (

@@ -27,6 +27,22 @@ export function resolveLocale(segments: string[] | undefined): Locale {
 }
 
 /**
+ * DÜZENİN kullandığı hoşgörülü sürüm. 404 sayfası da bu düzenin içinde
+ * çizilir; düzen `notFound()` fırlatsaydı 404'ün kendisi çizilecek yer
+ * bulamaz ve Next'in markasız varsayılan sayfası dönerdi. Bilinmeyen
+ * parçada hata yerine kanonik dile düşer — 404 Türkçe görünür.
+ * Sayfa (`page.tsx`) katı `resolveLocale`'de kalır; 404 kararını veren o.
+ */
+export function resolveLocaleLenient(segments: string[] | undefined): Locale {
+  if (!segments || segments.length === 0) return defaultLocale;
+  const first = segments[0];
+  if (segments.length === 1 && isLocale(first) && first !== defaultLocale) {
+    return first;
+  }
+  return defaultLocale;
+}
+
+/**
  * Derlenecek adresler. Türkçe için parametre YOK (`/`), diğerleri için
  * tek parçalı önek. `dynamicParams = false` ile birlikte bu liste dışında
  * kalan her şey 404 verir — sayfa üretim anında sabitlenir.

@@ -15,6 +15,24 @@ const ROLE_ROUTES: Record<string, string[]> = {
 // (Kullanıcı yönetimi, güvenlik, envanter vb. yine yalnızca ADMIN'de kalır.)
 const TEACHER_ALLOWED_ADMIN_PATHS = ["/admin/siniflar", "/admin/ogrenciler"];
 
+/**
+ * KİMLİK DOĞRULAMASI İSTEYEN PANEL ÖNEKLERİ — sözleşme şudur:
+ *
+ * Panele YENİ bir üst düzey bölüm eklenirse (`app/(panel)/<yeni>/`)
+ * BU LİSTEYE DE YAZILMAK ZORUNDADIR; yazılmazsa o bölüm kimlik
+ * doğrulamasına düşmez ve 404 sınırına akar. Liste, `app/(panel)`
+ * altındaki giriş gerektiren üst düzey dizinlerin birebir dökümüdür
+ * (auth ekranları ve /quiz hariç — onlar herkese açık).
+ *
+ * NEDEN "her şeyi kilitle" DEĞİL. Önceki sürüm bilinmeyen HER yolu
+ * /login'e yönlendiriyordu; yanlış adres yazan ziyaretçi tanıtım sitesi
+ * yerine iç panelin giriş ekranını görüyordu ve markalı 404 hiç
+ * çizilemiyordu (ölçüldü: /olmayan-sayfa → 307 → /login). Panel yolları
+ * burada kilitli kalır; geri kalan her yol tanıtım sitesinin 404
+ * sınırına düşer.
+ */
+const AUTH_PREFIXES = ["/admin", "/teacher", "/parent", "/student", "/davet"];
+
 const PUBLIC_PREFIXES = [
   "/login", "/ilk-kurulum", "/sifremi-unuttum", "/register",
   "/api/", "/_next", "/favicon",
@@ -48,6 +66,12 @@ export async function middleware(req: NextRequest) {
   // indekslenmez. Türkçe öneksiz olduğu için listede yok — onu bir üstteki
   // satır zaten karşılıyor.
   if (PUBLIC_LOCALE_PATHS.has(pathname)) return NextResponse.next();
+
+  // Panel önekiyle başlamayan her yol tanıtım sitesinin alanıdır; orada
+  // rota çözümü ve 404 kararı Next'e aittir (bkz. AUTH_PREFIXES notu).
+  if (!AUTH_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return NextResponse.next();
+  }
 
   const token = req.cookies.get("ceos_at")?.value;
   const payload = token ? await verifyAccessToken(token) : null;
