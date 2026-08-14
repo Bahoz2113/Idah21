@@ -96,6 +96,13 @@ export const metadata: Metadata = {
     },
   },
   formatDetection: { telephone: true, address: true, email: true },
+  // Panel kok duzeniyle ortak degil: tanitim sitesi kendi kok duzenine
+  // ayrildiginda bu dort alan onunla birlikte gitmisti. Belirtisi sessizdi
+  // — tarayici ikon bulamayinca kendiliginden /favicon.ico istiyor ve
+  // konsola 404 dusuyordu.
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: org.name },
+  icons: { icon: "/favicon-32.png", apple: "/apple-touch-icon.png" },
   other: {
     // Yerel arama için coğrafi meta işaretleri
     "geo.region": "TR-72",
