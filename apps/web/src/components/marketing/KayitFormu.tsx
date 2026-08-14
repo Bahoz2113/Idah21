@@ -90,10 +90,7 @@ export function KayitFormu({ locale }: { locale: Locale }) {
 
   /** WhatsApp'a geçirilecek özet — dosya değil, düz metin. */
   const whatsappMetni = () => {
-    const secilenAdlar = secenekler
-      .filter((p) => f.programlar.includes(p.id))
-      .map((p) => p.ad)
-      .join(", ");
+    // Program satırı yok: liste artık bilgilendirme amaçlı, veli seçmiyor.
     const satirlar = [
       `${t.eyebrow} — ${t.titleLead} ${t.titleAccent}`.trim(),
       `${t.ogrenciAd}: ${f.ogrenciAd}`,
@@ -102,9 +99,9 @@ export function KayitFormu({ locale }: { locale: Locale }) {
       `${t.telefon}: ${f.telefon}`,
       f.eposta ? `${t.eposta}: ${f.eposta}` : "",
       `${t.adres}: ${f.adres}`,
-      `${t.programlar}: ${secilenAdlar}`,
       f.baslangicTarihi ? `${t.baslangicTarihi}: ${f.baslangicTarihi}` : "",
       `${t.odemeTuru}: ${f.odemeTuru === "pesin" ? t.pesin : t.taksitli}`,
+      f.odemeGunu ? `${t.odemeGunu}: ${f.odemeGunu}` : "",
       f.toplamTutar ? `${t.toplamTutar}: ${f.toplamTutar}` : "",
       f.alerjiVar ? `${t.alerjiDetay}: ${f.alerjiDetay}` : "",
       f.hastalikVar ? `${t.hastalikDetay}: ${f.hastalikDetay}` : "",
@@ -485,42 +482,31 @@ export function KayitFormu({ locale }: { locale: Locale }) {
       </Bolum>
 
       <Bolum no="2" baslik={t.s2}>
-        <fieldset className="sm:col-span-2">
-          <legend className={ETIKET}>{t.programlar}</legend>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {secenekler.map((p) => {
-              const secili = f.programlar.includes(p.id);
-              return (
-                <label
-                  key={p.id}
-                  className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-[14px] transition ${
-                    secili
-                      ? "border-czr-orange bg-czr-orange/12 text-white"
-                      : "border-white/12 text-czr-ice/75 hover:border-white/25"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={secili}
-                    onChange={(e) =>
-                      set(
-                        "programlar",
-                        e.target.checked
-                          ? [...f.programlar, p.id]
-                          : f.programlar.filter((x) => x !== p.id),
-                      )
-                    }
-                    className="h-4 w-4 shrink-0 accent-[#ff8c00]"
-                  />
-                  {p.ad}
-                </label>
-              );
-            })}
-          </div>
-          {hataMetni("programlar") ? (
-            <p className="mt-2 text-[12.5px] font-medium text-red-300">{hataMetni("programlar")}</p>
-          ) : null}
-        </fieldset>
+        {/* Program listesi SALT BİLGİLENDİRME — kurucunun kararı: veli
+            işaretlemez; liste, çocuğun neler görüp öğreneceğini göstermek
+            için durur. Programlar kayıt sırasında merkezde birlikte
+            belirlenir ve PDF'te alan elle doldurulmak üzere boş basılır.
+            `ul` bilinçli: form kontrolü değil içerik listesi. */}
+        <div className="sm:col-span-2">
+          <p className={ETIKET}>{t.programlar}</p>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-czr-ice/55">
+            {t.programlarNot}
+          </p>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {secenekler.map((p) => (
+              <li
+                key={p.id}
+                className="flex items-center gap-3 rounded-xl border border-white/12 px-4 py-3 text-[14px] text-czr-ice/75"
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-czr-orange"
+                />
+                {p.ad}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <Alan k="baslangicTarihi" etiket={t.baslangicTarihi} tip="date" ipucu={t.tarihHint} />
         <Alan k="bitisTarihi" etiket={t.bitisTarihi} tip="date" ipucu={t.tarihHint} />
@@ -557,6 +543,9 @@ export function KayitFormu({ locale }: { locale: Locale }) {
           </div>
         </fieldset>
 
+        {/* Ödeme günü: `type="date"` — tıklanınca tarayıcının takvimi
+            açılır, veli günü oradan seçer (kurucunun isteği). */}
+        <Alan k="odemeGunu" etiket={t.odemeGunu} tip="date" ipucu={t.odemeGunuHint} required />
         <Alan k="toplamTutar" etiket={t.toplamTutar} ipucu={t.tutarHint} inputMode="decimal" />
         {f.odemeTuru === "taksitli" ? (
           <Metin k="taksitPlani" etiket={t.taksitPlani} satir={2} />

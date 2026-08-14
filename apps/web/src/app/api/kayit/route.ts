@@ -154,12 +154,9 @@ export async function POST(req: Request) {
   // İstemcinin gönderdiği adı basmak, forma istediğini yazdırmak demekti.
   const gecerliIdler = new Set(programSecenekleri.map((p) => p.id));
   const secilen = basvuru.programlar.filter((id) => gecerliIdler.has(id));
-  if (secilen.length === 0) {
-    return NextResponse.json(
-      { ok: false, hata: "dogrulama", hatalar: { programlar: "programSecilmedi" } },
-      { status: 422 },
-    );
-  }
+  // Boş liste geçerlidir: program listesi formda bilgilendirme amaçlıdır,
+  // programlar kayıt sırasında merkezde birlikte belirlenir (kurucunun kararı).
+  // PDF'te alan boş kalır ve merkezde elle doldurulur.
   const programAdlari = secilen.map(programAdiTr);
   const no = basvuruNo();
 

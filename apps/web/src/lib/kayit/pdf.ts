@@ -463,6 +463,7 @@ export async function kayitPdfUret({
     t.odemeTuru,
     basvuru.odemeTuru === "pesin" ? `${t.pesin}  ( X )` : `${t.taksitli}  ( X )`,
   );
+  y.alan(t.odemeGunu, trTarih(basvuru.odemeGunu));
   y.alan(t.toplamTutar, g(basvuru.toplamTutar));
   y.alan(t.taksitPlani, g(basvuru.taksitPlani));
 

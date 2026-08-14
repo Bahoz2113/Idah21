@@ -37,6 +37,8 @@ export type KayitBasvurusu = {
 
   // 3 — Ödeme bilgileri
   odemeTuru: OdemeTuru;
+  /** Velinin ödemeyi yapacağı gün — takvimden seçilir (ISO tarih). */
+  odemeGunu: string;
   toplamTutar: string;
   taksitPlani: string;
 
@@ -71,6 +73,7 @@ export const BOS_BASVURU: KayitBasvurusu = {
   baslangicTarihi: "",
   bitisTarihi: "",
   odemeTuru: "pesin",
+  odemeGunu: "",
   toplamTutar: "",
   taksitPlani: "",
   alerjiVar: false,
@@ -153,7 +156,9 @@ export function validate(f: KayitBasvurusu): Hatalar {
   else if (!gecerliTarih(f.dogumTarihi) || f.dogumTarihi > new Date().toISOString().slice(0, 10))
     h.dogumTarihi = "tarihGecersiz";
 
-  if (f.programlar.length === 0) h.programlar = "programSecilmedi";
+  // Program listesi bilgilendirme amaçlıdır (kurucunun kararı):
+  // veli işaretlemez, programlar kayıt sırasında merkezde belirlenir.
+  // Bu yüzden burada seçim aranmaz.
 
   if (!bos(f.baslangicTarihi) && !gecerliTarih(f.baslangicTarihi))
     h.baslangicTarihi = "tarihGecersiz";
@@ -161,6 +166,12 @@ export function validate(f: KayitBasvurusu): Hatalar {
 
   // Taksitli seçildiyse plan alanı boş bırakılamaz; kâğıt formda da öyle.
   if (f.odemeTuru === "taksitli" && bos(f.taksitPlani)) h.taksitPlani = "zorunlu";
+
+  // Ödeme günü: geçmiş bir gün seçmek veri girişi hatasıdır. ISO biçimi
+  // sözlük sıralı olduğu için dize karşılaştırması tarih karşılaştırmasıdır.
+  if (bos(f.odemeGunu)) h.odemeGunu = "zorunlu";
+  else if (!gecerliTarih(f.odemeGunu)) h.odemeGunu = "tarihGecersiz";
+  else if (f.odemeGunu < new Date().toISOString().slice(0, 10)) h.odemeGunu = "tarihGecersiz";
 
   // "Evet" işaretlenip detay boş bırakılırsa kayıt eksik kalır ve eğitmen
   // sahada bilgisiz kalır. Sağlık alanlarında bunun bedeli yüksektir.
@@ -202,6 +213,7 @@ export function parseBasvuru(raw: unknown): KayitBasvurusu {
     baslangicTarihi: s("baslangicTarihi"),
     bitisTarihi: s("bitisTarihi"),
     odemeTuru: o.odemeTuru === "taksitli" ? "taksitli" : "pesin",
+    odemeGunu: s("odemeGunu"),
     toplamTutar: s("toplamTutar"),
     taksitPlani: s("taksitPlani"),
     alerjiVar: b("alerjiVar"),
