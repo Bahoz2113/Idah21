@@ -113,6 +113,25 @@ h3.scrub-display {
   border-color: var(--color-line);
 }
 
+/* ── Çapa hedefleri sabit çubuğun altında kalmasın ────────────────
+   Gezinme çubuğu sabit ve sayfanın üstünü kapatıyor. Bu kural olmadan
+   tarayıcının kendi çapa atlaması (`#basin`), `scrollIntoView` ve
+   yenilemeden sonraki konum geri yüklemesi bölüm başlığını çubuğun
+   ALTINA bırakır — üçü de JavaScript'teki kaydırma fonksiyonundan
+   geçmez, dolayısıyla oradaki ofset onları kurtarmaz.
+
+   Değerler çubuğun gerçek yükseklikleriyle aynı: 76 px dar ekranda,
+   640 px'ten itibaren 88 px. Üstüne biraz nefes payı. */
+.scrub-site [id] {
+  scroll-margin-top: 92px;
+}
+
+@media (min-width: 640px) {
+  .scrub-site [id] {
+    scroll-margin-top: 104px;
+  }
+}
+
 /* ── Bölüm taşma kesici ───────────────────────────────────────────
    `SectionHeading`'in perdesi (`.czr-veil::before`) bilerek kenarlardan
    taşar; dar ekranda bu, belgeye 10 px yatay kaydırma ekliyordu

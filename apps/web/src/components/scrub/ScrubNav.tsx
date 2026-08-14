@@ -28,7 +28,7 @@ export function ScrubNav() {
 
     const io = new IntersectionObserver(
       ([entry]) => setPast(!entry.isIntersecting),
-      { rootMargin: "-72px 0px 0px 0px", threshold: 0 },
+      { rootMargin: "-88px 0px 0px 0px", threshold: 0 },
     );
 
     io.observe(hero);
@@ -93,7 +93,7 @@ export function ScrubNav() {
     >
       <nav
         aria-label="Ana gezinme"
-        className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6 lg:px-10"
+        className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-6 sm:h-[88px] lg:px-10"
       >
         <a
           href="#esik"
@@ -101,16 +101,18 @@ export function ScrubNav() {
           aria-label={`${org.name} — sayfanın başına dön`}
           className="flex items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-accent)]"
         >
+          {/* Kaynak dosya 2x istenen boyutta veriliyor: yuksek yogunluklu
+              ekranda amblem bulanik cikmasin. */}
           <Image
             src="/logo.png"
             alt={`${org.name} logosu`}
-            width={36}
-            height={36}
+            width={104}
+            height={104}
             priority
-            className="h-9 w-9 object-contain"
+            className="h-11 w-11 object-contain sm:h-[52px] sm:w-[52px]"
           />
           <span
-            className={`scrub-display text-[15px] font-bold tracking-tight transition-colors duration-500 ${
+            className={`scrub-display text-[17px] font-bold tracking-tight transition-colors duration-500 sm:text-[20px] ${
               past ? "text-[var(--color-surface-dark)]" : "text-white"
             }`}
           >
