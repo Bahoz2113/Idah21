@@ -100,7 +100,7 @@ export const ku: Content = {
       titleLead: "Ne Simulasyon. Atolyeyeke Rastîn.",
       titleAccent: "",
       titleTail: "",
-      lead: "Li atolyeya Batmanê xwendekar çaperê 3D dixebitînin, laşê dronê dimeltînin, çerx lehîm dikin û li qadê testa firîna rastîn dikin. Wêneyên jêrîn ji van xebatan hatine girtin; dîsîplînên ku hê qeyda wan tune bi etîketa 'Konsept' hatine nîşankirin. Rûyên xwendekaran ji ber rêzgirtina nepenîtiyê hatine tarîkirin.",
+      lead: "Li atolyeya Batmanê xwendekar çaperê 3D dixebitînin, laşê dronê dimeltînin, çerx lehîm dikin û li qadê testa firîna rastîn dikin. Wêneyên jêrîn ji van xebatan hatine girtin; dîsîplînên ku hê qeyda wan tune bi etîketa 'Konsept' hatine nîşankirin. Ji dê û bavên xwendekarên di van wêneyan de destûr hatiye stendin.",
     },
     basin: {
       eyebrow: "Em Di Çapemeniyê De",

@@ -70,7 +70,7 @@ const tr = {
   pressEmpty:
     "Basın bağlantıları hazırlanıyor. Yayınlanan haber, röportaj ve etkinlik haberlerimiz burada kaynağıyla birlikte listelenecek.",
   pressPhotoNote:
-    "Kartlardaki fotoğraflar CEZERİ ROBOTECH arşivinden dosya fotoğraflarıdır; haberlerin kendi görselleri ilgili yayınlara aittir.",
+    "Kartlardaki fotoğraflar CEZERİ ROBOTECH arşivindendir; bir kısmı dosya fotoğrafıdır. Haberlerin kendi görselleri ilgili yayınlara aittir.",
 
   // ── İletişim
   contactEmailCta: "E-posta Gönder",
@@ -194,7 +194,7 @@ const en: UiStrings = {
   pressEmpty:
     "Press links are being prepared. Published news, interviews and event coverage will be listed here together with their sources.",
   pressPhotoNote:
-    "The photographs on these cards are file photos from the CEZERİ ROBOTECH archive; the images belonging to each article remain the property of the publication concerned.",
+    "The photographs on these cards come from the CEZERİ ROBOTECH archive; some are file photos. The images belonging to each article remain the property of the publication concerned.",
 
   contactEmailCta: "Send an Email",
   contactDirections: "Get directions — opens in your map app in a new tab",
@@ -297,7 +297,7 @@ const ku: UiStrings = {
   pressEmpty:
     "Girêdanên çapemeniyê tên amadekirin. Nûçe, hevpeyvîn û çalakiyên me yên weşandî dê li vir bi çavkaniya xwe re bên rêzkirin.",
   pressPhotoNote:
-    "Wêneyên li ser van kartan ji arşîva CEZERÎ ROBOTECH in; wêneyên nûçeyan bi xwe yên weşanên têkildar in.",
+    "Wêneyên li ser van kartan ji arşîva CEZERÎ ROBOTECH in; hin ji wan wêneyên dosyayê ne. Wêneyên nûçeyan bi xwe yên weşanên têkildar in.",
 
   contactEmailCta: "E-name bişîne",
   contactDirections: "Rê werbigire — di sepana nexşeyê de di tabeke nû de vedibe",
@@ -400,7 +400,7 @@ const ar: UiStrings = {
   pressEmpty:
     "يجري إعداد روابط الصحافة. ستُدرج هنا الأخبار والمقابلات وتغطية الفعاليات المنشورة مع مصادرها.",
   pressPhotoNote:
-    "الصور الظاهرة على هذه البطاقات مأخوذة من أرشيف CEZERİ ROBOTECH؛ أما صور الأخبار نفسها فهي ملك للجهات الناشرة.",
+    "الصور الظاهرة على هذه البطاقات مأخوذة من أرشيف CEZERİ ROBOTECH، وبعضها صور أرشيفية عامة. أما صور الأخبار نفسها فهي ملك للجهات الناشرة.",
 
   contactEmailCta: "أرسل بريدًا إلكترونيًا",
   contactDirections: "احصل على الاتجاهات — يفتح في تطبيق الخرائط في تبويب جديد",

@@ -98,7 +98,7 @@ export const tr = {
       titleLead: "Simülasyon Değil. Gerçek Atölye.",
       titleAccent: "",
       titleTail: "",
-      lead: "Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Öğrencilerin yüzleri gizliliğe saygı gereği bulanıklaştırılmıştır.",
+      lead: "Batman'daki atölyede öğrenciler 3D yazıcı çalıştırır, drone gövdesi monte eder, devre lehimler ve sahada gerçek uçuş testi yapar. Aşağıdaki kareler bu çalışmalardan alınmıştır; henüz kaydı olmayan disiplinler ise 'Konsept' etiketiyle işaretlendi. Karelerdeki öğrencilerin görüntülerinin paylaşılması için velilerinden izin alınmıştır.",
     },
     basin: {
       eyebrow: "Basında Biz",

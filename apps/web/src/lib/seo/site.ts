@@ -413,11 +413,11 @@ export const press: readonly PressItem[] = [
     summary:
       "Batman Valiliği himayesinde düzenlenen YEDİİKİ Robot ve Teknoloji Yarışması'nın açılışı; Batman Valisi Ekrem Canalp proje standlarını gezdi.",
     video: "https://www.instagram.com/reel/DXuKouMCHNG/",
-    image: "/assets/real-media/robotik-tezgah-01.webp",
+    image: "/assets/real-media/etkinlik-yediiki-vali-01.webp",
     imageAlt:
-      "CEZERİ ROBOTECH arşivi: ultrasonik sensörlü paletli robotun mikrodenetleyici kartının tezgahta ayarlanması",
-    imageWidth: 900,
-    imageHeight: 1206,
+      "Batman Valisi Ekrem Canalp, YEDİİKİ Robot ve Teknoloji Yarışması'nda CEZERİ ROBOTECH öğrencilerinin model uçağını inceliyor",
+    imageWidth: 1366,
+    imageHeight: 910,
     kind: "haber",
     source: "slug",
   },
@@ -428,11 +428,11 @@ export const press: readonly PressItem[] = [
     url: "https://batmandemokrathaber.com/serkan-ramanlidan-cezeri-roboteche-ziyaret-gelecegi-insa-eden-genclerimizin-yanindayiz/",
     summary:
       "Batman Milletvekili Serkan Ramanlı atölyeyi ziyaret etti ve gençlerin teknoloji çalışmalarına destek mesajı verdi.",
-    image: "/assets/real-media/atolye-tur-01-poster.webp",
+    image: "/assets/real-media/ziyaret-ramanli-kit-01.webp",
     imageAlt:
-      "CEZERİ ROBOTECH arşivi: Batman atölyesinin içi — 3D baskı ürünleri, hexacopter drone ve robotik eğitim kitleri",
-    imageWidth: 800,
-    imageHeight: 1422,
+      "Batman Milletvekili Serkan Ramanlı, CEZERİ ROBOTECH atölyesinde eğitmenden robotik eğitim setini teslim alıyor",
+    imageWidth: 1400,
+    imageHeight: 1050,
     kind: "haber",
     source: "slug",
   },
@@ -442,11 +442,14 @@ export const press: readonly PressItem[] = [
     url: "https://www.batmantarafsiz.com/nasiroglu-robotik-kodlama-atolyesini-ziyaret-etti/",
     summary:
       "AK Parti Batman Milletvekili Ferhat Nasıroğlu robotik kodlama atölyesini gezerek öğrencilerin projelerini inceledi.",
-    image: "/assets/real-media/atolye-ldr-dersi-01.webp",
+    // Bu kart artık DOSYA FOTOĞRAFI taşımıyor: kare ziyaretin kendisinden.
+    // Öncesinde ilgisiz bir ders fotoğrafı duruyordu ve kredi "arşiv" diyordu;
+    // haberin konusu bu ziyaretken okura yanlış bir kare göstermek gereksizdi.
+    image: "/assets/real-media/ziyaret-vekil-vitrin-01.webp",
     imageAlt:
-      "CEZERİ ROBOTECH arşivi: LDR ışık sensörü dersinde devre kuran ve LED'leri yakan öğrenciler",
-    imageWidth: 828,
-    imageHeight: 1192,
+      "Batman Milletvekili Ferhat Nasıroğlu CEZERİ ROBOTECH atölyesinde öğrenci projelerinin sergilendiği vitrini inceliyor",
+    imageWidth: 1400,
+    imageHeight: 933,
     kind: "haber",
     source: "slug",
   },
@@ -456,10 +459,11 @@ export const press: readonly PressItem[] = [
     url: "https://www.batmansonsoz.net/mobil/haber/esnaf-odasi-robotech-le-anlasti-90483.html",
     summary:
       "Batman Esnaf ve Sanatkârlar Odası ile imzalanan protokol kapsamında oda üyeleri ve çocukları teknoloji eğitimlerinden indirimli yararlanıyor.",
-    image: "/assets/real-media/ekip-egitmenler-01.webp",
-    imageAlt: "CEZERİ ROBOTECH arşivi: Batman eğitmen kadrosu, kurumun robotik baykuş amblemi önünde",
-    imageWidth: 1200,
-    imageHeight: 1200,
+    image: "/assets/real-media/protokol-esnaf-odasi-01.webp",
+    imageAlt:
+      "CEZERİ ROBOTECH ile Batman Esnaf ve Sanatkârlar Odası arasındaki teknoloji eğitimi protokolünün imza anı",
+    imageWidth: 1080,
+    imageHeight: 813,
     kind: "haber",
     source: "slug",
   },
@@ -469,11 +473,11 @@ export const press: readonly PressItem[] = [
     url: "https://batmanrehbergazetesi.com/dijital-dolandiricilik-her-gecen-gun-artiyor",
     summary:
       "Kart bilgisi hırsızlığı, SMS tuzakları ve yapay zeka destekli dolandırıcılık yöntemlerine karşı farkındalık uyarısı. Siber güvenlik farkındalığı, atölyedeki on eğitim başlığından biri.",
-    image: "/assets/real-media/etkinlik-avm-standi-01.webp",
+    image: "/assets/real-media/roportaj-siber-guvenlik-01.webp",
     imageAlt:
-      "CEZERİ ROBOTECH arşivi: Batman Petrol City AVM'deki robotik tanıtım standı ve ziyaretçi aileler",
+      "CEZERİ ROBOTECH bilişim uzmanı, siber suçlar ve dijital dolandırıcılık konusunda basına açıklama yaparken",
     imageWidth: 828,
-    imageHeight: 1118,
+    imageHeight: 620,
     kind: "haber",
     source: "arama",
   },
