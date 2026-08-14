@@ -24,6 +24,13 @@ const securityHeaders = [
 
 module.exports = {
   reactStrictMode: true,
+  // TEK DOSYALIK ÖNİZLEME PAKETİ İÇİN KAÇIŞ KAPISI. Normal derlemede
+  // görüntü iyileştirici açıktır. Paket derlemesinde `next/image`
+  // çalışma anında `/_next/image?...` adresleri üretir ve bu adresler
+  // tek dosyaya gömülemez; `unoptimized` ile hem sunucu hem istemci
+  // orijinal `/assets/...` yolunu basar, o yol da data URI'ye çevrilir.
+  // Üretim derlemesi bu bayrak OLMADAN alınır.
+  images: { unoptimized: process.env.CEZERI_STATIK_PAKET === "1" },
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "prisma"],
     outputFileTracingIncludes: {
