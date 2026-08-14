@@ -421,7 +421,7 @@ export const press: readonly PressItem[] = [
     // Bu kart artık DOSYA FOTOĞRAFI taşımıyor: kare ziyaretin kendisinden.
     // Öncesinde ilgisiz bir ders fotoğrafı duruyordu ve kredi "arşiv" diyordu;
     // haberin konusu bu ziyaretken okura yanlış bir kare göstermek gereksizdi.
-    image: "/assets/real-media/ziyaret-vekil-vitrin-01.webp",
+    image: "/assets/real-media/ziyaret-nasiroglu-vitrin-01.webp",
     imageAlt:
       "Batman Milletvekili Ferhat Nasıroğlu CEZERİ ROBOTECH atölyesinde öğrenci projelerinin sergilendiği vitrini inceliyor",
     imageWidth: 1400,

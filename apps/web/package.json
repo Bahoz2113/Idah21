@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "mkdir -p src/generated/client && cp ../../packages/database/src/generated/client/*.so.node src/generated/client/ && next build",
+    "build": "node scripts/varlik-denetimi.mjs && mkdir -p src/generated/client && cp ../../packages/database/src/generated/client/*.so.node src/generated/client/ && next build",
+    "denetle:varlik": "node scripts/varlik-denetimi.mjs",
     "start": "next start",
     "lint": "next lint"
   },
