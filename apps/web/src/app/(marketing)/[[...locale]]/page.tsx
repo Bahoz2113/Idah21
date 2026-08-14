@@ -140,7 +140,7 @@ export const viewport: Viewport = {
  * Sonuç beyaz üstüne beyazdı: "Üsse Bağlan" başlığı, kanal adları, adres,
  * telefon ve e-posta okunmuyordu (dört dilde birden; ölçüldü).
  */
-const DARK = new Set(["egitimler", "mufredat", "atolye", "biz-kimiz", "basin", "sss", "iletisim"]);
+const DARK = new Set(["egitimler", "mufredat", "atolye", "biz-kimiz", "basin", "sss", "kayit", "iletisim"]);
 
 /**
  * DILE GORE UST VERI.
@@ -307,17 +307,21 @@ export default async function HomePage({
 
             <ScrubReveal delay={240}>
               <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                {/* Asıl eylem artık kayıt formu; telefon ikinci kanal.
+                    Çapa bağlantısı `scroll-margin-top` sayesinde başlığı
+                    gezinme çubuğunun altına sokmadan durur. */}
                 <a
-                  href={`tel:${contact.phoneE164}`}
+                  href="#kayit"
                   className="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-accent)] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[var(--color-surface-dark)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110"
                 >
                   {t.ctaPrimary}
                 </a>
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`tel:${contact.phoneE164}`}
+                  dir="ltr"
                   className="inline-flex items-center justify-center rounded-full border border-[var(--color-line)] px-8 py-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-surface-dark)] transition duration-300 hover:border-[var(--color-brand-accent)]"
                 >
-                  {t.ctaSecondary}
+                  {contact.phoneDisplay}
                 </a>
               </div>
             </ScrubReveal>

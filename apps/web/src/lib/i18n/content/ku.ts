@@ -43,7 +43,7 @@ export const ku: Content = {
   },
 
   cta: {
-    index: "09 — Vexwendin",
+    index: "10 — Vexwendin",
     titleLead: "Werin Pêşerojê",
     titleAccent: "Bi Hev Re",
     titleTail: "Sêwirînin",

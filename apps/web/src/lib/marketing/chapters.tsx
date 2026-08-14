@@ -4,12 +4,14 @@ import { AboutSection } from "@/components/marketing/AboutSection";
 import { ContactChannels } from "@/components/marketing/ContactChannels";
 import { CurriculumSection } from "@/components/marketing/CurriculumSection";
 import { FaqAccordion } from "@/components/marketing/FaqAccordion";
+import { KayitFormu } from "@/components/marketing/KayitFormu";
 import { PressSection } from "@/components/marketing/PressSection";
 import { RealMediaGrid } from "@/components/marketing/RealMediaGrid";
 import { Reveal } from "@/components/marketing/Reveal";
 import { TrainingCatalog } from "@/components/marketing/TrainingCatalog";
 import type { Locale } from "@/lib/i18n/config";
 import { content } from "@/lib/i18n/content";
+import { kayitStrings } from "@/lib/i18n/kayit";
 import { ui } from "@/lib/i18n/ui";
 import { contact } from "@/lib/seo/site";
 
@@ -82,6 +84,7 @@ export function chapters(locale: Locale): Chapter[] {
   const all = content(locale);
   const c = all.chapters;
   const t = ui(locale);
+  const k = kayitStrings(locale);
   const stop = (n: string) => `${t.stop} ${n}`;
 
   return [
@@ -156,9 +159,21 @@ export function chapters(locale: Locale): Chapter[] {
       ),
     },
     {
+      // Kayit formu SSS'nin hemen ardinda: veli sorularinin cevabini
+      // okuduktan sonra karar verir. Iletisim bolumunden once durur cunku
+      // form artik asil eylem; telefon ve WhatsApp onu tamamlayan kanallar.
+      id: "kayit",
+      headingId: "kayit-baslik",
+      code: stop("08"),
+      eyebrow: k.eyebrow,
+      title: chapterTitle("kayit-baslik", k),
+      lead: k.lead,
+      body: <KayitFormu locale={locale} />,
+    },
+    {
       id: "iletisim",
       headingId: "iletisim-baslik",
-      code: stop("08"),
+      code: stop("09"),
       eyebrow: c.iletisim.eyebrow,
       title: chapterTitle("iletisim-baslik", c.iletisim),
       lead: c.iletisim.lead,

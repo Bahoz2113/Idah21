@@ -41,7 +41,7 @@ export const tr = {
   },
 
   cta: {
-    index: "09 — Davet",
+    index: "10 — Davet",
     titleLead: "Geleceği",
     titleAccent: "Birlikte",
     titleTail: "Tasarlayalım",

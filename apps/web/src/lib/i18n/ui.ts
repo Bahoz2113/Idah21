@@ -99,6 +99,7 @@ const tr = {
     "biz-kimiz": "Biz Kimiz",
     basin: "Basında Biz",
     sss: "SSS",
+    kayit: "Kayıt",
     iletisim: "İletişim",
   },
 
@@ -218,6 +219,7 @@ const en: UiStrings = {
     "biz-kimiz": "Who We Are",
     basin: "In the Press",
     sss: "FAQ",
+    kayit: "Enrolment",
     iletisim: "Contact",
   },
 
@@ -320,6 +322,7 @@ const ku: UiStrings = {
     "biz-kimiz": "Em Kî Ne",
     basin: "Di Çapemeniyê de",
     sss: "Pirsên Pir Tên Kirin",
+    kayit: "Tomarkirin",
     iletisim: "Têkilî",
   },
 
@@ -422,6 +425,7 @@ const ar: UiStrings = {
     "biz-kimiz": "من نحن",
     basin: "في الصحافة",
     sss: "الأسئلة الشائعة",
+    kayit: "التسجيل",
     iletisim: "التواصل",
   },
 

@@ -36,7 +36,7 @@ export const en: Content = {
   },
 
   cta: {
-    index: "09 — Invitation",
+    index: "10 — Invitation",
     titleLead: "Let's Design the Future",
     titleAccent: "Together",
     titleTail: "",

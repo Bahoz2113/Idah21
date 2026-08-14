@@ -50,7 +50,7 @@ export const ar: Content = {
   },
 
   cta: {
-    index: "٠٩ — دعوة",
+    index: "١٠ — دعوة",
     titleLead: "لنصمّم المستقبل",
     titleAccent: "معاً",
     titleTail: "",

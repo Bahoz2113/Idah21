@@ -1,4 +1,4 @@
-import type { EmailProvider } from "./index";
+import type { EmailAttachment, EmailProvider } from "./index";
 
 /**
  * SMTP yapılandırılmamışken kullanılan geliştirme sağlayıcısı.
@@ -7,6 +7,27 @@ import type { EmailProvider } from "./index";
  * SMTP_HOST tanımlanmadan bırakılırsa bu durum loglarda açıkça görünür.
  */
 export class ConsoleEmailProvider implements EmailProvider {
+  readonly canDeliver = false;
+
+  /**
+   * Bilerek FIRLATIR, sessizce loglamaz. Doğrulama kodu akışında konsola
+   * yazmak yeterlidir çünkü geliştirici kodu logdan okuyabilir; kayıt
+   * formunda ise gönderilemeyen bir başvuru kaybolan bir müşteridir.
+   * Çağıran taraf bu hatayı yakalayıp kullanıcıya başka bir kanal sunar.
+   */
+  async sendDocument(params: {
+    to: string;
+    subject: string;
+    html: string;
+    replyTo?: string;
+    attachments?: EmailAttachment[];
+  }): Promise<void> {
+    throw new Error(
+      `E-posta gonderilemedi: SMTP yapilandirilmamis (SMTP_HOST tanimli degil). ` +
+        `Alici: ${params.to}, konu: ${params.subject}.`,
+    );
+  }
+
   private log(kind: string, email: string, code: string) {
     // eslint-disable-next-line no-console
     console.warn(
