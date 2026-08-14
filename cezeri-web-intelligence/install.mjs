@@ -20,6 +20,7 @@ import {
   sha256, readIfExists, atomicWrite, backupFile, timestamp,
   run, hasCommand, readManifest, writeManifest, packageVersion,
   buildPolicyBlock, upsertPolicy, mcpStatus, validateSkillFrontmatter,
+  addMcpToConfig, mcpInConfig,
 } from "./lib/common.mjs";
 
 const DRY = process.argv.includes("--dry-run");
@@ -56,8 +57,8 @@ if (claudeAvailable) {
   const v = run("claude", ["--version"], { timeout: 30_000 });
   ok(`claude CLI: ${(v.stdout || "").trim() || "surum okunamadi"}`);
 } else {
-  warn("claude CLI bulunamadi — skill ve policy kurulacak, MCP adimi atlanacak.");
-  info("Claude Code kurmak icin: npm install -g @anthropic-ai/claude-code");
+  warn("claude komut satiri araci bulunamadi — MCP kaydi dogrudan ~/.claude.json'a yazilacak.");
+  info("Komut satiri araci istersen: npm install -g @anthropic-ai/claude-code");
 }
 
 // ─────────────────────────────────────────────────────── 2. SKILL'LER
@@ -144,32 +145,45 @@ let mcpAddedByUs = readManifest()?.mcp?.added_by_cezeri === true;
 if (NO_MCP) {
   skip("--no-mcp verildi");
   summary.mcp = "skipped";
-} else if (!claudeAvailable) {
-  warn("claude CLI yok — MCP kaydi yapilamadi");
-  summary.mcp = "unavailable";
-} else {
-  const status = mcpStatus();
-  if (status.registered) {
-    skip(`"${MCP_NAME}" zaten kayitli — dokunulmadi (duplicate olusturulmadi)`);
-    summary.mcp = "already-present";
-  } else if (DRY) {
-    info(`eklenecek: claude mcp add -s user ${MCP_NAME} -- npx -y ${MCP_PACKAGE}`);
-    summary.mcp = "would-add";
+} else if (mcpStatus().registered) {
+  skip(`"${MCP_NAME}" zaten kayitli — dokunulmadi (duplicate olusturulmadi)`);
+  summary.mcp = "already-present";
+} else if (DRY) {
+  info(claudeAvailable
+    ? `eklenecek: claude mcp add -s user ${MCP_NAME} -- npx -y ${MCP_PACKAGE}`
+    : `eklenecek: ~/.claude.json -> mcpServers.${MCP_NAME} (claude CLI yok)`);
+  summary.mcp = "would-add";
+} else if (claudeAvailable) {
+  const r = run("claude", ["mcp", "add", "-s", "user", MCP_NAME, "--", "npx", "-y", MCP_PACKAGE], {
+    timeout: 180_000,
+  });
+  if (r.ok || mcpStatus().registered) {
+    ok(`"${MCP_NAME}" user scope'a eklendi`);
+    summary.mcp = "added";
+    mcpAddedByUs = true;
+    summary.changed++;
   } else {
-    const r = run("claude", ["mcp", "add", "-s", "user", MCP_NAME, "--", "npx", "-y", MCP_PACKAGE], {
-      timeout: 180_000,
-    });
-    if (r.ok || mcpStatus().registered) {
-      ok(`"${MCP_NAME}" user scope'a eklendi`);
-      summary.mcp = "added";
-      mcpAddedByUs = true;
-      summary.changed++;
-    } else {
-      fail(`MCP eklenemedi: ${(r.stderr || r.stdout || "").trim().split("\n")[0]}`);
-      info(`Elle deneyin: claude mcp add -s user ${MCP_NAME} -- npx -y ${MCP_PACKAGE}`);
-      summary.mcp = "failed";
-      summary.errors.push("mcp add basarisiz");
-    }
+    fail(`MCP eklenemedi: ${(r.stderr || r.stdout || "").trim().split("\n")[0]}`);
+    info(`Elle deneyin: claude mcp add -s user ${MCP_NAME} -- npx -y ${MCP_PACKAGE}`);
+    summary.mcp = "failed";
+    summary.errors.push("mcp add basarisiz");
+  }
+} else {
+  // claude CLI yok — kaydi dogrudan yapilandirma dosyasina yaz (ayni sonuc, user scope).
+  const r = addMcpToConfig(STAMP);
+  if (r.ok && r.action === "added") {
+    ok(`"${MCP_NAME}" ~/.claude.json icine eklendi (claude CLI olmadan)`);
+    summary.mcp = "added-via-config";
+    mcpAddedByUs = true;
+    summary.changed++;
+  } else if (r.ok) {
+    skip(`"${MCP_NAME}" zaten kayitli`);
+    summary.mcp = "already-present";
+  } else {
+    fail(`MCP kaydi yazilamadi: ${r.detail}`);
+    info(`Claude Code CLI kurup tekrar deneyin: npm install -g @anthropic-ai/claude-code`);
+    summary.mcp = "failed";
+    summary.errors.push("mcp config yazilamadi");
   }
 }
 
@@ -225,10 +239,14 @@ if (!DRY) {
   else if (policyBody !== null) { fail("Global policy blogu bulunamadi"); verifyFailed++; }
 }
 
-if (claudeAvailable && !NO_MCP && !DRY) {
-  const g = run("claude", ["mcp", "get", MCP_NAME], { timeout: 90_000 });
-  if (g.ok) ok(`MCP kaydi okunabiliyor: ${MCP_NAME}`);
-  else warn(`MCP kaydi dogrulanamadi (Claude Code yeniden baslatilinca baglanir)`);
+if (!NO_MCP && !DRY) {
+  if (claudeAvailable) {
+    const g = run("claude", ["mcp", "get", MCP_NAME], { timeout: 90_000 });
+    if (g.ok) ok(`MCP kaydi okunabiliyor: ${MCP_NAME}`);
+    else warn("MCP kaydi dogrulanamadi (Claude Code yeniden baslatilinca baglanir)");
+  } else if (mcpInConfig()) {
+    ok(`MCP kaydi ~/.claude.json icinde dogrulandi: ${MCP_NAME}`);
+  }
 }
 
 // ─────────────────────────────────────────────────────── ÖZET

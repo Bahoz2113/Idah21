@@ -98,18 +98,67 @@ export function timestamp() {
 }
 
 // ---------------------------------------------------------------- komut
+const IS_WIN = process.platform === "win32";
+const resolvedCache = new Map();
+
+/**
+ * Windows'ta bir komutun gercek yolunu bulur (`where`).
+ * `npx` gibi komutlar orada `npx.cmd` batch dosyasidir; bunlar shell olmadan
+ * dogrudan calistirilamaz, `cmd.exe /c` ile cagrilmalari gerekir.
+ * @returns {string|null}
+ */
+function resolveWindowsCommand(cmd) {
+  if (resolvedCache.has(cmd)) return resolvedCache.get(cmd);
+  let found = null;
+  try {
+    const out = execFileSync("where", [cmd], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 15_000,
+    });
+    const lines = String(out).split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    // .cmd/.bat/.exe tercih et; yoksa ilk sonucu al.
+    found = lines.find((l) => /\.(cmd|bat|exe)$/i.test(l)) ?? lines[0] ?? null;
+  } catch {
+    found = null;
+  }
+  resolvedCache.set(cmd, found);
+  return found;
+}
+
 /**
  * Komutu çalıştırır; hata fırlatmaz.
+ *
+ * `shell: true` KULLANMAZ. Node 24 bunu args dizisiyle birlikte kullanmayı
+ * DEP0190 ile uyarıyor (argümanlar escape edilmez, yalnızca birleştirilir —
+ * enjeksiyon riski). Windows'ta batch sarmalayıcıları bunun yerine
+ * `cmd.exe /c <tam-yol> <args>` ile çağrılır; argümanlar ayrı dizi
+ * elemanları olarak geçtiği için birleştirme yapılmaz.
+ *
  * @returns {{ok: boolean, stdout: string, stderr: string, code: number|null}}
  */
 export function run(cmd, args = [], opts = {}) {
+  const { timeout, ...rest } = opts;
+  let file = cmd;
+  let argv = args;
+
+  if (IS_WIN) {
+    const resolved = resolveWindowsCommand(cmd);
+    if (resolved && /\.(cmd|bat)$/i.test(resolved)) {
+      file = process.env.ComSpec || "cmd.exe";
+      argv = ["/d", "/s", "/c", resolved, ...args];
+    } else if (resolved) {
+      file = resolved;
+    }
+  }
+
   try {
-    const stdout = execFileSync(cmd, args, {
+    const stdout = execFileSync(file, argv, {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
-      timeout: opts.timeout ?? 60_000,
-      shell: process.platform === "win32", // .cmd/.ps1 sarmalayıcıları için
-      ...opts,
+      timeout: timeout ?? 60_000,
+      windowsHide: true,
+      ...rest,
     });
     return { ok: true, stdout: stdout || "", stderr: "", code: 0 };
   } catch (e) {
@@ -123,8 +172,8 @@ export function run(cmd, args = [], opts = {}) {
 }
 
 export function hasCommand(cmd) {
-  const probe = process.platform === "win32" ? "where" : "which";
-  return run(probe, [cmd], { timeout: 15_000 }).ok;
+  if (IS_WIN) return resolveWindowsCommand(cmd) !== null;
+  return run("which", [cmd], { timeout: 15_000 }).ok;
 }
 
 // ---------------------------------------------------------------- skill dogrulama
@@ -245,9 +294,94 @@ export function removePolicy(existing) {
  * claude CLI yoksa {available:false} döner.
  */
 export function mcpStatus() {
-  if (!hasCommand("claude")) return { available: false, registered: false, raw: "" };
+  if (!hasCommand("claude")) {
+    // claude CLI yoksa yapilandirma dosyasindan bak.
+    return { available: false, registered: mcpInConfig(), raw: "" };
+  }
   const r = run("claude", ["mcp", "list"], { timeout: 90_000 });
   const raw = (r.stdout || "") + (r.stderr || "");
   const registered = new RegExp(`(^|\\s)${MCP_NAME}\\b`, "m").test(raw);
   return { available: true, registered, raw };
+}
+
+/** Kullanici duzeyindeki Claude yapilandirma dosyasi (~/.claude.json). */
+export const CLAUDE_CONFIG = path.join(os.homedir(), ".claude.json");
+
+/** MCP kaydi yapilandirma dosyasinda var mi? */
+export function mcpInConfig() {
+  const raw = readIfExists(CLAUDE_CONFIG);
+  if (!raw) return false;
+  try {
+    return Boolean(JSON.parse(raw)?.mcpServers?.[MCP_NAME]);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * claude CLI yokken MCP kaydini dogrudan ~/.claude.json icine yazar.
+ * `claude mcp add -s user` ile ayni sonucu uretir (user scope).
+ * Dosyanin geri kalanina DOKUNMAZ; yalnizca mcpServers.<MCP_NAME> eklenir.
+ *
+ * @returns {{ok: boolean, action: "added"|"already-present"|"failed", detail?: string}}
+ */
+export function addMcpToConfig(stamp) {
+  const raw = readIfExists(CLAUDE_CONFIG);
+  let cfg = {};
+  if (raw !== null) {
+    try {
+      cfg = JSON.parse(raw);
+    } catch (e) {
+      return { ok: false, action: "failed", detail: `~/.claude.json okunamadi (bozuk JSON): ${e.message}` };
+    }
+    if (cfg === null || typeof cfg !== "object" || Array.isArray(cfg)) {
+      return { ok: false, action: "failed", detail: "~/.claude.json beklenen bicimde degil" };
+    }
+  }
+
+  if (cfg.mcpServers && cfg.mcpServers[MCP_NAME]) {
+    return { ok: true, action: "already-present" };
+  }
+
+  if (raw !== null) backupFile(CLAUDE_CONFIG, stamp);
+  cfg.mcpServers = { ...(cfg.mcpServers ?? {}) };
+  cfg.mcpServers[MCP_NAME] = {
+    type: "stdio",
+    command: "npx",
+    args: ["-y", MCP_PACKAGE],
+    env: {},
+  };
+
+  try {
+    atomicWrite(CLAUDE_CONFIG, JSON.stringify(cfg, null, 2) + "\n");
+  } catch (e) {
+    return { ok: false, action: "failed", detail: e.message };
+  }
+
+  // VERIFY: geri okuyup kaydin gercekten yerinde oldugunu dogrula.
+  return mcpInConfig()
+    ? { ok: true, action: "added" }
+    : { ok: false, action: "failed", detail: "yazildi ama dogrulanamadi" };
+}
+
+/** MCP kaydini ~/.claude.json icinden kaldirir (uninstall icin). */
+export function removeMcpFromConfig(stamp) {
+  const raw = readIfExists(CLAUDE_CONFIG);
+  if (!raw) return { ok: true, action: "absent" };
+  let cfg;
+  try {
+    cfg = JSON.parse(raw);
+  } catch {
+    return { ok: false, action: "failed", detail: "~/.claude.json okunamadi (bozuk JSON)" };
+  }
+  if (!cfg?.mcpServers?.[MCP_NAME]) return { ok: true, action: "absent" };
+
+  backupFile(CLAUDE_CONFIG, stamp);
+  delete cfg.mcpServers[MCP_NAME];
+  try {
+    atomicWrite(CLAUDE_CONFIG, JSON.stringify(cfg, null, 2) + "\n");
+  } catch (e) {
+    return { ok: false, action: "failed", detail: e.message };
+  }
+  return mcpInConfig() ? { ok: false, action: "failed", detail: "silindi ama hala gorunuyor" } : { ok: true, action: "removed" };
 }

@@ -19,7 +19,7 @@ import {
   CLAUDE_HOME, SKILLS_DIR, GLOBAL_MEMORY, STATE_DIR, MCP_NAME, SKILL_NAMES,
   bold, dim, cyan, step, ok, skip, warn, fail, info,
   readIfExists, atomicWrite, backupFile, timestamp,
-  run, hasCommand, readManifest, removePolicy, mcpStatus,
+  run, hasCommand, readManifest, removePolicy, mcpStatus, removeMcpFromConfig,
 } from "./lib/common.mjs";
 
 const DRY = process.argv.includes("--dry-run");
@@ -93,17 +93,19 @@ if (existing === null) {
 step("3) Playwright MCP");
 
 const addedByUs = manifest?.mcp?.added_by_cezeri === true;
+const claudeAvailable = hasCommand("claude");
+
 if (KEEP_MCP) {
   skip("--keep-mcp verildi");
 } else if (!addedByUs) {
   skip("MCP kaydini CEZERI eklemedi — dokunulmadi");
-} else if (!hasCommand("claude")) {
-  warn("claude CLI yok — MCP kaydi kaldirilamadi");
 } else if (!mcpStatus().registered) {
   skip("kayit zaten yok");
 } else if (DRY) {
-  info(`kaldirilacak: claude mcp remove -s user ${MCP_NAME}`);
-} else {
+  info(claudeAvailable
+    ? `kaldirilacak: claude mcp remove -s user ${MCP_NAME}`
+    : `kaldirilacak: ~/.claude.json -> mcpServers.${MCP_NAME}`);
+} else if (claudeAvailable) {
   const r = run("claude", ["mcp", "remove", "-s", "user", MCP_NAME], { timeout: 90_000 });
   if (r.ok || !mcpStatus().registered) {
     ok(`"${MCP_NAME}" kaydi kaldirildi`);
@@ -112,6 +114,18 @@ if (KEEP_MCP) {
     fail(`kaldirilamadi: ${(r.stderr || r.stdout || "").trim().split("\n")[0]}`);
     info(`Elle: claude mcp remove -s user ${MCP_NAME}`);
     errors.push("mcp remove");
+  }
+} else {
+  // claude CLI yok — kaydi dogrudan yapilandirma dosyasindan sil.
+  const r = removeMcpFromConfig(STAMP);
+  if (r.ok && r.action === "removed") {
+    ok(`"${MCP_NAME}" kaydi ~/.claude.json icinden kaldirildi`);
+    removed++;
+  } else if (r.ok) {
+    skip("kayit zaten yok");
+  } else {
+    fail(`kaldirilamadi: ${r.detail}`);
+    errors.push("mcp config temizlenemedi");
   }
 }
 

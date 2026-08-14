@@ -27,7 +27,7 @@ import {
   SKILLS_DIR, GLOBAL_MEMORY, MCP_NAME, SKILL_NAMES,
   bold, dim, green, yellow, red, cyan,
   readIfExists, run, hasCommand, readManifest, packageVersion,
-  validateSkillFrontmatter,
+  validateSkillFrontmatter, mcpInConfig,
 } from "./lib/common.mjs";
 
 const JSON_OUT = process.argv.includes("--json");
@@ -45,11 +45,16 @@ record("node", Number(process.versions.node.split(".")[0]) >= 18 ? "PASS" : "FAI
 record("npx", hasCommand("npx") ? "PASS" : "FAIL", hasCommand("npx") ? "mevcut" : "bulunamadi");
 
 // ─────────────────────────────────────────────────── 2. Claude Code
-if (hasCommand("claude")) {
+const claudeAvailable = hasCommand("claude");
+if (claudeAvailable) {
   const v = run("claude", ["--version"], { timeout: 30_000 });
   record("claude-cli", "PASS", (v.stdout || "").trim() || "surum okunamadi");
 } else {
-  record("claude-cli", "FAIL", "claude bulunamadi (npm install -g @anthropic-ai/claude-code)");
+  // CLI olmadan da kurulum calisir (masaustu uygulamasi ayni ~/.claude dizinini okur),
+  // bu yuzden kritik degil.
+  record("claude-cli", "WARN",
+    "claude komut satiri araci yok — skill/policy/MCP dosya duzeyinde kuruldu. " +
+    "CLI icin: npm install -g @anthropic-ai/claude-code", false);
 }
 
 // ─────────────────────────────────────────────────── 3. Skill'ler
@@ -79,7 +84,7 @@ if (mem && mem.includes("CEZERI WEB INTELLIGENCE POLICY")) {
 }
 
 // ─────────────────────────────────────────────────── 5. MCP kaydı
-if (hasCommand("claude")) {
+if (claudeAvailable) {
   const r = run("claude", ["mcp", "list"], { timeout: 90_000 });
   const raw = (r.stdout || "") + (r.stderr || "");
   const line = raw.split(/\r?\n/).find((l) => new RegExp(`(^|\\s)${MCP_NAME}\\b`).test(l));
@@ -91,8 +96,11 @@ if (hasCommand("claude")) {
   } else {
     record("mcp-registered", "PASS", line.trim());
   }
+} else if (mcpInConfig()) {
+  record("mcp-registered", "PASS",
+    `~/.claude.json icinde kayitli: ${MCP_NAME} (baglanti durumu icin Claude Code'u yeniden baslatin)`);
 } else {
-  record("mcp-registered", "FAIL", "claude CLI olmadan kontrol edilemez");
+  record("mcp-registered", "FAIL", `"${MCP_NAME}" kayitli degil (node install.mjs)`);
 }
 
 // ─────────────────────────────────────────────────── 6. Browser launch

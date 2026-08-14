@@ -27,3 +27,21 @@
   üretmek. Dry-run diske yazmaz; doğrulama adımı da hedef dosya yerine KAYNAK dosyayı
   denetlemeli, mesajlar gelecek zaman ("silinecek") olmalı. Aksi hâlde dry-run hem yanlış
   bilgi verir hem de hatalı çıkış koduyla biter.
+
+- [2026-08-14] loop:loop-mss0zehh-ca54d8 — `shell: true` + args dizisi (Node 24 DEP0190)
+  `execFileSync(cmd, args, { shell: true })` Node 24'te DeprecationWarning veriyor:
+  argümanlar escape edilmez, yalnızca birleştirilir → komut enjeksiyonu riski.
+  Windows'ta `.cmd` sarmalayıcıları (npx.cmd, claude.cmd) çalıştırmak için kullanılıyordu.
+  Doğru çözüm: `where <cmd>` ile gerçek yolu çöz; `.cmd`/`.bat` ise
+  `cmd.exe /d /s /c <tam-yol> <args...>` biçiminde, args ayrı dizi elemanları olarak geçir.
+  Böylece shell hiç kullanılmaz, birleştirme olmaz, uyarı kalkar.
+  Ders: Geliştirme ortamındaki Node sürümü (22) kullanıcınınkinden (24) eskiyse,
+  deprecation uyarıları ancak kullanıcıda ortaya çıkar.
+
+- [2026-08-14] loop:loop-mss0zehh-ca54d8 — dış CLI'yi tek yol saymak
+  Kurucu MCP kaydı için yalnızca `claude mcp add` komutuna güveniyordu; kullanıcının
+  makinesinde CLI olmayınca adım tamamen atlandı ve tarayıcı yeteneği kurulamadı.
+  O komutun yaptığı iş aslında `~/.claude.json` içine bir JSON anahtarı yazmaktı.
+  Ders: Bir dış aracın tek işlevi bir dosyayı düzenlemekse, araç yoksa o dosyayı
+  doğrudan (yedekleyerek + atomik yazarak + geri okuyup doğrulayarak) düzenleyen bir
+  yedek yol bırak. Kullanıcıyı gereksiz kurulum adımına zorlama.
