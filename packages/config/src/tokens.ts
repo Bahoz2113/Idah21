@@ -57,3 +57,59 @@ export const tokens = {
 
   motion: { duration: "250ms", ease: "cubic-bezier(0.33, 1, 0.68, 1)" },
 } as const;
+
+// ══════════════════════════════════════════════════════════════════
+// MARKETING SURFACE TOKENS — public tanıtım sitesi (Mali Kontrol paleti)
+//
+// DİKKAT: Bunlar yukarıdaki `tokens` setinden AYRIDIR ve onu ezmez.
+// Yönetim paneli (admin/teacher/parent/student) mavi-amber `tokens` setini
+// kullanmaya devam eder; bu petrol yeşili/turuncu set YALNIZCA kök rotadaki
+// tanıtım deneyiminde geçerlidir. İki seti karıştırmayın.
+// ══════════════════════════════════════════════════════════════════
+export const marketingTokens = {
+  colors: {
+    // ——— Dominant: koyu petrol yeşili / teal ———
+    teal:        "#0F4C5C",  // Primary — sistem başlıkları, navigasyon, derinlik
+    tealDeep:    "#0D5C63",  // Primary alt tonu — katman ayrımı
+    tealSoft:    "#1B6E7E",  // Hover / aktif kenar
+
+    // ——— Aksent: dinamik turuncu ———
+    orange:      "#FF8C00",  // Fırlatma butonları, odak noktaları
+    orangeDeep:  "#F57C00",  // Hover / basılı hâl
+
+    // ——— İkincil aksent: zümrüt ———
+    emerald:     "#10B981",  // Başarı metrikleri, onay durumları
+    emeraldDeep: "#00B894",
+
+    // ——— Koyu zemin (derin petrol siyahı) ———
+    base:        "#0A191D",  // Ana koyu zemin
+    baseAlt:     "#0D1F23",  // İkincil koyu yüzey
+
+    // ——— Aydınlık yüzeyler ———
+    white:       "#FFFFFF",  // Siber beyaz
+    ice:         "#F2F8F8",  // Buzul teal tonu — kart zemini
+  },
+
+  gradients: {
+    hero:    "linear-gradient(160deg, #0A191D 0%, #0F4C5C 55%, #0D5C63 100%)",
+    launch:  "linear-gradient(135deg, #FF8C00 0%, #F57C00 100%)",
+    signal:  "linear-gradient(135deg, #10B981 0%, #00B894 100%)",
+    hangar:  "linear-gradient(135deg, rgba(15,76,92,0.55) 0%, rgba(10,25,29,0.85) 100%)",
+    glass:   "linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 100%)",
+  },
+
+  // Gerçek fotoğraf/video üstüne uygulanan görsel bütünlük filtresi
+  grade: {
+    tint:     "rgba(15,76,92,0.38)",
+    shadow:   "rgba(10,25,29,0.55)",
+    vignette: "radial-gradient(ellipse at center, transparent 42%, rgba(10,25,29,0.72) 100%)",
+  },
+
+  shadow: {
+    lift:  "0 18px 48px rgba(10,25,29,0.38)",
+    glow:  "0 0 32px rgba(255,140,0,0.28)",
+    ring:  "0 0 0 1px rgba(255,255,255,0.08)",
+  },
+
+  motion: { duration: "600ms", ease: "cubic-bezier(0.16, 1, 0.3, 1)" },
+} as const;

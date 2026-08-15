@@ -51,3 +51,418 @@ button:focus-visible, a:focus-visible {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #E7EDF4; border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MARKETING KATMANI — yalnızca public tanıtım sayfası (kök rota)
+   Kapsam `.czr-site` altına hapsedilmiştir; yönetim paneli etkilenmez.
+   ══════════════════════════════════════════════════════════════════ */
+
+.czr-site {
+  background: #0A191D;
+  color: #F2F8F8;
+  /* Koyu yüzeyde tarayıcı varsayılanlarının (form, scrollbar) uyumlanması */
+  color-scheme: dark;
+}
+
+/* Kök layout `body`'ye açık zemin verir (panel için doğru). Tanıtım sayfası
+   koyu olduğundan, aşırı kaydırmada (iOS lastik bandı) beyaz şerit
+   görünmesin diye body zemini de koyuya alınır. Bunu `:has()` ile yapmak,
+   kök layout'a marketing'e özel bir sınıf eklemekten daha temiz — panel
+   tarafında hiçbir şey değişmez. Destekleyemeyen tarayıcıda tek etki,
+   aşırı kaydırmada açık zeminin görünmesidir. */
+body:has(> .czr-site) {
+  background: #0A191D;
+}
+
+.czr-site ::-webkit-scrollbar-thumb { background: #163C46; }
+.czr-site ::-webkit-scrollbar-thumb:hover { background: #1B6E7E; }
+.czr-site ::selection { background: #FF8C00; color: #0A191D; }
+
+/* ── DÜNYA KATMANI ─────────────────────────────────────────────────
+   Sayfa bir yığın bölüm değil, içinde yürünen tek bir mekândır. Sahne
+   `position: fixed` ile arkada sabit durur; bölümler onun üzerinden akar.
+
+   Taban katman (`floor`) sahne hiç yüklenmese de dünyanın rengini ve
+   derinliğini taşır — WebGL'siz cihazda sayfa boş bir siyahlığa düşmez.
+   Perde (`scrim`) hareketli sahnenin üstünde metin kontrastını
+   tesadüfe bırakmaz; kenarlarda koyulaşır, ortada açılır. */
+.czr-world { contain: layout paint; }
+
+/* ── DERİNLİK ODAĞI ────────────────────────────────────────────────
+   Dünya her bölümde aynı yoğunlukta durmaz: eşikte açılır, yoğun okuma
+   bölümlerinde geri çekilir. Değerleri `WorldFocus` yazar, geçişi
+   tarayıcı yapar — JS her karede bir şey hesaplamaz.
+
+   Değişkenler köke yazılır; hem dünya hem de içeriğin üstünden geçen
+   ön plan aynı değeri okur, ikisi birlikte çekilir. */
+:root {
+  --czr-depth-blur: 0px;
+  --czr-depth-dim: 0;
+  /* Eşikteki başlangıç değeri: hero'nun eylem butonları makine sırtının
+     altında kalmasın diye ön plan orada zayıf durur. */
+  --czr-depth-fg: 0.26;
+}
+
+.czr-world,
+.czr-foreground {
+  transition: filter 900ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Ön plan zaten metnin ÜSTÜNDE duruyor; karartması dünyanınkinden
+   daha yumuşak olmalı, yoksa alt şerit tamamen kaybolur. */
+.czr-foreground {
+  opacity: calc(var(--czr-depth-fg) * (0.92 - var(--czr-depth-dim) * 0.5));
+}
+
+/* Telefonda siluet daha da geri çekilir. Dar ekranda metin bloğu ekranın
+   altına kadar iner; makine sırtı orada masaüstündeki yoğunlukta dursaydı
+   son paragrafı yutardı. */
+@media (max-width: 639px) {
+  .czr-foreground {
+    opacity: calc(var(--czr-depth-fg) * (0.62 - var(--czr-depth-dim) * 0.3));
+  }
+}
+
+/* Bulanıklık yalnızca geniş ekranda. Telefonda tam ekran bir katmanı
+   bulanıklaştırmak her geçişte pahalı bir yeniden boyama demektir;
+   orada derinlik yalnızca karartmayla anlatılır. Azaltılmış hareket
+   isteyen kullanıcıda ikisi de kapalıdır — sahne sabit durur. */
+@media (prefers-reduced-motion: no-preference) {
+  .czr-world { opacity: calc(1 - var(--czr-depth-dim) * 0.62); }
+
+  @media (min-width: 768px) {
+    .czr-world { filter: blur(var(--czr-depth-blur)); }
+    .czr-foreground { filter: blur(calc(var(--czr-depth-blur) * 0.6)); }
+  }
+}
+
+.czr-world-floor {
+  background:
+    radial-gradient(120% 80% at 50% 0%, #123039 0%, rgba(10, 25, 29, 0) 62%),
+    radial-gradient(90% 60% at 50% 100%, #0D2A31 0%, rgba(10, 25, 29, 0) 58%),
+    #0A191D;
+}
+
+/* Sahne çalışırken taban katman yalnızca zemin rengi olarak kalır;
+   gradyan sahnenin derinliğiyle çakışmasın diye söner. */
+.czr-world[data-active] .czr-world-floor { opacity: 0.35; }
+
+/* Genel perde YALNIZCA kenarları toplar. Ortayı karartmak sahneyi
+   görünmez yapıyordu; okunabilirlik artık metnin arkasındaki yerel
+   perdeyle (`.czr-veil`) sağlanıyor. */
+.czr-world-scrim {
+  background:
+    linear-gradient(180deg, rgba(10, 25, 29, 0.62) 0%, rgba(10, 25, 29, 0) 18%,
+                            rgba(10, 25, 29, 0) 82%, rgba(10, 25, 29, 0.72) 100%),
+    radial-gradient(85% 70% at 50% 50%, rgba(10, 25, 29, 0) 55%, rgba(10, 25, 29, 0.38) 100%);
+}
+
+/* Bölümler dünyanın üzerinde yüzer: kendi opak zeminleri yoktur.
+   Yerel okunabilirlik gerektiğinde metin bloğunun arkasına bu perde konur. */
+/* `overflow-x: clip` bölümün kendi düzenini bozmadan yalnızca yatay
+   taşmayı keser. Perde (`.czr-veil::before`) bilerek kenarlardan taşar;
+   dar ekranda bu taşma belgeye yatay kaydırma ekliyordu. `hidden` yerine
+   `clip`: `hidden` yeni bir kaydırma bağlamı açar ve içerideki `sticky`
+   davranışını bozardı. */
+/* `scroll-margin-top`: menüden bir bölüme atlandığında sabit üst çubuk
+   başlığın künye satırını örtüyordu. Tarayıcı hedefi bu kadar aşağıya
+   hizalar; hiçbir JS gerekmez. */
+.czr-chapter {
+  position: relative;
+  z-index: 10;
+  overflow-x: clip;
+  scroll-margin-top: 5.5rem;
+}
+
+.czr-veil {
+  position: relative;
+}
+/* Perde başlık bloğunun TAMAMINI kapsar. Önceki dar elips yalnızca sol
+   kolonu koruyordu; editoryal düzende gövde metni sağa geçince sahnenin
+   üzerinde korumasız kalıyordu. Elips geniş ve yumuşak: metnin arkasını
+   toplarken kenarlarda dünyayı serbest bırakır. */
+.czr-veil::before {
+  content: "";
+  position: absolute;
+  inset: -14% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    72% 66% at 42% 50%,
+    rgba(10, 25, 29, 0.9) 0%,
+    rgba(10, 25, 29, 0.66) 46%,
+    rgba(10, 25, 29, 0) 100%
+  );
+}
+
+/* Koyu zeminde turuncu odak halkası — panelin mavi odağını ezmez */
+.czr-site :is(a, button, [tabindex]):focus-visible {
+  outline: 2px solid #FF8C00;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.czr-site :is(input, textarea, select):focus-visible {
+  outline: none;
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.22);
+}
+
+/* ── Görsel bütünlük filtresi ───────────────────────────────────────
+   Gerçek fotoğraf ve videolar farklı kamera, ışık ve beyaz ayarıyla
+   çekilir; ham hâlde yan yana konduklarında galeri dağınık görünür.
+   Bu iki katman (petrol yeşili tonlama + vignette) hepsini tek bir
+   sinematik dünyada birleştirir. */
+.czr-grade { position: relative; isolation: isolate; }
+.czr-grade > img,
+.czr-grade > video {
+  filter: saturate(0.88) contrast(1.06) brightness(0.94);
+}
+.czr-grade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(10, 25, 29, 0.72) 100%),
+    linear-gradient(180deg, rgba(15, 76, 92, 0.30) 0%, rgba(10, 25, 29, 0.55) 100%);
+  mix-blend-mode: multiply;
+}
+/* Hover'da tonlama geri çekilir — fotoğrafın kendisi öne çıkar */
+.czr-grade-hover::after {
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.czr-grade-hover:hover::after { opacity: 0.45; }
+
+/* ── Cam yüzey (hangar kapısı / kart) ───────────────────────────── */
+.czr-glass-panel {
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* ── Askı ────────────────────────────────────────────────────────────
+   Paneller sayfaya yapıştırılmış kutular değil, hangar boşluğunda asılı
+   duran yüzeylerdir. Üstten inen saç teli kadar ince askı hattı ve üst
+   kenardaki turuncu ışık çizgisi bu okumayı verir; ikisi de dekoratif
+   olduğu için `::before`/`::after` ile çizilir, DOM'a düğüm eklemez. */
+.czr-rim,
+.czr-suspended { position: relative; }
+
+/* Askı hattı kartın DIŞINA taşar; yalnızca `overflow` kırpmayan
+   yüzeylerde kullanılabilir. Kırpılan kartlar `.czr-rim` alır. */
+.czr-suspended::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 1px;
+  height: 26px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 140, 0, 0) 0%, rgba(255, 140, 0, 0.42) 100%);
+}
+
+.czr-rim::after,
+.czr-suspended::after {
+  content: "";
+  position: absolute;
+  inset-inline: 18%;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,140,0,0) 0%, rgba(255,140,0,0.55) 50%, rgba(255,140,0,0) 100%);
+  opacity: 0.5;
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Görüntü tipografisi ─────────────────────────────────────────────
+   Bölüm başlıkları viewport ile birlikte büyür ama üst sınırı vardır;
+   sınırsız büyüme çok geniş ekranda satırı okunmaz uzunluğa taşır.
+
+   Büyük punto negatif harf aralığı ister: aynı `tracking` değeri 16 px'te
+   normal, 64 px'te dağınık görünür. `clamp` ile boy büyüdükçe aralık
+   sıkılaşır, optik yoğunluk sabit kalır.
+
+   `text-wrap: balance` satırları eşitler — iki satırlık bir başlığın
+   ikinci satırında tek kelime kalması (dul satır) engellenir. */
+.czr-display {
+  font-size: clamp(2.1rem, 1.15rem + 3.6vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: clamp(-0.035em, -0.012em - 0.35vw, -0.015em);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+/* Hero başlığı bölüm başlıklarından bir kademe önde durur. */
+.czr-hero-display {
+  font-size: clamp(2.6rem, 1.2rem + 5.4vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: clamp(-0.045em, -0.02em - 0.4vw, -0.02em);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+/* Ambiyans düğmesinin seviye göstergesi */
+@keyframes czr-eq {
+  from { height: 4px; }
+  to   { height: 15px; }
+}
+
+.czr-rim:hover::after,
+.czr-rim:focus-within::after,
+.czr-suspended:hover::after,
+.czr-suspended:focus-within::after { opacity: 1; }
+
+/* ── Teknik ızgara dokusu (kontrol merkezi hissi) ───────────────── */
+.czr-grid-texture {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ── Scroll ile ortaya çıkış (IntersectionObserver ile tetiklenir) ── */
+.czr-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--czr-delay, 0ms);
+}
+.czr-reveal[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Bölüm numarası / teknik etiket tipografisi ─────────────────── */
+.czr-mono {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.18em;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SEKANS DÜZENİ (/alternatif)
+   Aynı içerik, farklı çerçeve: sayfa tek bir mekân değil, sırayla
+   açılan perdelerdir. Arka planda bir gösteri akar (roket → İHA →
+   3D baskı → ...), bölümler yaklaşıldıkça açılır.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Perde plakası: yeni görsel saydamdan açılır. `key` değiştiğinde
+   eleman yeniden monte edilir ve animasyon baştan çalışır. */
+.czr-seq-plate {
+  opacity: 0;
+  animation: czr-plate-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes czr-plate-in {
+  from { opacity: 0; }
+  to   { opacity: 0.42; }
+}
+
+/* Gerçek kayıt plakanın üstünde, ondan daha soluk: sahnenin dokusunu
+   verir ama içeriğin arkasında kalır.
+
+   Kenarları maskeyle eritilir — dikey panel sert bir dikdörtgen olarak
+   dursaydı sahnenin parçası değil, üstüne yapıştırılmış bir kutu gibi
+   görünürdü. Sol kenar tamamen, üst ve alt kısmen açılır. */
+.czr-seq-clip {
+  opacity: 0;
+  animation: czr-clip-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  -webkit-mask-image:
+    linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 42%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%,
+                            rgba(0,0,0,1) 82%, rgba(0,0,0,0) 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 42%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%,
+                            rgba(0,0,0,1) 82%, rgba(0,0,0,0) 100%);
+  mask-composite: intersect;
+}
+@keyframes czr-clip-in {
+  from { opacity: 0; }
+  to   { opacity: 0.34; }
+}
+
+/* Sekans perdesi ana sayfanınkinden koyu: arkada video oynayabiliyor,
+   metin kontrastı tesadüfe bırakılamaz. */
+.czr-seq-scrim {
+  background:
+    linear-gradient(180deg, rgba(10, 25, 29, 0.86) 0%, rgba(10, 25, 29, 0.42) 26%,
+                            rgba(10, 25, 29, 0.42) 74%, rgba(10, 25, 29, 0.9) 100%),
+    radial-gradient(80% 70% at 50% 50%, rgba(10, 25, 29, 0.24) 0%, rgba(10, 25, 29, 0.72) 100%);
+}
+
+/* Perde bildirimi: yalnızca perde değişince belirir, sonra çekilir.
+   Sabit konumlu kalıcı bir panel akan metinle çakışıyordu. */
+.czr-act-notice {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.czr-act-notice[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Bölümün açılışı: künye önce, gövde hemen ardından.
+   Yükseklik DEĞİŞMEZ — yalnızca görünürlük açılır. Bkz. SequenceChapter. */
+.czr-seq-masthead,
+.czr-seq-body {
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.czr-seq-chapter:not([data-open]) .czr-seq-masthead {
+  opacity: 0;
+  transform: translateY(26px);
+}
+.czr-seq-chapter:not([data-open]) .czr-seq-body {
+  opacity: 0;
+  transform: translateY(42px);
+  filter: blur(7px);
+  /* Kapalıyken gövde tıklanmaz: görünmeyen bir bağlantıya klavyeyle
+     ya da fareyle ulaşılmamalı. */
+  pointer-events: none;
+}
+.czr-seq-chapter[data-open] .czr-seq-body {
+  transition-delay: 160ms;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ERİŞİLEBİLİRLİK: hareket azaltma
+   Sistem "azaltılmış hareket" istiyorsa sinematik katman tamamen
+   durur ve içerik doğrudan görünür hâle gelir. Reveal'lerin görünür
+   kalması kritiktir — aksi hâlde içerik kalıcı olarak gizlenirdi.
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .czr-site *,
+  .czr-site *::before,
+  .czr-site *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .czr-reveal { opacity: 1 !important; transform: none !important; }
+
+  /* Sekans bölümleri de doğrudan açık gelir; hiçbir içerik gizli
+     kalmaz. Perde plakası ve kaydı da son hâllerinde durur. */
+  .czr-seq-masthead,
+  .czr-seq-body {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    pointer-events: auto !important;
+  }
+  .czr-seq-plate { opacity: 0.42 !important; }
+  .czr-seq-clip { opacity: 0.34 !important; }
+}

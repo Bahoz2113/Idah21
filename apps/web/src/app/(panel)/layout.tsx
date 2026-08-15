@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../globals.css";
 import type { Metadata, Viewport } from "next";
 import { TRPCProvider } from "@/trpc/Provider";
 import { PWARegister } from "@/components/PWARegister";
@@ -19,7 +19,19 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * PANEL KÖK DÜZENİ.
+ *
+ * İki kök düzen var: bu ve `(marketing)/layout.tsx`. Sebep tek bir
+ * öznitelik: `<html lang>`. Tanıtım sitesi dört dilde yayınlanıyor ve her
+ * dilin sayfası kendi dil etiketini — Arapçada ayrıca `dir="rtl"` —
+ * taşımak zorunda. Tek bir kök düzen olsaydı `<html>` etiketi bir kez ve
+ * sabit yazılırdı; ekran okuyucu Arapça sayfayı Türkçe telaffuz eder,
+ * arama motoru dil sinyalini sayfanın kendisinden alamazdı.
+ *
+ * Panel tek dilli olduğu için burası sabit `tr` kalır.
+ */
+export default function PanelLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
       <body className="bg-gray-50 text-gray-900 antialiased min-h-screen">

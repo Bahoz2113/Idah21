@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAccessToken } from "@cezeri/auth";
+import { defaultLocale, locales } from "@/lib/i18n/config";
 
 const ROLE_ROUTES: Record<string, string[]> = {
   "/admin":   ["ADMIN"],
@@ -14,11 +15,43 @@ const ROLE_ROUTES: Record<string, string[]> = {
 // (Kullanıcı yönetimi, güvenlik, envanter vb. yine yalnızca ADMIN'de kalır.)
 const TEACHER_ALLOWED_ADMIN_PATHS = ["/admin/siniflar", "/admin/ogrenciler"];
 
+/**
+ * KİMLİK DOĞRULAMASI İSTEYEN PANEL ÖNEKLERİ — sözleşme şudur:
+ *
+ * Panele YENİ bir üst düzey bölüm eklenirse (`app/(panel)/<yeni>/`)
+ * BU LİSTEYE DE YAZILMAK ZORUNDADIR; yazılmazsa o bölüm kimlik
+ * doğrulamasına düşmez ve 404 sınırına akar. Liste, `app/(panel)`
+ * altındaki giriş gerektiren üst düzey dizinlerin birebir dökümüdür
+ * (auth ekranları ve /quiz hariç — onlar herkese açık).
+ *
+ * NEDEN "her şeyi kilitle" DEĞİL. Önceki sürüm bilinmeyen HER yolu
+ * /login'e yönlendiriyordu; yanlış adres yazan ziyaretçi tanıtım sitesi
+ * yerine iç panelin giriş ekranını görüyordu ve markalı 404 hiç
+ * çizilemiyordu (ölçüldü: /olmayan-sayfa → 307 → /login). Panel yolları
+ * burada kilitli kalır; geri kalan her yol tanıtım sitesinin 404
+ * sınırına düşer.
+ */
+const AUTH_PREFIXES = ["/admin", "/teacher", "/parent", "/student", "/davet"];
+
 const PUBLIC_PREFIXES = [
   "/login", "/ilk-kurulum", "/sifremi-unuttum", "/register",
   "/api/", "/_next", "/favicon",
   "/icon", "/manifest", "/sw.js", "/apple-touch-icon", "/robots",
+  // Public tanıtım sitesi varlıkları ve SEO uç noktaları.
+  // Bunlar kimlik doğrulaması ARDINA DÜŞERSE arama motorları ve AI
+  // tarayıcıları /login'e yönlendirilir; site indekslenemez.
+  "/sitemap", "/llms.txt", "/opengraph-image", "/twitter-image", "/assets/",
+  // Kendi sunucumuzdan servis edilen tanıtım fontları. Kimlik doğrulamasının
+  // ardına düşerse başlıklar yedek fontla çizilir ve düzen kayar.
+  "/fonts/",
 ];
+
+/** `/en`, `/ku`, `/ar` — sondaki eğik çizgili biçimleriyle birlikte. */
+const PUBLIC_LOCALE_PATHS = new Set(
+  locales
+    .filter((l) => l !== defaultLocale)
+    .flatMap((l) => [`/${l}`, `/${l}/`]),
+);
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -26,6 +59,19 @@ export async function middleware(req: NextRequest) {
   if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next();
   if (pathname.startsWith("/quiz/")) return NextResponse.next();
   if (pathname === "/") return NextResponse.next();
+
+  // Tanıtım sitesinin dil adresleri (`/en`, `/ku`, `/ar`). Bunlar da kök
+  // rota kadar herkese açıktır; kimlik kontrolüne düşerlerse ziyaretçi ve
+  // arama motoru giriş ekranına yönlendirilir ve dil sayfaları hiç
+  // indekslenmez. Türkçe öneksiz olduğu için listede yok — onu bir üstteki
+  // satır zaten karşılıyor.
+  if (PUBLIC_LOCALE_PATHS.has(pathname)) return NextResponse.next();
+
+  // Panel önekiyle başlamayan her yol tanıtım sitesinin alanıdır; orada
+  // rota çözümü ve 404 kararı Next'e aittir (bkz. AUTH_PREFIXES notu).
+  if (!AUTH_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return NextResponse.next();
+  }
 
   const token = req.cookies.get("ceos_at")?.value;
   const payload = token ? await verifyAccessToken(token) : null;

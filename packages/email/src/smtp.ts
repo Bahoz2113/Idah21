@@ -1,5 +1,5 @@
 import nodemailer, { type Transporter } from "nodemailer";
-import type { EmailProvider } from "./index";
+import type { EmailAttachment, EmailProvider } from "./index";
 
 const BRAND = "CEZERİ Education OS";
 
@@ -31,6 +31,7 @@ function codeBlock(code: string): string {
 }
 
 export class SmtpEmailProvider implements EmailProvider {
+  readonly canDeliver = true;
   private transporter: Transporter;
   private from: string;
 
@@ -48,6 +49,38 @@ export class SmtpEmailProvider implements EmailProvider {
 
   private async send(to: string, subject: string, html: string) {
     await this.transporter.sendMail({ from: this.from, to, subject, html });
+  }
+
+  /**
+   * `replyTo` bilerek ayrı: gönderen her zaman kurumun kendi SMTP kimliğidir
+   * (aksi hâlde SPF/DKIM doğrulaması düşer ve posta spam'e gider), ama
+   * "Yanıtla" düğmesi doğrudan veliye gitmelidir.
+   */
+  async sendDocument({
+    to,
+    subject,
+    html,
+    replyTo,
+    attachments,
+  }: {
+    to: string;
+    subject: string;
+    html: string;
+    replyTo?: string;
+    attachments?: EmailAttachment[];
+  }) {
+    await this.transporter.sendMail({
+      from: this.from,
+      to,
+      subject,
+      html,
+      replyTo,
+      attachments: attachments?.map((a) => ({
+        filename: a.filename,
+        content: Buffer.from(a.content),
+        contentType: a.contentType,
+      })),
+    });
   }
 
   async sendEmailVerificationCode(email: string, code: string, fullName?: string) {

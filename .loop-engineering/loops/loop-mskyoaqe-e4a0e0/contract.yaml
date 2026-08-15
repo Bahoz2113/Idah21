@@ -1,0 +1,117 @@
+loop_id: loop-mskyoaqe-e4a0e0
+loop_name: "software-development: CEZERI ROBOTECH kinematik hangar dunyasi"
+version: 2
+created_at: 2026-08-08T22:44:39.639Z
+revised_at: 2026-08-08T22:52:00.000Z
+created_by: user
+revised_by: loop-design
+
+objective: >-
+  Tanitim sayfasini yigilmis opak bolumlerden, scroll ile kameranin ilerledigi
+  TEK surekli 3D dunyaya donustur. Referans seviye: mengto.github.io/KAGE —
+  sahne sayfanin arkasinda sabit yasar, icerik onun uzerinde yuzer, dev wordmark
+  sahnenin icine gomulur ve on plandaki geometri tarafindan orten derinlik verir.
+  Cezeri karsiligi: gece hangari -> acilan kapilar -> firlatma sahasi ->
+  Cezeri disli katmani -> saha notu panelleri -> kontrol konsolu.
+
+business_goal: >-
+  Kurucunun "Awwwards odullu ajans isi" beklentisini karsilamak: ziyaretcinin
+  sayfayi okumasi degil, icinde yurumesi. Batman'da 6-16 yas teknoloji egitimi
+  pazarinda tanitim sayfasini kategorik olarak farklilastirmak.
+
+template: software-development
+
+in_scope:
+  - apps/web/src/components/marketing/world/* (yeni: kalici WebGL dunya katmani)
+  - apps/web/src/components/marketing/* (bolumlerin seffaf "chapter" katmanina donusu)
+  - apps/web/src/app/page.tsx (sayfa iskeleti: chapter yapisi)
+  - apps/web/src/app/globals.css (.czr-site katmani: seffaf zeminler, chapter tipografisi)
+  - apps/web/tailwind.config.ts (gerekirse yeni token/animasyon)
+  - packages/config/src/tokens.ts (yalnizca marketingTokens icinde ekleme)
+
+out_of_scope:
+  - production deployment
+  - panel (admin/teacher/student/parent) rotalari ve tokens.tokens objesi
+  - veri silme, migration, secret degisikligi
+  - SEO icerigi ve JSON-LD grafigi (korunur, degistirilmez)
+  - gercek medya dosyalarinin yeniden uretimi (mevcut anonimlestirilmis setler kullanilir)
+
+acceptance_criteria:
+  - ac1: >-
+      Sayfa boyunca TEK kalici WebGL sahnesi vardir; scroll ilerledikce kamera
+      konumu/hedefi degisir. Kanit: sahne DOM'da tek canvas, scroll 0/0.5/1
+      noktalarinda farkli kamera degerleri loglanir.
+  - ac2: >-
+      Hicbir bolum opak zemin kullanmaz; icerik dunyanin uzerinde yuzer.
+      Kanit: bolum elemanlarinda bg-czr-base/bg-czr-base-alt kalmadigi grep ile
+      gosterilir ve ekran goruntusunde sahne icerikten gorunur.
+  - ac3: >-
+      Dev CEZERI wordmark sahnenin icine gomulur ve on plan geometrisi tarafindan
+      kismen ortulur (gercek derinlik). Kanit: kare karsilastirmasi.
+  - ac4: >-
+      Surekli atmosfer partikulleri (toz/kivilcim) calisir ve reduced-motion'da durur.
+  - ac5: >-
+      Bolumler "CHAPTER" anlatisina gecer; ilerleme gostergesi kullaniciya
+      dunyanin neresinde oldugunu soyler.
+  - ac6: >-
+      Progressive enhancement: WebGL yoksa, prefers-reduced-motion aciksa veya
+      cihaz zayifsa sayfa TAM okunabilir kalir (statik koyu zemin fallback).
+      Kanit: WebGL kapali tarayicida tam sayfa ekran goruntusu + metin sayimi.
+  - ac7: >-
+      SEO/GEO regresyonu yok: tum metin SSR ile DOM'da, JSON-LD @graph dugum
+      sayisi ve FAQ/Course/VideoObject dugumleri korunur. Kanit: dugum sayimi
+      onceki ile ayni veya fazla.
+  - ac8: >-
+      Erisilebilirlik: klavye ile tum interaktif ogeler gezilir, focus gorunur,
+      basliklar hiyerarsik, canvas aria-hidden. Kanit: klavye gezinti kaydi.
+  - ac9: >-
+      Masaustu (1440) ve mobil (390) yatay tasma yok (scrollWidth == clientWidth).
+  - ac10: >-
+      Performans: / rotasi ilk yuk JS butcesi <= 200 kB (three.js lazy),
+      LCP metni ilk boyamada gorunur, CLS < 0.1. Kanit: build ciktisi + olcum.
+  - ac11: >-
+      pnpm --filter web build EXIT=0, tip hatasi yok.
+  - ac12: >-
+      Mevcut islevsellik korunur: 10 SSS akordeonu, galeri video modali,
+      iletisim kanallari, menu ic baglantilari calisir.
+
+verification_methods:
+  - build_run
+  - browser_probe        # Playwright + Chromium: kamera, tasma, klavye, fallback
+  - screenshot_diff
+  - schema_node_count
+  - file_check
+
+quality_threshold: 70
+baseline_score: 0
+target_score: 85
+minimum_improvement: 5
+max_iterations: 6
+max_retries_per_step: 2
+risk_level: medium
+
+required_approvals:
+  - none   # kod degisikligi; deploy ve merge kullanicidadir
+
+rollback_policy: checkpoint-before-risky-change
+
+stop_conditions:
+  - target_score_reached
+  - max_iterations_reached
+  - same_failure_repeated
+  - budget_exhausted
+  - user_cancelled
+
+allowed_tools:
+  - fs
+  - build
+  - git
+  - browser
+
+forbidden_actions:
+  - production_deploy
+  - force_push_main
+  - data_deletion
+  - direct_merge_to_main
+
+data_classification: internal
