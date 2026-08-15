@@ -360,7 +360,7 @@ export const sections = [
   { id: "biz-kimiz", label: "Biz Kimiz" },
   { id: "basin", label: "Basında Biz" },
   { id: "sss", label: "SSS" },
-  { id: "kayit", label: "Kayıt" },
+  { id: "kayit", label: "Online Kayıt" },
   { id: "iletisim", label: "İletişim" },
 ] as const;
 
