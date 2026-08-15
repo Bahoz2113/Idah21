@@ -1,6 +1,7 @@
 import type { Locale } from "@/lib/i18n/config";
 import { content } from "@/lib/i18n/content";
 import { curriculum } from "@/lib/seo/curriculum";
+import { localizedCurriculum } from "@/lib/i18n/curriculum";
 import { disciplines } from "@/lib/seo/site";
 
 /**
@@ -35,9 +36,9 @@ export function programAdi(id: string, locale: Locale): string {
     const key = id.slice(2) as keyof ReturnType<typeof content>["disciplines"];
     return content(locale).disciplines[key]?.title ?? id;
   }
-  // Müfredat programlarının adları henüz yalnızca Türkçe; olmayan bir
-  // çeviriyi uydurmak yerine kaynaktaki adı gösteriyoruz.
-  return curriculum.find((p) => `m:${p.id}` === id)?.title ?? id;
+  // Müfredat program adları da dile göre gelir (çeviri katmanı
+  // lib/i18n/curriculum). PDF Türkçe kalır: programAdiTr "tr" ile çağırır.
+  return localizedCurriculum(locale).find((p) => `m:${p.id}` === id)?.title ?? id;
 }
 
 /** PDF ve e-posta için Türkçe ad — belge dili her zaman Türkçedir. */

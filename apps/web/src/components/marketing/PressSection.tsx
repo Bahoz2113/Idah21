@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useId, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { ui, type UiStrings } from "@/lib/i18n/ui";
-import { press } from "@/lib/seo/site";
+import { press, type PressItem } from "@/lib/seo/site";
+import { localizedPress } from "@/lib/i18n/press";
 import { DahaFazla } from "./DahaFazla";
 import { Reveal } from "./Reveal";
 
@@ -33,7 +34,7 @@ import { Reveal } from "./Reveal";
 /** Ana ekranda görünen haber kartı sayısı. */
 const ILK_GORUNEN = 3;
 
-type Item = (typeof press)[number];
+type Item = PressItem;
 
 function PressCard({
   item,
@@ -107,7 +108,7 @@ function PressCard({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/14 px-3.5 py-1.5 text-[12px] font-semibold text-czr-ice transition duration-300 ease-czr-cine hover:border-czr-orange/50 hover:text-czr-orange"
               >
-                Haberi oku
+                {t.pressRead}
                 <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3 w-3" fill="currentColor">
                   <path d="M6 4h10v10h-2V7.4L5.7 15.7 4.3 14.3 12.6 6H6V4z" />
                 </svg>
@@ -177,8 +178,10 @@ export function PressSection({ locale }: { locale: Locale }) {
   const t = ui(locale);
   const [acik, setAcik] = useState(false);
   const arsivId = useId();
-  const haberler = press.filter((p) => p.kind === "haber");
-  const sosyal = press.filter((p) => p.kind === "sosyal");
+  // Başlık ve özetler dile göre; kaynak adları özel isimdir, çevrilmez.
+  const kayitlar = localizedPress(locale);
+  const haberler = kayitlar.filter((p) => p.kind === "haber");
+  const sosyal = kayitlar.filter((p) => p.kind === "sosyal");
   // Gizlenen: ilk üçün dışındaki haberler + sosyal paylaşımların tamamı.
   const gizliSayi = Math.max(0, haberler.length - ILK_GORUNEN) + sosyal.length;
 

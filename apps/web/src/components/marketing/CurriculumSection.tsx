@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { ui } from "@/lib/i18n/ui";
-import { curriculum, curriculumTotalWeeks } from "@/lib/seo/curriculum";
+import { curriculumTotalWeeks } from "@/lib/seo/curriculum";
+import { localizedCurriculum } from "@/lib/i18n/curriculum";
 import { Reveal } from "./Reveal";
 
 /**
@@ -34,6 +35,9 @@ const LEVEL_TONE: Record<string, string> = {
 
 export function CurriculumSection({ locale }: { locale: Locale }) {
   const t = ui(locale);
+  // Program metinleri dile göre (kurucunun kuralı: seçilen dilde her
+  // yazılı içerik o dile döner). Yapı ve hafta numaraları kaynaktan.
+  const curriculum = useMemo(() => localizedCurriculum(locale), [locale]);
   const [active, setActive] = useState(curriculum[0].id);
   const [openModule, setOpenModule] = useState<string | null>(null);
 
