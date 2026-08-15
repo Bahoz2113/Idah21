@@ -61,6 +61,230 @@ const GIRDI =
 const GIRDI_HATA = "border-red-400/70 bg-red-400/[0.06]";
 const ETIKET = "block text-[13px] font-semibold text-czr-ice/85";
 
+/**
+ * ALAN BİLEŞENLERİ MODÜL SEVİYESİNDE — bileşenin İÇİNDE TANIMLANAMAZLAR.
+ *
+ * Önceki sürümde `Alan`, `Metin` vb. `KayitFormu`'nun gövdesinde
+ * tanımlıydı. Her tuş vuruşu state'i değiştirir, bileşen yeniden çalışır
+ * ve bu iç tanımlar her seferinde YENİ birer fonksiyon nesnesi olur.
+ * React, tip kimliği değişen bir öğeyi güncellemez; söküp yeniden kurar —
+ * input DOM'dan kalkıp geri gelir ve odak düşer. Kullanıcı bunu "bir harf
+ * yazınca kutu kapanıyor, tekrar tıklamak gerekiyor" diye yaşadı
+ * (kurucunun birebir raporu). Modül seviyesindeki tipler kararlıdır;
+ * React aynı input'u yerinde günceller ve odak korunur.
+ *
+ * Bu yüzden bu bileşenler durum TAŞIMAZ: değer, hata ve değişim işleyicisi
+ * dışarıdan gelir. Form içindeki kısa `alan()/metin()/...` kurucuları
+ * çağrı yerlerini sade tutar — onlar bileşen değil düz fonksiyondur,
+ * render sırasında çağrılır ve tip sınırı oluşturmazlar.
+ */
+
+function AlanUI({
+  id,
+  etiket,
+  ipucu,
+  tip = "text",
+  genis = false,
+  deger,
+  hata,
+  onDegis,
+  ...rest
+}: {
+  id: string;
+  etiket: string;
+  ipucu?: string;
+  tip?: "text" | "tel" | "email" | "date";
+  genis?: boolean;
+  deger: string;
+  hata: string | null;
+  onDegis: (v: string) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "id" | "type" | "value" | "onChange">) {
+  return (
+    <div className={genis ? "sm:col-span-2" : ""}>
+      <label htmlFor={id} className={ETIKET}>
+        {etiket}
+      </label>
+      <input
+        {...rest}
+        id={id}
+        type={tip}
+        value={deger}
+        onChange={(e) => onDegis(e.target.value)}
+        aria-invalid={hata ? true : undefined}
+        aria-describedby={hata ? `${id}-hata` : ipucu ? `${id}-ipucu` : undefined}
+        // Telefon ve e-posta latin/rakamdır; sağdan sola akışta kendi
+        // yönlerini korumaları gerekir.
+        dir={tip === "tel" || tip === "email" || tip === "date" ? "ltr" : undefined}
+        className={`mt-2 ${GIRDI} ${hata ? GIRDI_HATA : ""}`}
+      />
+      {hata ? (
+        <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
+          {hata}
+        </p>
+      ) : ipucu ? (
+        <p id={`${id}-ipucu`} className="mt-1.5 text-[12px] text-czr-ice/50">
+          {ipucu}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function MetinUI({
+  id,
+  etiket,
+  satir = 3,
+  deger,
+  hata,
+  onDegis,
+}: {
+  id: string;
+  etiket: string;
+  satir?: number;
+  deger: string;
+  hata: string | null;
+  onDegis: (v: string) => void;
+}) {
+  return (
+    <div className="sm:col-span-2">
+      <label htmlFor={id} className={ETIKET}>
+        {etiket}
+      </label>
+      <textarea
+        id={id}
+        rows={satir}
+        value={deger}
+        onChange={(e) => onDegis(e.target.value)}
+        aria-invalid={hata ? true : undefined}
+        aria-describedby={hata ? `${id}-hata` : undefined}
+        className={`mt-2 resize-y ${GIRDI} ${hata ? GIRDI_HATA : ""}`}
+      />
+      {hata ? (
+        <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
+          {hata}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/** Evet/Hayır ikilisi; açılan detay alanı `children` ile gelir. */
+function EvetHayirUI({
+  ad,
+  soru,
+  deger,
+  evet,
+  hayir,
+  onSec,
+  children,
+}: {
+  ad: string;
+  soru: string;
+  deger: boolean;
+  evet: string;
+  hayir: string;
+  onSec: (v: boolean) => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="sm:col-span-2">
+      <fieldset>
+        <legend className={ETIKET}>{soru}</legend>
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {[
+            { v: true, l: evet },
+            { v: false, l: hayir },
+          ].map((o) => (
+            <label
+              key={String(o.v)}
+              className={`cursor-pointer rounded-xl border px-5 py-2.5 text-[14px] font-semibold transition ${
+                deger === o.v
+                  ? "border-czr-orange bg-czr-orange/15 text-white"
+                  : "border-white/15 text-czr-ice/70 hover:border-white/30"
+              }`}
+            >
+              <input
+                type="radio"
+                name={ad}
+                className="sr-only"
+                checked={deger === o.v}
+                onChange={() => onSec(o.v)}
+              />
+              {o.l}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      {children}
+    </div>
+  );
+}
+
+function OnayUI({
+  id,
+  metin,
+  not,
+  deger,
+  hata,
+  onDegis,
+}: {
+  id: string;
+  metin: string;
+  not?: string;
+  deger: boolean;
+  hata: string | null;
+  onDegis: (v: boolean) => void;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
+          hata ? "border-red-400/70 bg-red-400/[0.06]" : "border-white/12 hover:border-white/25"
+        }`}
+      >
+        <input
+          id={id}
+          type="checkbox"
+          checked={deger}
+          onChange={(e) => onDegis(e.target.checked)}
+          aria-describedby={hata ? `${id}-hata` : undefined}
+          className="mt-0.5 h-5 w-5 shrink-0 accent-[#ff8c00]"
+        />
+        <span className="text-[14px] leading-relaxed text-czr-ice/85">{metin}</span>
+      </label>
+      {not ? <p className="mt-2 ps-1 text-[12px] leading-relaxed text-czr-ice/50">{not}</p> : null}
+      {hata ? (
+        <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
+          {hata}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function BolumUI({
+  no,
+  baslik,
+  children,
+}: {
+  no: string;
+  baslik: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="border-t border-white/8 pt-10">
+      <Reveal>
+        <h3 className="flex items-baseline gap-3 text-[18px] font-bold text-white sm:text-[20px]">
+          <span className="czr-mono text-[12px] tabular-nums text-czr-orange">{no}</span>
+          {baslik}
+        </h3>
+      </Reveal>
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">{children}</div>
+    </section>
+  );
+}
+
 export function KayitFormu({ locale }: { locale: Locale }) {
   const t = kayitStrings(locale);
   const chrome = ui(locale);
@@ -258,192 +482,63 @@ export function KayitFormu({ locale }: { locale: Locale }) {
   const gonderiliyor = durum.tip === "gonderiliyor";
   const hataVar = Object.values(hatalar).some(Boolean);
 
-  // ── Küçük yardımcılar (bileşen içinde: hepsi `t` ve `set`'e bağlı)
-  const Alan = ({
-    k,
-    etiket,
-    ipucu,
-    tip = "text",
-    genis = false,
-    ...rest
-  }: {
-    k: keyof KayitBasvurusu;
-    etiket: string;
-    ipucu?: string;
-    tip?: "text" | "tel" | "email" | "date";
-    genis?: boolean;
-  } & React.InputHTMLAttributes<HTMLInputElement>) => {
-    const id = `${kokId}-${String(k)}`;
-    const hata = hataMetni(k);
-    return (
-      <div className={genis ? "sm:col-span-2" : ""}>
-        <label htmlFor={id} className={ETIKET}>
-          {etiket}
-        </label>
-        <input
-          {...rest}
-          id={id}
-          type={tip}
-          value={String(f[k] ?? "")}
-          onChange={(e) => set(k, e.target.value as KayitBasvurusu[typeof k])}
-          aria-invalid={hata ? true : undefined}
-          aria-describedby={hata ? `${id}-hata` : ipucu ? `${id}-ipucu` : undefined}
-          // Telefon ve e-posta latin/rakamdır; sağdan sola akışta kendi
-          // yönlerini korumaları gerekir.
-          dir={tip === "tel" || tip === "email" || tip === "date" ? "ltr" : undefined}
-          className={`mt-2 ${GIRDI} ${hata ? GIRDI_HATA : ""}`}
-        />
-        {hata ? (
-          <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
-            {hata}
-          </p>
-        ) : ipucu ? (
-          <p id={`${id}-ipucu`} className="mt-1.5 text-[12px] text-czr-ice/50">
-            {ipucu}
-          </p>
-        ) : null}
-      </div>
-    );
-  };
+  // ── Kısa kurucular. Bunlar BİLEŞEN DEĞİL, render sırasında çağrılan düz
+  // fonksiyonlar: döndürdükleri öğelerin tipi modül seviyesindeki kararlı
+  // AlanUI/MetinUI/...'dır, bu yüzden tuş vuruşunda odak düşmez (üstteki
+  // modül yorumuna bakın). Amaçları yalnızca çağrı yerlerini sade tutmak.
+  const alan = (
+    k: keyof KayitBasvurusu,
+    etiket: string,
+    ekstra?: Partial<React.ComponentProps<typeof AlanUI>>,
+  ) => (
+    <AlanUI
+      id={`${kokId}-${String(k)}`}
+      etiket={etiket}
+      deger={String(f[k] ?? "")}
+      hata={hataMetni(k)}
+      onDegis={(v) => set(k, v as KayitBasvurusu[typeof k])}
+      {...ekstra}
+    />
+  );
 
-  const Metin = ({
-    k,
-    etiket,
-    satir = 3,
-  }: {
-    k: keyof KayitBasvurusu;
-    etiket: string;
-    satir?: number;
-  }) => {
-    const id = `${kokId}-${String(k)}`;
-    const hata = hataMetni(k);
-    return (
-      <div className="sm:col-span-2">
-        <label htmlFor={id} className={ETIKET}>
-          {etiket}
-        </label>
-        <textarea
-          id={id}
-          rows={satir}
-          value={String(f[k] ?? "")}
-          onChange={(e) => set(k, e.target.value as KayitBasvurusu[typeof k])}
-          aria-invalid={hata ? true : undefined}
-          aria-describedby={hata ? `${id}-hata` : undefined}
-          className={`mt-2 resize-y ${GIRDI} ${hata ? GIRDI_HATA : ""}`}
-        />
-        {hata ? (
-          <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
-            {hata}
-          </p>
-        ) : null}
-      </div>
-    );
-  };
+  const metin = (k: keyof KayitBasvurusu, etiket: string, satir = 3) => (
+    <MetinUI
+      id={`${kokId}-${String(k)}`}
+      etiket={etiket}
+      satir={satir}
+      deger={String(f[k] ?? "")}
+      hata={hataMetni(k)}
+      onDegis={(v) => set(k, v as KayitBasvurusu[typeof k])}
+    />
+  );
 
-  /** Evet/Hayır ikilisi + koşullu detay alanı. */
-  const EvetHayir = ({
-    soruK,
-    detayK,
-    soru,
-    detayEtiket,
-  }: {
-    soruK: "alerjiVar" | "hastalikVar" | "fobiVar";
-    detayK: "alerjiDetay" | "hastalikDetay" | "fobiDetay";
-    soru: string;
-    detayEtiket: string;
-  }) => {
-    const ad = `${kokId}-${soruK}`;
-    return (
-      <div className="sm:col-span-2">
-        <fieldset>
-          <legend className={ETIKET}>{soru}</legend>
-          <div className="mt-2.5 flex flex-wrap gap-2">
-            {[
-              { v: true, l: t.evet },
-              { v: false, l: t.hayir },
-            ].map((o) => (
-              <label
-                key={String(o.v)}
-                className={`cursor-pointer rounded-xl border px-5 py-2.5 text-[14px] font-semibold transition ${
-                  f[soruK] === o.v
-                    ? "border-czr-orange bg-czr-orange/15 text-white"
-                    : "border-white/15 text-czr-ice/70 hover:border-white/30"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={ad}
-                  className="sr-only"
-                  checked={f[soruK] === o.v}
-                  onChange={() => set(soruK, o.v)}
-                />
-                {o.l}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        {f[soruK] ? <div className="mt-4"><Metin k={detayK} etiket={detayEtiket} satir={2} /></div> : null}
-      </div>
-    );
-  };
+  const evetHayir = (
+    soruK: "alerjiVar" | "hastalikVar" | "fobiVar",
+    detayK: "alerjiDetay" | "hastalikDetay" | "fobiDetay",
+    soru: string,
+    detayEtiket: string,
+  ) => (
+    <EvetHayirUI
+      ad={`${kokId}-${soruK}`}
+      soru={soru}
+      deger={f[soruK]}
+      evet={t.evet}
+      hayir={t.hayir}
+      onSec={(v) => set(soruK, v)}
+    >
+      {f[soruK] ? <div className="mt-4">{metin(detayK, detayEtiket, 2)}</div> : null}
+    </EvetHayirUI>
+  );
 
-  const Onay = ({
-    k,
-    metin,
-    not,
-  }: {
-    k: "sartlarOnay" | "saglikRiza" | "medyaItiraz";
-    metin: string;
-    not?: string;
-  }) => {
-    const id = `${kokId}-${k}`;
-    const hata = hataMetni(k);
-    return (
-      <div>
-        <label
-          htmlFor={id}
-          className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
-            hata ? "border-red-400/70 bg-red-400/[0.06]" : "border-white/12 hover:border-white/25"
-          }`}
-        >
-          <input
-            id={id}
-            type="checkbox"
-            checked={Boolean(f[k])}
-            onChange={(e) => set(k, e.target.checked)}
-            aria-describedby={hata ? `${id}-hata` : undefined}
-            className="mt-0.5 h-5 w-5 shrink-0 accent-[#ff8c00]"
-          />
-          <span className="text-[14px] leading-relaxed text-czr-ice/85">{metin}</span>
-        </label>
-        {not ? <p className="mt-2 ps-1 text-[12px] leading-relaxed text-czr-ice/50">{not}</p> : null}
-        {hata ? (
-          <p id={`${id}-hata`} className="mt-1.5 text-[12.5px] font-medium text-red-300">
-            {hata}
-          </p>
-        ) : null}
-      </div>
-    );
-  };
-
-  const Bolum = ({
-    no,
-    baslik,
-    children,
-  }: {
-    no: string;
-    baslik: string;
-    children: React.ReactNode;
-  }) => (
-    <section className="border-t border-white/8 pt-10">
-      <Reveal>
-        <h3 className="flex items-baseline gap-3 text-[18px] font-bold text-white sm:text-[20px]">
-          <span className="czr-mono text-[12px] tabular-nums text-czr-orange">{no}</span>
-          {baslik}
-        </h3>
-      </Reveal>
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">{children}</div>
-    </section>
+  const onay = (k: "sartlarOnay" | "saglikRiza" | "medyaItiraz", metinStr: string, not?: string) => (
+    <OnayUI
+      id={`${kokId}-${k}`}
+      metin={metinStr}
+      not={not}
+      deger={Boolean(f[k])}
+      hata={hataMetni(k)}
+      onDegis={(v) => set(k, v)}
+    />
   );
 
   return (
@@ -472,16 +567,16 @@ export function KayitFormu({ locale }: { locale: Locale }) {
         {t.hataOzet}
       </p>
 
-      <Bolum no="1" baslik={t.s1}>
-        <Alan k="ogrenciAd" etiket={t.ogrenciAd} autoComplete="off" required />
-        <Alan k="dogumTarihi" etiket={t.dogumTarihi} tip="date" required />
-        <Alan k="veliAd" etiket={t.veliAd} autoComplete="name" required />
-        <Alan k="telefon" etiket={t.telefon} tip="tel" autoComplete="tel" required />
-        <Alan k="eposta" etiket={t.eposta} tip="email" ipucu={t.epostaHint} autoComplete="email" />
-        <Metin k="adres" etiket={t.adres} satir={2} />
-      </Bolum>
+      <BolumUI no="1" baslik={t.s1}>
+        {alan("ogrenciAd", t.ogrenciAd, { autoComplete: "off", required: true })}
+        {alan("dogumTarihi", t.dogumTarihi, { tip: "date", required: true })}
+        {alan("veliAd", t.veliAd, { autoComplete: "name", required: true })}
+        {alan("telefon", t.telefon, { tip: "tel", autoComplete: "tel", required: true })}
+        {alan("eposta", t.eposta, { tip: "email", ipucu: t.epostaHint, autoComplete: "email" })}
+        {metin("adres", t.adres, 2)}
+      </BolumUI>
 
-      <Bolum no="2" baslik={t.s2}>
+      <BolumUI no="2" baslik={t.s2}>
         {/* Program listesi SALT BİLGİLENDİRME — kurucunun kararı: veli
             işaretlemez; liste, çocuğun neler görüp öğreneceğini göstermek
             için durur. Programlar kayıt sırasında merkezde birlikte
@@ -508,11 +603,11 @@ export function KayitFormu({ locale }: { locale: Locale }) {
           </ul>
         </div>
 
-        <Alan k="baslangicTarihi" etiket={t.baslangicTarihi} tip="date" ipucu={t.tarihHint} />
-        <Alan k="bitisTarihi" etiket={t.bitisTarihi} tip="date" ipucu={t.tarihHint} />
-      </Bolum>
+        {alan("baslangicTarihi", t.baslangicTarihi, { tip: "date", ipucu: t.tarihHint })}
+        {alan("bitisTarihi", t.bitisTarihi, { tip: "date", ipucu: t.tarihHint })}
+      </BolumUI>
 
-      <Bolum no="3" baslik={t.s3}>
+      <BolumUI no="3" baslik={t.s3}>
         <fieldset className="sm:col-span-2">
           <legend className={ETIKET}>{t.odemeTuru}</legend>
           <div className="mt-2.5 flex flex-wrap gap-2">
@@ -545,18 +640,16 @@ export function KayitFormu({ locale }: { locale: Locale }) {
 
         {/* Ödeme günü: `type="date"` — tıklanınca tarayıcının takvimi
             açılır, veli günü oradan seçer (kurucunun isteği). */}
-        <Alan k="odemeGunu" etiket={t.odemeGunu} tip="date" ipucu={t.odemeGunuHint} required />
-        <Alan k="toplamTutar" etiket={t.toplamTutar} ipucu={t.tutarHint} inputMode="decimal" />
-        {f.odemeTuru === "taksitli" ? (
-          <Metin k="taksitPlani" etiket={t.taksitPlani} satir={2} />
-        ) : null}
-      </Bolum>
+        {alan("odemeGunu", t.odemeGunu, { tip: "date", ipucu: t.odemeGunuHint, required: true })}
+        {alan("toplamTutar", t.toplamTutar, { ipucu: t.tutarHint, inputMode: "decimal" })}
+        {f.odemeTuru === "taksitli" ? metin("taksitPlani", t.taksitPlani, 2) : null}
+      </BolumUI>
 
-      <Bolum no="4" baslik={t.s4}>
-        <EvetHayir soruK="alerjiVar" detayK="alerjiDetay" soru={t.alerjiSoru} detayEtiket={t.alerjiDetay} />
-        <EvetHayir soruK="hastalikVar" detayK="hastalikDetay" soru={t.hastalikSoru} detayEtiket={t.hastalikDetay} />
-        <EvetHayir soruK="fobiVar" detayK="fobiDetay" soru={t.fobiSoru} detayEtiket={t.fobiDetay} />
-      </Bolum>
+      <BolumUI no="4" baslik={t.s4}>
+        {evetHayir("alerjiVar", "alerjiDetay", t.alerjiSoru, t.alerjiDetay)}
+        {evetHayir("hastalikVar", "hastalikDetay", t.hastalikSoru, t.hastalikDetay)}
+        {evetHayir("fobiVar", "fobiDetay", t.fobiSoru, t.fobiDetay)}
+      </BolumUI>
 
       {/* ── Şartlar ve koşullar: okunur metin, düzenlenemez. */}
       <section className="border-t border-white/8 pt-10">
@@ -590,10 +683,10 @@ export function KayitFormu({ locale }: { locale: Locale }) {
         </div>
 
         <div className="mt-5">
-          <Onay k="medyaItiraz" metin={t.medyaItiraz} />
+          {onay("medyaItiraz", t.medyaItiraz)}
           {f.medyaItiraz ? (
             <div className="mt-4 grid gap-5 sm:grid-cols-2">
-              <Metin k="medyaItirazDetay" etiket={t.medyaItirazDetay} satir={2} />
+              {metin("medyaItirazDetay", t.medyaItirazDetay, 2)}
             </div>
           ) : null}
         </div>
@@ -609,12 +702,12 @@ export function KayitFormu({ locale }: { locale: Locale }) {
         </Reveal>
 
         <div className="mt-6 space-y-4">
-          <Onay k="sartlarOnay" metin={t.sartlarOnay} />
+          {onay("sartlarOnay", t.sartlarOnay)}
           {/* Açık rıza YALNIZCA sağlık verisi girildiyse sorulur; girilmemişse
               istenmesi gereksiz bir onay yükü olurdu. */}
-          {f.alerjiVar || f.hastalikVar || f.fobiVar ? (
-            <Onay k="saglikRiza" metin={t.saglikRiza} not={t.saglikRizaNot} />
-          ) : null}
+          {f.alerjiVar || f.hastalikVar || f.fobiVar
+            ? onay("saglikRiza", t.saglikRiza, t.saglikRizaNot)
+            : null}
         </div>
 
         <p className="mt-5 text-[12.5px] leading-relaxed text-czr-ice/50">{t.imzaNot}</p>
