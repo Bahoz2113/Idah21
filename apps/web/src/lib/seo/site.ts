@@ -22,14 +22,26 @@
  * kendi içinde tutarlı kılar; Vercel preview'lara zaten `noindex` verdiği
  * için arama motoru tarafında bir risk oluşmaz.
  */
+function resolveSiteUrlDefault(): string {
+  return "https://cezerirobotech.com";
+}
+
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
 
+  // VERCEL_URL yedeği YALNIZCA preview içindir. Production derlemesinde de
+  // bu değişken tanımlıdır ve yedek oradan devreye girince robots.txt'nin
+  // Host/Sitemap satırları geçici deployment adresini gösterdi (ölçüldü:
+  // canlı robots.txt Google'ı idah21-*.vercel.app'e yönlendiriyordu — SEO
+  // için zehir). Production'da kanonik domain sabittir; ortam değişkenine
+  // bakılmaz.
+  if (process.env.VERCEL_ENV === "production") return resolveSiteUrlDefault();
+
   const vercelHost = process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.VERCEL_URL;
   if (vercelHost) return `https://${vercelHost.replace(/\/$/, "")}`;
 
-  return "https://cezerirobotech.com";
+  return resolveSiteUrlDefault();
 }
 
 export const SITE_URL = resolveSiteUrl();
