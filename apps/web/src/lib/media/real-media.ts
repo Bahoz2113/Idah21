@@ -74,6 +74,16 @@ type MediaBase = {
 export type RealImage = MediaBase & {
   kind: "image";
   src: string;
+  /**
+   * PC lightbox'ında gösterilen YATAY (16:9) kırpım — kurucunun kararı:
+   * "bilgisayarda görsele girildiğinde tamamen yatay görülmeli, mobilde
+   * dikey kalacak." Yalnızca dikey fotoğraflarda var; kırpım her fotoğraf
+   * için elle seçildi (yüzler ve konu korunacak şekilde), otomatik merkez
+   * kırpım takım fotoğrafında kafaları kesiyordu.
+   */
+  yataySrc?: string;
+  yatayWidth?: number;
+  yatayHeight?: number;
 };
 
 export type RealVideo = MediaBase & {
@@ -118,8 +128,9 @@ export const realMedia: readonly RealMediaItem[] = [
   // (fırlatma-01, mızrak-01, ekip-iha-takım, roket-ekip, LDR dersi, AVM
   // standı) galeriden ve diskten ÇIKARILDI; bulanık yama Awwwards jürisine
   // de ziyaretçiye de özensizlik olarak görünüyordu. Yeni kayıtlar dikey
-  // telefon çekimiydi; 1280×720 yatay kadraja alındı (kare ortada, kenarlar
-  // bulanık zemin), hafif gürültü temizliği ve netleştirme uygulandı.
+  // telefon çekimiydi; PC için GERÇEK 16:9 merkez kırpımla yataya
+  // alındı (kurucunun ikinci düzeltmesi: bulanık bantlı kadraj 'dikey
+  // görünüyor' diye reddedildi), gürültü temizliği ve netleştirme uygulandı.
   {
     kind: "video",
     id: "saha-roket-firlatma-02",
@@ -154,8 +165,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "İHA gövde ve elektronik montajı",
     category: "atolye",
     span: "tall",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1238,
     durationSec: 11,
@@ -173,8 +184,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Simurgh-24 uçuş testi",
     category: "drone",
     span: "wide",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1422,
     durationSec: 10,
@@ -317,6 +328,9 @@ export const realMedia: readonly RealMediaItem[] = [
     kind: "image",
     id: "etkinlik-yediiki-takim-01",
     src: "/assets/real-media/etkinlik-yediiki-takim-01.webp",
+    yataySrc: "/assets/real-media/etkinlik-yediiki-takim-01-yatay.webp",
+    yatayWidth: 1280,
+    yatayHeight: 720,
     alt: "CEZERİ ROBOTECH takımı YEDİİKİ Robot ve Teknoloji Festivali'nde madalyaları ve plaketiyle",
     caption: "YEDİİKİ — takım",
     category: "ekip",
@@ -365,8 +379,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Atölye çalışması",
     category: "atolye",
     span: "normal",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 478,
     posterHeight: 850,
     durationSec: 15,
@@ -383,8 +397,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Atölye çalışması",
     category: "atolye",
     span: "normal",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 478,
     posterHeight: 850,
     durationSec: 36,
@@ -423,10 +437,10 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Atölye dersleri",
     category: "atolye",
     span: "wide",
-    width: 1280,
-    height: 720,
-    posterWidth: 1280,
-    posterHeight: 720,
+    width: 960,
+    height: 540,
+    posterWidth: 960,
+    posterHeight: 540,
     durationSec: 46,
   },
   {
@@ -442,8 +456,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Atölye turu",
     category: "atolye",
     span: "wide",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1422,
     durationSec: 11,
@@ -461,8 +475,8 @@ export const realMedia: readonly RealMediaItem[] = [
     category: "3d-baski",
     span: "wide",
     source: "generated",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1422,
     durationSec: 8,
@@ -471,6 +485,9 @@ export const realMedia: readonly RealMediaItem[] = [
     kind: "image",
     id: "robotik-tezgah-01",
     src: "/assets/real-media/robotik-tezgah-01.webp",
+    yataySrc: "/assets/real-media/robotik-tezgah-01-yatay.webp",
+    yatayWidth: 1280,
+    yatayHeight: 720,
     alt: "Ultrasonik sensörlü paletli robotun mikrodenetleyici kartının tezgahta ayarlanması",
     caption: "Robot montaj tezgahı",
     category: "robotik",
@@ -527,8 +544,8 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Etkinlik havadan görüntü",
     category: "saha",
     span: "wide",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1194,
     durationSec: 9,
@@ -545,10 +562,10 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "İHA gövde yapımı",
     category: "atolye",
     span: "normal",
-    width: 1280,
-    height: 720,
-    posterWidth: 1280,
-    posterHeight: 720,
+    width: 960,
+    height: 540,
+    posterWidth: 960,
+    posterHeight: 540,
     durationSec: 25,
   },
   {
@@ -564,8 +581,8 @@ export const realMedia: readonly RealMediaItem[] = [
     category: "robotik",
     span: "tall",
     source: "generated",
-    width: 1280,
-    height: 720,
+    width: 960,
+    height: 540,
     posterWidth: 800,
     posterHeight: 1422,
     durationSec: 8,
@@ -574,6 +591,9 @@ export const realMedia: readonly RealMediaItem[] = [
     kind: "image",
     id: "3d-baski-atolye-01",
     src: "/assets/real-media/3d-baski-atolye-01.webp",
+    yataySrc: "/assets/real-media/3d-baski-atolye-01-yatay.webp",
+    yatayWidth: 1280,
+    yatayHeight: 720,
     alt: "Atölyedeki 3D baskı istasyonunda üretilen turuncu İHA gövde parçası ve baskı kafası",
     caption: "3D baskı istasyonu",
     category: "3d-baski",
@@ -612,10 +632,10 @@ export const realMedia: readonly RealMediaItem[] = [
     caption: "Robot köpek merkezde",
     category: "robotik",
     span: "normal",
-    width: 1280,
-    height: 720,
-    posterWidth: 1280,
-    posterHeight: 720,
+    width: 960,
+    height: 540,
+    posterWidth: 960,
+    posterHeight: 540,
     durationSec: 3,
   },
   // İKİNCİ PARTİ (Ağustos 2026): kurucunun gönderdiği altı proje videosu.

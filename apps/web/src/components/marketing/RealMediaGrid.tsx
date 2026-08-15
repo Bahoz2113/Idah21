@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useId, useMemo, useState } from "react";
 import {
-  mediaFilters,
   realMedia,
   spanClass,
   type MediaCategory,
@@ -11,6 +10,7 @@ import {
   type RealMediaItem,
   type RealVideo,
 } from "@/lib/media/real-media";
+import { localizedMedia, localizedMediaFilters } from "@/lib/i18n/media";
 import type { Locale } from "@/lib/i18n/config";
 import { ui } from "@/lib/i18n/ui";
 import { DahaFazla } from "./DahaFazla";
@@ -49,10 +49,14 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
   const [acik, setAcik] = useState(false);
   const galeriId = useId();
 
+  // Kayıtlar dile göre: caption ve alt seçilen dilde gelir (kurucunun
+  // kuralı: seçilen dilde HER yazılı içerik o dile döner).
+  const tumKayitlar = useMemo(() => localizedMedia(locale), [locale]);
   const items = useMemo(
-    () => (filter === "tumu" ? realMedia : realMedia.filter((m) => m.category === filter)),
-    [filter],
+    () => (filter === "tumu" ? tumKayitlar : tumKayitlar.filter((m) => m.category === filter)),
+    [filter, tumKayitlar],
   );
+  const filtreler = useMemo(() => localizedMediaFilters(locale), [locale]);
 
   // Kapalıyken yalnızca öne çıkanlar çizilir. Filtre satırı da kapalıyken
   // gizli olduğu için `filter` her zaman "tumu"dur; yine de görünürlüğü
@@ -78,7 +82,7 @@ export function RealMediaGrid({ locale }: { locale: Locale }) {
         aria-label={t.mediaCategoryAria}
         className={`flex flex-wrap gap-2 ${acik ? "" : "hidden"}`}
       >
-        {mediaFilters.map((f) => {
+        {filtreler.map((f) => {
           const selected = filter === f.id;
           return (
             <button

@@ -10,9 +10,9 @@
 // tekrarlanmaz. Böylece DOM ile structured data arasında sapma oluşmaz.
 // ══════════════════════════════════════════════════════════════════
 
-import { realMedia } from "../media/real-media";
+import { localizedMedia } from "../i18n/media";
 import { SITE_URL, contact, disciplines, org, press, sameAs } from "./site";
-import { curriculum } from "./curriculum";
+import { localizedCurriculum } from "../i18n/curriculum";
 import { serviceArea, trainingSeoById } from "./trainings";
 import { defaultLocale, type Locale, localeMeta, localePath } from "../i18n/config";
 import { content } from "../i18n/content";
@@ -207,7 +207,7 @@ function courseNodes(locale: Locale) {
     // taradığı alandır. Modül adları ve hafta sayıları sayfada birebir
     // görünür; görünmeyen hiçbir şey buraya yazılmaz.
     ...(() => {
-      const programs = curriculum.filter((c) => c.relatedDisciplines.includes(d.id));
+      const programs = localizedCurriculum(locale).filter((c) => c.relatedDisciplines.includes(d.id));
       if (programs.length === 0) return {};
       return {
         syllabusSections: programs.flatMap((prog) =>
@@ -319,8 +319,10 @@ function websiteNodes(locale: Locale) {
  * olduğunda Google video zengin sonucu üretmeyebilir — ama yanlış veri
  * yayımlamaktan iyidir. Tarihler netleştiğinde buraya eklenmelidir.
  */
-function mediaNodes() {
-  return realMedia.map((m) => {
+function mediaNodes(locale: Locale) {
+  // Medya adı/açıklaması sayfanın diliyle aynı olmalı: sayfada Kürtçe
+  // görünen kartın şeması Türkçe kalsaydı ikisi ayrışırdı.
+  return localizedMedia(locale).map((m) => {
     const id = `${SITE_URL}/#medya-${m.id}`;
     const generated = m.source === "generated";
     const common = {
@@ -372,7 +374,7 @@ export function buildSchemaGraph(locale: Locale) {
       placeNode(),
       ...courseNodes(locale),
       faqNode(locale),
-      ...mediaNodes(),
+      ...mediaNodes(locale),
       ...websiteNodes(locale),
     ],
   };

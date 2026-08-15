@@ -3,9 +3,9 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, useState } from "react";
+import { content } from "@/lib/i18n/content";
 import { defaultLocale, type Locale } from "@/lib/i18n/config";
 import { ui } from "@/lib/i18n/ui";
-import { org } from "@/lib/seo/site";
 
 /**
  * KAYDIRMAYLA KAZINAN HERO.
@@ -55,6 +55,10 @@ const SEEK_EPSILON = 0.015;
 
 export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale }) {
   const t = ui(locale);
+  // Slogan ve tanıtım metni DİL SÖZLÜĞÜNDEN gelir, `seo/site`'tan değil:
+  // site.ts tek dilli kurumsal veridir ve hero'da kullanılması Kürtçe
+  // sayfada Türkçe paragraf bıraktı (kurucu ekran görüntüsüyle bildirdi).
+  const c = content(locale);
   const section = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const copy = useRef<HTMLDivElement>(null);
@@ -307,11 +311,11 @@ export function ScrollScrubHero({ locale = defaultLocale }: { locale?: Locale })
               </h1>
 
               <p className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-white/80 sm:text-xl">
-                {org.tagline}
+                {c.org.tagline}
               </p>
 
               <p className="mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/60">
-                {org.description}
+                {c.org.description}
               </p>
             </div>
           </div>
