@@ -176,10 +176,32 @@ export async function generateMetadata({
   const languages: Record<string, string> = { "x-default": "/" };
   for (const l of locales) languages[localeMeta[l].tag] = localePath(l);
 
+  // Başlık, açıklama ve paylaşım kartı metinleri SAYFANIN DİLİNDE olmalı:
+  // baseMetadata Türkçedir ve olduğu gibi yayılsaydı /ku sekmesi Türkçe
+  // başlık, twitter kartı Türkçe açıklama taşırdı (ölçüldü — kurucunun
+  // "her içerik seçilen dile dönmeli" kuralının meta yüzeyi).
+  const c = content(locale);
+  const baslik = `${org.name} — ${c.org.tagline}`;
+
   return {
     ...baseMetadata,
+    ...(locale === "tr"
+      ? {}
+      : {
+          title: { default: baslik, template: `%s | ${org.name}` },
+          description: c.org.description,
+        }),
     alternates: { canonical: localePath(locale), languages },
-    openGraph: { ...baseMetadata.openGraph, locale: meta.ogLocale, url: `${SITE_URL}${localePath(locale)}` },
+    openGraph: {
+      ...baseMetadata.openGraph,
+      locale: meta.ogLocale,
+      url: `${SITE_URL}${localePath(locale)}`,
+      ...(locale === "tr" ? {} : { title: baslik, description: c.org.description }),
+    },
+    twitter: {
+      ...baseMetadata.twitter,
+      ...(locale === "tr" ? {} : { title: baslik, description: c.org.tagline }),
+    },
   };
 }
 
