@@ -34,8 +34,24 @@ implementer, verifier (bağımsız!), critic, scorer, security-reviewer, qa-engi
 performance-analyst, documentation-agent, memory-curator, human-approval-gate.
 Claude Code bu rolleri sırasıyla üstlenir; CLI durum/kanıt/skor altyapısını zorlar.
 
+## Çekirdek Yetenekler (Skills)
+`.claude/skills/` — repoya commit edilmiştir, her oturumda otomatik yüklenir.
+
+| Skill | Ne zaman |
+|---|---|
+| `web-research` | Güncel/harici bilgi, doküman, kaynak doğrulama |
+| `file-operations` | Dosya okuma/yazma/arama, toplu değişiklik, secret koruması |
+| `terminal-ops` | Komut yürütme, build/test/git, teşhis, yıkıcı komut kontrolü |
+| `code-interpreter` | Hesap, veri işleme, baseline ölçümü, çalıştırarak ispat |
+| `context-manager` | Artifact yayını + bağlam/hafıza bütçesi |
+| `agent-fleet` | Harici ajan/araç filosu seçimi ve güvenli kurulumu |
+
+İşe uygun skill varsa **önce o okunur**. Kurallar: `.claude/rules/core-skills.md`.
+Tüm projelerde geçerli kılmak için: `bash scripts/install-core-skills.sh`
+
 ## Source of Truth
 - Sistem: `.loop-engineering/SYSTEM.md`
 - Aktif loop: `.loop-engineering/runtime/current-loop.json`
 - Öğrenimler: `.loop-engineering/memory/`
 - İzinler: `.loop-engineering/config/permissions.yaml`
+- Yetenekler: `.claude/skills/README.md`
